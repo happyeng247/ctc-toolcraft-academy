@@ -1,0 +1,529 @@
+{
+  "modules": [
+    {
+      "id": "ai-design-system",
+      "title": "From customer brief to an engineered proposal",
+      "subtitle": "Build an evidence chain that connects a customer requirement to a manufacturable tool and a measured result.",
+      "group": "AI & Leadership",
+      "minutes": 25,
+      "objectives": [
+        "Separate a tool recommendation, a parametric design, a manufacturing plan, and a released production program.",
+        "Define the minimum data needed before recommending a geometry.",
+        "Distinguish deterministic engineering checks from uncertain performance predictions."
+      ],
+      "sections": [
+        {
+          "heading": "Your first product is a reliable engineering brief",
+          "body": "A customer may ask for a better finish, longer tool life, or a shorter cycle. Those are different optimization problems. Before choosing a cutter, translate the request into a part feature, workpiece material and condition, acceptance criteria, machine and fixture constraints, and an operating baseline. A missing alloy, drawing revision, or tolerance is a question to resolve, not a value for a language model to invent.",
+          "bullets": [
+            "Separate hard constraints, such as a feature tolerance or holder clearance, from preferences, such as lower cost or fewer tool changes.",
+            "Record the customer's measurement method and what counts as end of tool life. A tool retired for burr growth has a different outcome label from one that fractured.",
+            "Show each extracted requirement beside its source page or message and let an engineer correct it. Preserve those corrections as data."
+          ]
+        },
+        {
+          "heading": "A practical six-stage design assistant",
+          "body": "The proposed workflow is: recommend a tool family \u2192 retrieve comparable evidence \u2192 propose bounded parameters \u2192 verify CAD and CAM \u2192 run an approved trial \u2192 obtain engineering signoff. A persuasive explanation alone does not establish manufacturability or cutting performance.",
+          "bullets": [
+            "Family: classify the operation and likely tool construction, while explicitly flagging unfamiliar materials or features.",
+            "Evidence: retrieve released designs and relevant failures, showing geometry revision, application conditions, measurements, and why each comparison fits or differs.",
+            "Parameters: populate an approved family template and propose only values within an engineer-maintained feasible domain. Keep units and coordinate conventions explicit.",
+            "Verification: check the geometric model, feature coverage, dimensional rules, blank and edge construction, grinding accessibility, holder and wheel clearances, and the applicable process route using appropriate engineering software.",
+            "Trial: compare against a documented baseline with a pre-agreed stop rule and measurement plan. Preserve all candidate and failed results.",
+            "Release: an authorized engineer approves the drawing, manufacturing route, inspection plan, and revision. Generation of production machine code is a separate controlled integration project."
+          ]
+        },
+        {
+          "heading": "Build records around relationships, not loose PDFs",
+          "body": "Use stable identifiers to connect a customer application, the design revision used, the physical tool batch, the manufacturing route, and the trial result. A folder of drawings can support search, but it cannot by itself tell you which edge preparation produced which life result.",
+          "bullets": [
+            "Application record: application_id, access_scope, source_documents, drawing_revision, workpiece_material, material_condition, feature_geometry, tolerances, finish and burr criteria, machine, holder, fixture, coolant, and baseline conditions.",
+            "Design record: design_id, family_id, revision, status, units, parameter definitions and values, substrate or PCD grade, edge construction, edge preparation, coating where applicable, CAD reference, assumptions, constraints, and author or approver.",
+            "Manufacturing record: route_revision, blank and material lot, actual machine model and configuration, software version, setup and wheel references, in-process measurements, final inspection, and nonconformances.",
+            "Trial record: trial_id, tool serial or batch, design_revision, operation and program revision, actual cutting conditions, machine and fixture state, measurement method, parts accepted, wear images, failure mode, retirement reason, dates, and operator observations.",
+            "Decision record: problem, alternatives, rejected options, evidence, confidence, reviewer, approval status, and conditions that would invalidate the decision."
+          ]
+        },
+        {
+          "heading": "Make the model say what it does not know",
+          "body": "The assistant should distinguish a retrieved fact, a calculation, an engineer's rule, an inference, and an unverified suggestion. Low evidence or an out-of-family request should lead to a clear engineering question or abstention. A chatbot confidence score is not a measured probability of successful cutting.",
+          "bullets": [
+            "Never retrieve across customer access boundaries. Evaluate access enforcement with deliberately unauthorized requests.",
+            "Filter by effective revision and release status; keep superseded designs available for historical explanation without presenting them as current instructions.",
+            "Capture failed and abandoned trials. Training only on released tools hides the feasible boundary and overstates success.",
+            "Reject unsupported dimensional values, mixed units, missing provenance, and conflicting requirements before any design is released."
+          ]
+        },
+        {
+          "heading": "Test engineering validity and prediction quality separately",
+          "body": "Deterministic checks test exact rules: required fields, units, bounds, drawing consistency, CAD validity, and specified clearances. Statistical checks test outcomes such as tool life or finish. Each geometric tolerance must come from an approved specification and a suitable measurement method; there is no universal micrometre threshold for every tool family.",
+          "bullets": [
+            "Require every mandatory release check to pass. Report the number and type of rejected proposals, including cases that the system correctly refuses to answer.",
+            "For requirement extraction, measure field accuracy and critical omission rate. For retrieval, ask engineers whether the correct comparable cases appear and whether cited revisions support the answer.",
+            "For performance predictions, report error and interval coverage on held-out trials, broken down by family and operating regime. A broad average can conceal a weak family.",
+            "Set acceptance thresholds with the design and quality teams before running the evaluation. Compare against today's engineer workflow and a simple nearest-approved-design baseline."
+          ]
+        }
+      ],
+      "exercise": {
+        "prompt": "A customer sends a drawing and asks for twice the tool life. What should the assistant produce before offering a geometry?",
+        "answer": "A traceable application brief: confirmed drawing revision and material condition; critical features, tolerances, finish and burr limits; machine, holder, fixture and coolant; current tool revision and cutting conditions; the present life distribution and retirement criterion; missing information; and a small set of comparable approved and failed cases. It should state that twice the life is a target to test, not a guaranteed design outcome."
+      },
+      "quiz": {
+        "question": "Which proposed AI output is ready to become a production design?",
+        "options": [
+          "A convincing geometry explanation with a high model confidence score",
+          "A parameter set copied from the closest-looking tool",
+          "A verified, trial-supported revision approved through the engineering release process",
+          "A 3D model that renders without visual errors"
+        ],
+        "correct": 2,
+        "explanation": "A plausible narrative, a visually similar design, or a rendered model is only part of the evidence. Release requires the appropriate specification, manufacturing checks, inspection and trial evidence, and engineering authority."
+      },
+      "sources": [
+        {
+          "title": "NIST AI RMF: governance and ongoing measurement",
+          "url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+        },
+        {
+          "title": "NIST: measurement process characterization",
+          "url": "https://www.nist.gov/publications/nistsematech-engineering-statistics-handbook-chapter-2-measurement-process"
+        }
+      ]
+    },
+    {
+      "id": "knowledge-and-collaboration",
+      "title": "Make design knowledge a shared company asset",
+      "subtitle": "Learn from the people doing the work and turn decisions into reusable evidence.",
+      "group": "AI & Leadership",
+      "minutes": 20,
+      "objectives": [
+        "Capture the reasoning behind a design rather than only its final drawing.",
+        "Create a collaboration process that includes design, production, quality, and applications.",
+        "Distinguish a verified engineering rule from a habit or untested opinion."
+      ],
+      "sections": [
+        {
+          "heading": "Begin with a workflow problem people recognize",
+          "body": "Investigate collaboration through observable handoffs. Look for unanswered requests, repeated drawing corrections, avoidable rework, unclear ownership, or decisions that depend on one person. Begin the AI effort with one shared burden, such as assembling the correct revision and prior trial history for a design review. The business should set expectations for documented handoffs and decision turnaround, with the design lead involved in defining them."
+        },
+        {
+          "heading": "Capture decisions around a real tool",
+          "body": "Select a released tool, its predecessor, and a failed variant. Ask the designer to explain what changed and what evidence justified it. Then ask the operator and quality engineer the same questions. Differences often reveal missing conditions rather than a single wrong person.",
+          "bullets": [
+            "Ask: What feature is hardest to produce? Which dimension or edge feature controls performance? What would make you reject this design before a trial?",
+            "Ask: Which apparently attractive design failed? What did the wear, chip, measurement, or operator observation teach us?",
+            "Ask: What is special about this customer's machine, stock condition, fixture, or acceptance method?",
+            "Write a one-page decision card and return it to the contributors for correction. Record names and evidence references so expertise remains visible."
+          ]
+        },
+        {
+          "heading": "Use an evidence ladder",
+          "body": "Tag each claim with its source and scope. A measured result on a particular machine and material is strong evidence for that setting, yet may not transfer unchanged. An experienced designer's heuristic is useful and deserves a record, but its applicable range should be stated and tested.",
+          "bullets": [
+            "Confirmed result: tied to a known tool revision, operating conditions, measurement method, and outcome.",
+            "Engineering calculation or verified constraint: units, assumptions, model version, and acceptance rule recorded.",
+            "Expert rule: contributor, rationale, applicable family, exceptions, and confidence recorded.",
+            "Hypothesis: plausible explanation awaiting a discriminating observation or test.",
+            "Unresolved disagreement: competing explanations preserved with the evidence needed to decide."
+          ]
+        },
+        {
+          "heading": "Give each handoff an owner and a useful artifact",
+          "body": "Propose a weekly 30-minute case review with a designer, manufacturing representative, quality engineer, and applications or customer-facing engineer. Bring one problem, the physical tool or images, a requirement sheet, the relevant measurements, and a decision to make. Your role as head of AI is to make the evidence available and the learning reusable.",
+          "bullets": [
+            "Applications owns the completeness of the customer brief and operating context.",
+            "Design owns the rationale, geometry, approved parameter domain, and technical design release.",
+            "Manufacturing owns the feasible route, setup record, and actual process conditions.",
+            "Quality owns the inspection method, measurement traceability, and acceptance evidence.",
+            "AI and data owners maintain access, version links, retrieval quality, evaluation records, and change history."
+          ]
+        },
+        {
+          "heading": "Measure whether collaboration is getting easier",
+          "body": "Track brief completeness, time waiting for design clarification, time to locate the correct revision, repeat nonconformances, and the share of trials with usable outcome records. Credit people for corrections, useful failures, and mentoring. Counting uploaded files or chatbot messages tells you little about engineering value. If the process still depends on unrecorded decisions, improving the interface alone will not resolve the dependence."
+        }
+      ],
+      "exercise": {
+        "prompt": "The design lead says, 'We already tried that geometry; it never works.' How do you turn this into useful knowledge?",
+        "answer": "Ask for one concrete case and reconstruct its design revision, material, machine, holder, conditions, inspection and failure mode. Record the claimed rule and its scope, then ask what condition might be different in the current application. If records are missing, retain it as an expert observation rather than a universal constraint. Let the expert review and correct the decision card."
+      },
+      "quiz": {
+        "question": "Which entry is most useful in the company knowledge base?",
+        "options": [
+          "More positive rake is always better",
+          "The senior designer prefers this geometry",
+          "For this released revision and recorded application, the trial met these criteria; these limitations remain",
+          "This PDF was downloaded many times"
+        ],
+        "correct": 2,
+        "explanation": "The strongest reusable record connects a scoped claim to a revision, conditions, evidence, and limitations. Expert preferences remain valuable when captured with their rationale and scope."
+      },
+      "sources": [
+        {
+          "title": "NIST AI RMF Core: governance across the system lifecycle",
+          "url": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+        }
+      ]
+    },
+    {
+      "id": "portfolio-and-experiments",
+      "title": "Turn the SKU portfolio into a learning system",
+      "subtitle": "Choose a narrow pilot, evaluate honestly, and connect tool design to cost per accepted part.",
+      "group": "AI & Leadership",
+      "minutes": 25,
+      "objectives": [
+        "Organize tools by engineering family and application rather than SKU alone.",
+        "Design a meaningful comparison and avoid train/test leakage.",
+        "Judge the pilot using quality, engineering time, and customer economics."
+      ],
+      "sections": [
+        {
+          "heading": "A SKU portfolio is not automatically a large AI dataset",
+          "body": "Start with a family map. Group by operation and feature, workpiece material, tool construction, geometry template, and manufacturing route. A SKU can belong to several useful views: a geometry family, a customer application, and a process family. Two tools with similar diameters may face very different loads or acceptance criteria. Conversely, many near-identical SKUs may provide little independent training information.",
+          "bullets": [
+            "Choose a pilot with repeated demand, measurable pain, stable requirements, usable records, and a cooperative engineering owner.",
+            "Begin with an established family where most new work is bounded adaptation. Novel constructions can follow when the evidence and validation methods support them.",
+            "Create a family card listing shared parameters, permitted ranges, mandatory checks, process routes, common failure modes, and known exceptions."
+          ]
+        },
+        {
+          "heading": "Preserve the difference between design and execution",
+          "body": "A nominal geometry may be good while the manufactured edge is wrong. A correctly made tool may perform poorly in a different holder, fixture, material lot, coolant condition, or toolpath. Store intended values and measured as-built values separately. Associate every performance result with the physical tool and its operating context. Otherwise the model may learn to blame geometry for process variation."
+        },
+        {
+          "heading": "Run comparisons that answer a specific question",
+          "body": "State the hypothesis, baseline, responses, stop rules, and smallest worthwhile benefit before testing. For a simple diagnostic question, a controlled single change can be useful. For design optimization with interacting factors, an engineer-designed experiment can reveal combinations that one-factor trials miss. Replication estimates variability; randomization and blocking help separate the candidate effect from time, machine, or material differences.",
+          "bullets": [
+            "Measure accepted parts, the specified surface and dimensional criteria, wear and retirement reason, cycle time, and tool or changeover cost.",
+            "Check that the measurement system can distinguish the intended improvement. Repeating measurements on one part is not the same as repeating an independent cutting trial.",
+            "Include candidate and baseline tools across relevant batches or conditions. Record every trial, including early stops and inconclusive results.",
+            "Keep a tool retired while still functional marked as right-censored for life analysis; its observed parts count is a lower bound, not a failure life."
+          ]
+        },
+        {
+          "heading": "Split evaluations at the level of the claim",
+          "body": "A random row split can put nearly identical revisions or the same trial in training and testing, making the model look better than it is. Keep related drawings, revisions, tool batches, and duplicated documents together. Use separate evaluation sets for different deployment claims, with only information available at the time of a decision.",
+          "bullets": [
+            "Time holdout: can the assistant help on genuinely later briefs using only knowledge then available?",
+            "Family holdout: can it generalize beyond families it has seen? Expect this to be harder than adapting an approved template.",
+            "Customer or site holdout: can results transfer to a different operating context? Check access restrictions independently of model accuracy.",
+            "Challenge set: outdated revisions, missing material condition, impossible geometry, ambiguous units, unauthorized documents, and requests outside the approved family.",
+            "Compare citation correctness, critical omissions, proposal validity, review effort, and actual trial performance. Do not collapse them into one opaque score."
+          ]
+        },
+        {
+          "heading": "Count value at the accepted-part level",
+          "body": "Use a consistent boundary: cost per accepted part = total relevant machining, tooling, tool-change, inspection, rework and scrap cost \u00f7 accepted output. Avoid double-counting machine time already included in the machining rate. Longer life can be valuable, but so can fewer rejects, a shorter cycle, or more predictable changeovers. Compare CTC's engineering and manufacturing economics separately from the customer's machining economics.",
+          "bullets": [
+            "Engineering: time to an approved concept, review effort, first-pass acceptance, and drawing or process rework.",
+            "Tool manufacture: blank yield, manufacturing time, inspection failures, rework, and delivery reliability.",
+            "Customer operation: quality yield, accepted parts per tool, cycle time, changeover losses, and variation across runs.",
+            "Pilot business case: measured benefit minus the continuing effort to clean data, review proposals, maintain integrations, and run evaluation trials."
+          ]
+        }
+      ],
+      "exercise": {
+        "prompt": "Candidate A makes 20% more parts before retirement, but increases cycle time and has two early failures. Is it the better design?",
+        "answer": "Not enough information. Compare the full life distribution and early-failure frequency, accepted-part yield, cycle-time cost, changeover losses, and identical retirement criteria across comparable trials. Check sample size, tool and material batches, and measurement consistency. An average life gain may disappear in cost per accepted part or predictability."
+      },
+      "quiz": {
+        "question": "Which evaluation most directly tests whether a tool assistant handles future work honestly?",
+        "options": [
+          "Randomly split individual pages from every drawing",
+          "Test on later applications with related records grouped and future outcomes excluded",
+          "Test only the best successful designs",
+          "Ask the assistant whether its recommendations are reliable"
+        ],
+        "correct": 1,
+        "explanation": "A time-based evaluation prevents the assistant from benefiting from information that was not available at the decision. Grouping related records also reduces leakage through near-duplicate revisions or trials. Other holdouts are needed for family and customer transfer claims."
+      },
+      "sources": [
+        {
+          "title": "NIST/SEMATECH Engineering Statistics Handbook",
+          "url": "https://www.nist.gov/programs-projects/nistsematech-engineering-statistics-handbook"
+        },
+        {
+          "title": "NIST Experimental Statistics: replication, randomization, and planned grouping",
+          "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/hb/nbshandbook91.pdf"
+        },
+        {
+          "title": "NIST: repeatability and reproducibility terminology",
+          "url": "https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-appendix-d1-terminology"
+        },
+        {
+          "title": "Sandvik Coromant: thread-milling troubleshooting examples",
+          "url": "https://cdn.sandvik.coromant.com/files/sitecollectiondocuments/downloads/global/technical%20guides/en-gb/c-2920-031.pdf"
+        },
+        {
+          "title": "Mitutoyo: temperature and dimensional measurement",
+          "url": "https://mitutoyo.com/educational-resource/temperature-and-dimensional-measurements/"
+        }
+      ]
+    }
+  ],
+  "roadmap": [
+    {
+      "phase": "1",
+      "title": "Learn the process and select one family",
+      "deliverable": "A family map, a documented baseline workflow, a data inventory, and one signed-off pilot charter.",
+      "gate": "A design owner and a quality owner agree on the application, success measures, available records, and release responsibilities."
+    },
+    {
+      "phase": "2",
+      "title": "Retrieve trustworthy precedent",
+      "deliverable": "An internal evidence assistant that finds the right drawings, revisions, trial records, failures, and decision cards.",
+      "gate": "Engineers verify retrieval and citation quality; access boundaries and superseded-revision handling pass challenge tests."
+    },
+    {
+      "phase": "3",
+      "title": "Draft the customer brief and family recommendation",
+      "deliverable": "A structured intake, missing-information report, comparable-case pack, and draft family recommendation.",
+      "gate": "Critical omissions and corrections meet pre-agreed thresholds on held-out briefs, and engineers spend less total review time."
+    },
+    {
+      "phase": "4",
+      "title": "Propose constrained design parameters",
+      "deliverable": "Editable proposals inside an approved parametric family, each linked to evidence and explicit constraints.",
+      "gate": "Mandatory rules pass, CAD and manufacturing feasibility are verified, and out-of-scope requests produce an engineering escalation."
+    },
+    {
+      "phase": "5",
+      "title": "Verify the route and compare physical trials",
+      "deliverable": "Reviewed CAD/CAM and inspection packages plus baseline-controlled manufacturing and customer-application trials.",
+      "gate": "Appropriate trials meet quality and economic criteria with documented uncertainty; an authorized engineer signs off the released revision."
+    },
+    {
+      "phase": "6",
+      "title": "Expand only where the evidence transfers",
+      "deliverable": "Additional family templates, monitored outcomes, revision control, and a maintained evaluation set.",
+      "gate": "Each family earns its own validation. Machine-code or machine-control integration requires separate technical validation and controlled release."
+    }
+  ],
+  "briefFields": [
+    {
+      "name": "Part, feature, drawing and revision",
+      "why": "Identifies the actual geometry and authoritative acceptance definition.",
+      "example": "Drawing revision C; finish a pocket wall and corner radius; relevant CAD and datum scheme attached."
+    },
+    {
+      "name": "Workpiece material and condition",
+      "why": "Alloy, heat treatment, hardness and stock condition influence cutting behavior and material selection.",
+      "example": "Exact alloy and temper from the material certificate; coating or casting skin identified."
+    },
+    {
+      "name": "Operation and stock to remove",
+      "why": "Roughing, finishing, slotting, drilling and edge finishing impose different engagement and chip-removal demands.",
+      "example": "Finish a wall after roughing; measured remaining stock and entry/exit locations recorded."
+    },
+    {
+      "name": "Critical acceptance criteria",
+      "why": "Turns 'good finish' into an inspectable result.",
+      "example": "Drawing tolerance, specified roughness parameter and evaluation method, burr limit, appearance reference, and inspection location."
+    },
+    {
+      "name": "Machine and spindle limits",
+      "why": "Defines the speed, torque, interface, motion and access envelope available at the customer.",
+      "example": "Machine model, spindle interface, maximum usable speed for this assembly, and validated operating limits."
+    },
+    {
+      "name": "Holder, overhang and workholding",
+      "why": "The complete assembly and fixture determine clearance, stiffness and runout behavior.",
+      "example": "Holder and collet reference, gauge length, measured runout, clamping scheme, and thin unsupported regions."
+    },
+    {
+      "name": "Current tool and operating baseline",
+      "why": "Provides a fair comparator and reveals the current limiting mechanism.",
+      "example": "Tool drawing and revision; speed, feed, axial/radial engagement, toolpath revision, and current tool-life distribution."
+    },
+    {
+      "name": "Coolant and chip removal",
+      "why": "Captures an operating condition that can dominate wear, adhesion and chip evacuation.",
+      "example": "Coolant type, delivery direction, measured concentration where relevant, and whether through-tool delivery is available."
+    },
+    {
+      "name": "Failure evidence and life definition",
+      "why": "Separates fracture, wear, burr growth and dimensional drift from discretionary replacement.",
+      "example": "Wear images by flute, part inspection trend, accepted parts count, and exact retirement reason."
+    },
+    {
+      "name": "Volume, economics and change constraints",
+      "why": "Determines whether the objective is capacity, consistency, cost, life, or a combination.",
+      "example": "Target accepted parts per shift, changeover cost, delivery requirement, trial allowance, and which setup or process changes the customer permits."
+    },
+    {
+      "name": "PCB stack and support system (when applicable)",
+      "why": "PCB drilling and routing depend on the complete layer and support system. For non-PCB work, record not applicable.",
+      "example": "Laminate grade and resin/glass system; copper layer stack; individual and total stack thickness; board count; entry/backing; pressure foot; extraction; hole or route acceptance criteria."
+    }
+  ],
+  "diagnostics": [
+    {
+      "symptom": "Regular waviness and a tonal sound appear on a finished wall",
+      "possibilities": [
+        "Dynamic vibration of the tool, holder, workpiece or machine",
+        "Runout or an uneven cutting edge",
+        "A toolpath region with changing engagement"
+      ],
+      "checks": [
+        "Map the marks to location and toolpath; compare straight cuts with corners.",
+        "Inspect all edges and verify assembly runout and overhang.",
+        "Check whether the fixture or thin wall changes stiffness during the operation."
+      ],
+      "change": "After locating the likely contributor, let the process engineer compare one controlled change to the baseline, such as a supported overhang or an approved speed/engagement change.",
+      "lesson": "A surface pattern is evidence to investigate; it does not prove the cutter geometry is wrong."
+    },
+    {
+      "symptom": "One flute chips early while the others remain relatively intact",
+      "possibilities": [
+        "Unequal tooth loading from runout or edge-height variation",
+        "A local edge defect or handling damage",
+        "An impact or trapped chip at a particular entry"
+      ],
+      "checks": [
+        "Compare pre-use and post-use edge images for every flute.",
+        "Measure the complete mounted assembly and actual edge geometry.",
+        "Correlate damage with the entry move and the first affected part."
+      ],
+      "change": "Correct any confirmed assembly or as-built discrepancy, then repeat the controlled baseline before redesigning the edge.",
+      "lesson": "Nominally identical flutes may not share load equally; keep as-built measurements connected to the trial."
+    },
+    {
+      "symptom": "A previously clean aluminium surface becomes smeared or intermittent",
+      "possibilities": [
+        "Material adhesion or built-up edge",
+        "Chip recutting or inadequate delivery to the cut",
+        "Edge wear or an unintended change in stock condition"
+      ],
+      "checks": [
+        "Inspect the edge and retained chips before cleaning away evidence.",
+        "Verify material, coolant delivery and the toolpath against the baseline.",
+        "Track whether the symptom comes and goes or grows steadily."
+      ],
+      "change": "Test the engineer's most likely adhesion or chip-removal hypothesis within an approved operating range. Preserve before-and-after images and conditions.",
+      "lesson": "Surface appearance can have multiple mechanisms; the same speed change need not help every operation."
+    },
+    {
+      "symptom": "Part size drifts over a production run",
+      "possibilities": [
+        "Cutting-edge wear",
+        "Thermal change in the part, machine or measurement process",
+        "Offset, fixturing or material variation"
+      ],
+      "checks": [
+        "Plot dimension against part count, time, tool changes and temperature.",
+        "Check a reference artifact and repeat the measurement under controlled conditions.",
+        "Separate tool wear evidence from offset edits and warm-up effects."
+      ],
+      "change": "Confirm that the drift is real and identify its source before changing the tool diameter or applying a compensation rule.",
+      "lesson": "A dimension is meaningful only with its datum, method, temperature context and measurement uncertainty."
+    },
+    {
+      "symptom": "Burrs increase even though the main surface still passes inspection",
+      "possibilities": [
+        "Edge wear or a change in edge condition",
+        "Exit support, direction or local stock variation",
+        "Material or engagement differences"
+      ],
+      "checks": [
+        "Map burr height or the specified criterion to entry and exit locations.",
+        "Compare a new tool with the aged tool under the same conditions.",
+        "Check the edge and local support before assuming more aggressive deburring is required."
+      ],
+      "change": "Run a reviewed comparison of the suspected exit condition or tool-life limit while maintaining the other acceptance criteria.",
+      "lesson": "Tool life may end when a burr criterion is exceeded, well before fracture or a general roughness limit."
+    },
+    {
+      "symptom": "A tool passes final inspection but performs worse after a route change",
+      "possibilities": [
+        "An unmeasured edge-preparation or surface-integrity difference",
+        "A material, joint or coating difference where applicable",
+        "A customer setup or operating change coinciding with the route revision"
+      ],
+      "checks": [
+        "Compare route revisions, lots, edge images and inspection coverage.",
+        "Identify which functional features were never measured.",
+        "Compare the old and new route in equivalent application conditions."
+      ],
+      "change": "Agree a targeted investigation with design, manufacturing and quality; add an inspection characteristic only when it is linked to function and can be measured reliably.",
+      "lesson": "Passing the listed dimensions proves conformance to those checks, not equivalence of every performance-relevant feature."
+    },
+    {
+      "symptom": "An AI-recommended design succeeds once and fails at another site",
+      "possibilities": [
+        "Different holder, fixture, material condition or chip removal",
+        "A revision or unit mismatch in the recommendation",
+        "Evaluation leakage or insufficient evidence for transfer"
+      ],
+      "checks": [
+        "Reconstruct both application and tool records with their source revisions.",
+        "Check which evidence the model retrieved and which conditions it omitted.",
+        "Compare matched conditions and inspect whether related trials leaked into evaluation."
+      ],
+      "change": "Narrow the recommendation's scope to validated conditions and define a transfer trial with explicit unknowns and acceptance criteria.",
+      "lesson": "A successful example is evidence for its recorded context, not a universal recipe."
+    }
+  ],
+  "fieldwork": [
+    {
+      "week": 1,
+      "title": "Follow one order from requirement to shipment",
+      "tasks": [
+        "Shadow applications, design, manufacturing, quality and dispatch for one representative tool.",
+        "Collect the names of the actual documents and systems at each handoff.",
+        "Select one released tool, one earlier revision and one known failure for recurring study."
+      ],
+      "evidence": "A process map with owners, inputs, outputs, waiting points and unresolved terminology."
+    },
+    {
+      "week": 2,
+      "title": "Learn to read a tool as a functional object",
+      "tasks": [
+        "Review the selected tool's drawing and CAD with a designer; connect each important feature to its cutting function.",
+        "Inspect the physical tool under the company's measurement equipment with a quality engineer.",
+        "Compare nominal dimensions, actual measurements and acceptance methods."
+      ],
+      "evidence": "An annotated tool drawing and a list of critical features, how each is made, and how each is measured."
+    },
+    {
+      "week": 3,
+      "title": "Understand the manufacturing route",
+      "tasks": [
+        "Observe an authorized operator taking the selected family from blank through its actual manufacturing and inspection steps.",
+        "Record the Rollomatic model, installed configuration, software, wheel/setup references and the operations it performs at CTC.",
+        "For PCD constructions, identify any separate preparation, joining, erosion, laser, grinding or finishing steps actually used; do not infer them from the machine brand."
+      ],
+      "evidence": "A route card linking each process step to the geometry it creates, likely variation, and the check that detects it."
+    },
+    {
+      "week": 4,
+      "title": "Watch the tool cut and learn to read outcomes",
+      "tasks": [
+        "Observe an approved customer-application or internal trial with the applications engineer.",
+        "Record actual cutting conditions, holder, fixture, coolant, chip observations and part acceptance criteria.",
+        "Compare new and used edges, and separate observations from hypotheses about their causes."
+      ],
+      "evidence": "A complete trial record and one diagnostic case with competing explanations and a discriminating next check."
+    },
+    {
+      "week": 5,
+      "title": "Build the first shared evidence pack",
+      "tasks": [
+        "Map the available SKU portfolio into provisional engineering families.",
+        "For one family, connect drawings, revisions, route records, inspection, good trials and failures.",
+        "Run a case review with design, manufacturing and quality; have contributors correct the knowledge cards."
+      ],
+      "evidence": "One engineer-reviewed family card, a linked set of representative cases, and a list of missing data that matters."
+    },
+    {
+      "week": 6,
+      "title": "Define the first AI pilot and demonstrate learning",
+      "tasks": [
+        "Present a customer brief and explain why a tool family fits, what evidence supports it, and what remains uncertain.",
+        "Measure today's time to find precedent and prepare a design review for the chosen family.",
+        "Agree a narrow retrieval-and-brief pilot, its evaluation set, owners, acceptance thresholds and next trial gate."
+      ],
+      "evidence": "A pilot charter plus a teach-back review in which design, manufacturing and quality can challenge your reasoning."
+    }
+  ]
+}
