@@ -9,6 +9,8 @@ An interactive educational prototype for learning cutting-tool design, from cutt
 - Rotatable 3D end mill, PCB microdrill and PCD tipped tool models.
 - Adjustable flute geometry, cross-sections, rake and clearance.
 - 17 beginner lessons with exercises and knowledge checks.
+- A persistent voice panel: section narration, reviewed dictation, and an optional private ElevenLabs tutor with natural-language navigation and quiz interaction.
+- Page audio preparation and MP3 download for longer mobile listening when the private service is connected.
 - Milling calculations and an overhang demonstration with explicit assumptions.
 - Rollomatic and Tool Sketcher workflow lessons.
 - Seven failure investigations and a six-week shop-floor learning plan.
@@ -18,7 +20,7 @@ Start with the **Geometry lab**, then the first three lessons in **Learning path
 
 ## Run locally
 
-Open `docs/index.html` in a modern browser. It contains the runtime, content and styling, so it also works offline. External reference links need an internet connection.
+Open `docs/index.html` in a modern browser. It contains the 3D runtime, lessons and styling, so the core academy works offline. Device narration needs browser speech support and an installed voice. Cloud voice features and external reference links need an internet connection.
 
 For a local web preview:
 
@@ -40,14 +42,22 @@ Commit the source changes and the regenerated `docs/` files, then push to `main`
 
 No package installation or build service is required. Python 3 uses only its standard library; the Three.js browser runtime is vendored in the repository.
 
+## Voice learning
+
+Open **Voice → Listen** to read the current lesson with play/pause, speed, section selection, and optional progression to the next lesson. **Dictate notes** lets you review words before appending them to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable.
+
+**Talk to tutor** supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template; an empty frontend endpoint leaves cloud features disconnected until deployment. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
+
+Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Longer listening → Prepare page audio** creates a downloadable track for a separate audio player. Physical iOS/Android and live provider testing are still required before a mobile rollout.
+
 ## Learning data and scope
 
 The academy uses public technical references and generic teaching examples. No customer drawings, proprietary production records or personal learning notes are included in this repository.
 
-Progress, lesson notes and brief entries stay in the visitor's browser. Export controls create local JSON files; there is no account system, application backend or analytics integration. Browser storage is specific to the browser and site origin, so progress from a local copy does not automatically transfer to this website.
+Progress, lesson notes and brief entries are stored in the visitor's browser. Export controls create local JSON files. Cloud voice uses an optional private gateway: live tutoring sends microphone audio and course context to ElevenLabs; Scribe sends dictation audio; read-aloud sends the requested course text. Saved notes and brief values are not automatically included in tutor context. Browser dictation may use the browser vendor's speech service. There is no analytics integration. Browser storage is specific to the browser and site origin, so progress from a local copy does not automatically transfer to this website.
 
 The models are schematic and the calculations use stated idealizations. This is a learning environment, not a source of production CAD/CAM files, qualified machine settings or released tool designs. References were checked on 23 September 2026; installed machine models, software versions and options must be verified separately.
 
 ## Third-party software
 
-Three.js r128 is included under the [MIT License](src/vendor/THREE-LICENSE.txt). Its license is retained in the generated page and in `docs/THREE-LICENSE.txt`. Linked reference material remains with its respective publishers.
+Three.js r128 is included under the [MIT License](src/vendor/THREE-LICENSE.txt). Its license is retained in the generated page and in `docs/THREE-LICENSE.txt`. The optional voice client loads the pinned official `@elevenlabs/client` 1.36.0 browser bundle from jsDelivr only when cloud voice is used. Linked reference material remains with its respective publishers.
