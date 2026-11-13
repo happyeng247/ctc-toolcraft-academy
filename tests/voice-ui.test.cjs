@@ -333,6 +333,34 @@ test('browser dictation deduplicates final result indices and saves only on Add 
   assert.match(h.get('voice-error').textContent, /edited after dictation/);
 });
 
+test('lesson note dictation keeps its explicit destination after a tutor question was focused', async () => {
+  const h = fixture();
+  h.state.notes.first = 'Existing lesson observation';
+  h.get('lesson-notes').value = h.state.notes.first;
+  const question = h.get('voice-question');
+  question.value = 'How does helix angle affect chip evacuation?';
+  // Model the focus event seen by the controller, including the stale selection
+  // that previously made the lesson's Dictate button append to the question.
+  h.document.dispatchEvent(new MockEvent('focusin', { target: question }));
+  h.voice.open('dictate');
+  assert.equal(h.get('voice-dictation-target').value, 'question');
+  h.get('voice-dictation-engine').value = 'browser';
+
+  await h.voice.start('dictate', { target: 'lesson/first' });
+  assert.equal(h.get('voice-dictation-target').value, 'lesson/first', 'The notes entry point must override stale question focus');
+  const recognition = h.records.recognizers[0];
+  assert.equal(recognition.starts, 1);
+  recognition.onresult({ resultIndex: 0, results: [Object.assign([{ transcript: 'Compare the flute and core on one tool.' }], { isFinal: true })] });
+  assert.equal(h.state.notes.first, 'Existing lesson observation', 'Capture remains a reviewable draft until explicitly saved');
+  h.click('voice-finish-dictation');
+  h.click('voice-save-dictation');
+
+  assert.equal(h.state.notes.first, 'Existing lesson observation\nCompare the flute and core on one tool.');
+  assert.equal(h.get('lesson-notes').value, h.state.notes.first, 'The visible lesson notebook must update');
+  assert.equal(question.value, 'How does helix angle affect chip evacuation?', 'An unrelated tutor question must remain untouched');
+  assert.equal(h.records.saves, 1);
+});
+
 test('Undo removes only an unchanged last addition, and stale dictation callbacks cannot add words', async () => {
   const h = fixture(); h.state.notes.first = 'Keep this';
   h.get('voice-draft').value = 'Temporary observation'; h.click('voice-save-dictation');

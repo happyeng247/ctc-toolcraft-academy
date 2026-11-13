@@ -113,6 +113,10 @@
       highlight(); sendContext();
     }
     selectMode(mode);
+    if (mode === 'dictate' && typeof options.target === 'string' && dictationTargets().some(item => item.value === options.target)) {
+      find('voice-dictation-target').value = options.target;
+      showSavedWords();
+    }
     if (mode === 'listen') {
       if (playing && !Number.isInteger(options.sectionIndex)) toggleReading();
       else await startReading(sectionIndex);
@@ -122,7 +126,7 @@
     setExpanded(true);
     if (mode === 'tutor') {
       if (!conversation && !tutorConnecting) await startTutor(false);
-    } else if (!dictating) await startDictation();
+    } else if (!dictating) await startDictation(options.target);
   }
   function selectMode(mode) {
     selectedMode = mode;
@@ -655,14 +659,19 @@
     draft.value = combined.slice(0, 8000);
     if (combined.length > 8000) { stopDictation(); error('The draft reached its length limit. Save it before continuing.'); }
   }
-  async function startDictation() {
+  async function startDictation(explicitTarget) {
+    const target = typeof explicitTarget === 'string' ? explicitTarget : find('voice-dictation-target').value;
     const engine = find('voice-dictation-engine').value;
-    if (engine === 'elevenlabs' && !requireSession(startDictation)) return;
+    if (engine === 'elevenlabs' && !requireSession(() => startDictation(target))) return;
     const intent = operation + 1;
     const run = dictateGeneration + 1;
     await stopAll();
     if (intent !== operation || run !== dictateGeneration) return;
     discardAudio(); error(); selectMode('dictate');
+    if (dictationTargets().some(item => item.value === target)) {
+      find('voice-dictation-target').value = target;
+      showSavedWords();
+    }
     dictating = true; find('voice-dictate').disabled = true; find('voice-finish-dictation').disabled = false;
     find('voice-dictation-target').disabled = true; find('voice-dictation-engine').disabled = true;
     find('voice-interim').textContent = 'Allow microphone access when asked. You can cancel with Stop all.';
@@ -872,7 +881,9 @@
     if (action) {
       launchElement = action;
       const value = action.getAttribute('data-voice-section');
-      startMode(action.dataset.voiceAction, value === null ? {} : { sectionIndex: Number(value) });
+      const options = value === null ? {} : { sectionIndex: Number(value) };
+      if (action.dataset.voiceTarget) options.target = action.dataset.voiceTarget;
+      startMode(action.dataset.voiceAction, options);
     } else if (panel) {
       launchElement = panel; selectMode(panel.dataset.voicePanel); setExpanded(true);
     } else if (event.target.closest?.('[data-voice-next]')) moveSection(1);
