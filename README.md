@@ -2,7 +2,7 @@
 
 An interactive educational prototype for learning cutting-tool design, from cutting mechanics and tool geometry to manufacturing, inspection, trials and an AI design roadmap.
 
-**[Open the live academy](https://happyeng247.github.io/ctc-toolcraft-academy/)**
+**[Open the live academy with voice](https://ctc-toolcraft-academy.vercel.app/)** · [GitHub Pages mirror](https://happyeng247.github.io/ctc-toolcraft-academy/)
 
 ## Explore
 
@@ -46,9 +46,9 @@ No package installation or build service is required. Python 3 uses only its sta
 
 Open **Voice → Listen** to read the current lesson with play/pause, speed, section selection, and optional progression to the next lesson. **Dictate notes** lets you review words before appending them to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable.
 
-**Talk to tutor** supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template; an empty frontend endpoint leaves cloud features disconnected until deployment. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
+**Talk to tutor** supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template. The current frontend points to the deployed private voice service; a learner access code is supplied separately. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
 
-Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Longer listening → Prepare page audio** creates a downloadable track for a separate audio player. Physical iOS/Android and live provider testing are still required before a mobile rollout.
+Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Longer listening → Prepare page audio** creates a downloadable track for a separate audio player. The hosted service has been checked against ElevenLabs, including live text tutoring and WebRTC with a simulated microphone. Browser layouts are tested at phone widths; physical iOS/Android behavior may still vary.
 
 ## Learning data and scope
 

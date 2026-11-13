@@ -46,6 +46,8 @@ class ProvisioningTests(unittest.TestCase):
         agent = calls[-1][1]
         self.assertEqual(agent["conversation_config"]["agent"]["prompt"]["tool_ids"], ["tool_academy_context", "tool_academy_action"])
         self.assertEqual(agent["conversation_config"]["tts"]["voice_id"], "voice_test_approved")
+        # The live provider requires a v2 flash/turbo model for an English agent.
+        self.assertEqual(agent["conversation_config"]["tts"]["model_id"], "eleven_flash_v2")
         self.assertTrue(agent["platform_settings"]["auth"]["enable_auth"])
         self.assertEqual(agent["platform_settings"]["overrides"], {
             "conversation_config_override": {"conversation": {"text_only": True}}

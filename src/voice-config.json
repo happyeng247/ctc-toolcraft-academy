@@ -1,5 +1,5 @@
 {
-  "endpoint": "",
+  "endpoint": "https://ctc-toolcraft-academy.vercel.app/api/voice",
   "sdkUrl": "https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.36.0/dist/lib.iife.js",
   "scribeModel": "scribe_v2_realtime"
 }

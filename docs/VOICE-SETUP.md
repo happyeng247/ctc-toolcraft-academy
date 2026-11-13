@@ -2,7 +2,7 @@
 
 The academy stays a public static site. Its voice gateway runs as a Vercel Node function at `/api/voice`. The browser knows only that endpoint, a learner's expiring session token, and short-lived ElevenLabs conversation or dictation credentials. The provider API key stays in the server environment. GitHub Pages cannot execute this function; it can call the separately deployed Vercel endpoint.
 
-These files have been validated locally with mocked provider responses. Agent creation, deployment, and a live microphone/audio check still require network access and an ElevenLabs account. The checked-in configuration does not activate a paid service.
+The academy is deployed at https://ctc-toolcraft-academy.vercel.app with a private ElevenLabs tutor. Server credentials and the learner access code are kept outside this repository. The instructions below describe configuring another deployment. Copying the source does not copy the account credentials. Automated checks use mocked responses; live checks also verified private login, text tutoring, navigation, WebRTC with a simulated microphone, and generated audio.
 
 ## 1. Prepare the server environment
 
@@ -38,6 +38,8 @@ python3 scripts/configure_voice.py --apply
 The script creates two client tools through the [Tools API](https://elevenlabs.io/docs/api-reference/tools/create), then passes their IDs to the [Create Agent API](https://elevenlabs.io/docs/api-reference/agents/create). It prints the new agent ID for the server environment. It never prints or saves the key. A local `.voice-agent-state.json` stores resource IDs so interrupted runs reuse already-created tools; keep that file until provisioning is complete. A completed rerun makes no remote changes. If configuration differs or `ELEVENLABS_AGENT_ID` already points to another agent, the script stops for dashboard review instead of silently replacing it. A network failure after a provider creates a resource but before its response arrives may require checking the dashboard before retrying.
 
 `voice/agent-config.json` sets authenticated access, a 900-second maximum conversation, 20 conversations per day, concurrency 2, disabled bursting and queueing. **The daily limit counts conversations, not minutes or total spend.** These are shared agent limits, not per learner. They do not limit the separate read-aloud and Scribe services. Voice recording is disabled and retention is requested at seven days; inspect the resulting privacy settings in the provider dashboard before inviting learners.
+
+The English tutor uses `eleven_flash_v2`, as required by the live agent API. The separate read-aloud endpoint uses `eleven_flash_v2_5`; changing the tutor model does not change that endpoint.
 
 Keep `platform_settings.auth.enable_auth` enabled. Do not add a provider hostname allowlist to this private agent: provider allowlist authentication and signed authentication are alternative modes. The gateway enforces its own origin list. [ElevenLabs authentication](https://elevenlabs.io/docs/eleven-agents/customization/authentication)
 

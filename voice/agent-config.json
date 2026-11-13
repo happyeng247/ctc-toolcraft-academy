@@ -39,7 +39,7 @@
       },
       "tts": {
         "voice_id": "__ELEVENLABS_VOICE_ID__",
-        "model_id": "eleven_flash_v2_5"
+        "model_id": "eleven_flash_v2"
       },
       "turn": {
         "turn_eagerness": "patient",

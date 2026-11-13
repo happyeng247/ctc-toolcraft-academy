@@ -30,7 +30,7 @@ Open **Voice** at the bottom of any page.
 
 Use **Stop all** to end playback and microphone capture. Keep this page open for live conversation; switching apps or locking the phone may interrupt it. Listening does not automatically pass a quiz or complete a lesson.
 
-Cloud voice is not activated by downloading this file. The private gateway must be deployed and configured first; see [Voice setup](VOICE-SETUP.md). The voice panel accepts an academy access code, never a provider API key. Saved learning notes are not automatically sent to the tutor; live audio and course context are processed by ElevenLabs when used.
+Use the hosted academy for cloud voice and enter your private learner access code when prompted. Downloaded files retain offline lessons; browser security may prevent cloud voice from a file URL. For a separate deployment, see [Voice setup](VOICE-SETUP.md). The voice panel accepts an academy access code, never a provider API key. Saved learning notes are not automatically sent to the tutor; live audio and course context are processed by ElevenLabs when used.
 
 ## Keep your work
 

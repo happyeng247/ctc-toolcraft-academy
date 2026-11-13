@@ -714,7 +714,8 @@
     if (!content) return;
     const oldId = sections[sectionIndex]?.id;
     sections = content.getSections();
-    const title = document.querySelector('#main h1')?.textContent || nav.find(n => n[0] === currentRoute)?.[1] || 'Academy';
+    const heading = document.querySelector('#main h1');
+    const title = (heading?.innerText || heading?.textContent || nav.find(n => n[0] === currentRoute)?.[1] || 'Academy').replace(/\s+/g, ' ').trim();
     find('voice-place').textContent = title;
     if (routeChanged) sectionIndex = Number(prefs.bookmarks[currentRoute] || 0);
     else { const i = sections.findIndex(part => part.id === oldId); if (i >= 0) sectionIndex = i; }

@@ -1,0 +1,7 @@
+.git
+.env
+.env.*
+.voice-agent-state*
+__pycache__
+*.pyc
+tests
