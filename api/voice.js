@@ -4,6 +4,7 @@ const { createHmac, createHash, timingSafeEqual, randomBytes } = require('node:c
 const SESSION_SECONDS = 4 * 60 * 60;
 const MAX_BODY_BYTES = 24 * 1024;
 const MAX_TEXT_LENGTH = 10000;
+const MAX_PROVIDER_ERROR_BYTES = 8 * 1024;
 const TTS_MODEL = 'eleven_flash_v2_5';
 const API_ROOT = 'https://api.elevenlabs.io/v1';
 
@@ -118,7 +119,24 @@ async function readLimited(response, limit) {
   return Buffer.concat(chunks);
 }
 
-function createHandler({ env = process.env, fetchImpl = (...args) => fetch(...args), now = Date.now } = {}) {
+function providerFailure(status, code) {
+  // Only fixed categories cross the provider boundary. Never forward its message,
+  // request ID, parameter values, or an unrecognized code to the browser or logs.
+  if (status === 429) return new VoiceError(429, 'provider_busy', 'The voice service is busy. Try again shortly.');
+  if (status === 402 || ['quota_exceeded', 'insufficient_credits'].includes(code)) {
+    return new VoiceError(402, 'provider_quota_exceeded', 'There are not enough ElevenLabs credits for this request. You can keep listening with your device voice.');
+  }
+  if (['invalid_api_key', 'missing_api_key', 'voice_not_found', 'agent_not_found', 'model_access_denied', 'insufficient_permissions'].includes(code)) {
+    return new VoiceError(503, 'provider_not_configured', 'The private voice service needs attention from the academy owner. You can keep listening with your device voice.');
+  }
+  if (['max_character_limit_exceeded', 'text_too_long'].includes(code)) {
+    return new VoiceError(413, 'provider_text_too_long', 'This passage is too long for ElevenLabs. Try one section at a time.');
+  }
+  if (status === 504) return new VoiceError(504, 'provider_timeout', 'The voice service took too long. Try again.');
+  return new VoiceError(502, 'provider_unavailable', 'The voice service could not complete this request.');
+}
+
+function createHandler({ env = process.env, fetchImpl = (...args) => fetch(...args), now = Date.now, logger = console } = {}) {
   // Warm-instance limits are only best-effort. Distributed quotas need a shared store.
   const buckets = new Map();
   function limit(key, maximum, windowMs) {
@@ -149,9 +167,19 @@ function createHandler({ env = process.env, fetchImpl = (...args) => fetch(...ar
         redirect: 'error', signal: controller.signal
       });
       if (!response.ok) {
-        if (response.body) await response.body.cancel();
-        if (response.status === 429) throw new VoiceError(429, 'provider_busy', 'The voice service is busy. Try again shortly.');
-        throw new VoiceError(502, 'provider_unavailable', 'The voice service could not complete this request.');
+        let code;
+        try {
+          const bytes = await readLimited(response, MAX_PROVIDER_ERROR_BYTES);
+          const detail = JSON.parse(bytes.toString('utf8'))?.detail;
+          code = typeof detail?.code === 'string' && detail.code ? detail.code : detail?.status;
+        } catch (error) {
+          if (controller.signal.aborted) throw error;
+          // Malformed and oversized error bodies remain generic; status-only
+          // payment, busy, and timeout failures are still actionable.
+        }
+        const failure = providerFailure(response.status, code);
+        logger.warn('Voice provider request failed', { status: response.status, category: failure.code });
+        throw failure;
       }
       if (audio && !/^audio\/(mpeg|mp3)(;|$)/i.test(response.headers.get('content-type') || '')) {
         if (response.body) await response.body.cancel();

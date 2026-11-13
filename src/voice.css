@@ -196,3 +196,8 @@
 @media (prefers-reduced-motion: reduce) {
   .voice-section-trigger, #voice-dock button { transition: none; }
 }
+
+/* A credit limit must not interrupt free device listening. */
+#voice-inline-notice { display:block; margin-top:8px; color:var(--voice-ink); font-size:12px; line-height:1.5; }
+.voice-notice { padding:12px 14px; background:#f0edff; color:var(--voice-ink); border-radius:12px; font-size:13px; line-height:1.55; }
+#voice-use-device { margin:0 0 16px; min-height:44px; }

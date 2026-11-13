@@ -12,10 +12,11 @@ const ENV = {
   VOICE_ALLOWED_ORIGINS: `${ORIGIN},http://localhost:4173`
 };
 function fixture(responder = () => Response.json({ token: 'mock-conversation-token' }), overrides = {}) {
-  const calls = []; let time = Date.parse('2026-11-12T12:00:00Z');
+  const calls = [], providerErrors = []; let time = Date.parse('2026-11-12T12:00:00Z');
   const handler = createHandler({ env: { ...ENV, ...overrides }, now: () => time,
-    fetchImpl: async (...args) => { calls.push(args); return responder(...args); } });
-  return { handler, calls, advance: ms => { time += ms; } };
+    fetchImpl: async (...args) => { calls.push(args); return responder(...args); },
+    logger: { warn: (...args) => providerErrors.push(args) } });
+  return { handler, calls, providerErrors, advance: ms => { time += ms; } };
 }
 async function invoke(handler, body, options = {}) {
   const req = Readable.from(options.chunks || []);
@@ -207,4 +208,90 @@ test('repeated conversation token creation is bounded per authenticated session'
   for (let i = 0; i < 6; i++) assert.equal((await invoke(f.handler, { action: 'session' }, auth(token))).status, 200);
   assert.equal((await invoke(f.handler, { action: 'session' }, auth(token))).status, 429);
   assert.equal(f.calls.length, 6);
+});
+
+test('quota failures are distinct from authentication and never retry billable audio', async () => {
+  const privateDetail = `${ENV.ELEVENLABS_API_KEY} private account and balance details`;
+  for (const [status, detail] of [
+    [401, { status: 'quota_exceeded', message: privateDetail }],
+    [402, { code: 'insufficient_credits', message: privateDetail }],
+    [400, { code: 'quota_exceeded', message: privateDetail }],
+    [402, { message: privateDetail }]
+  ]) {
+    const f = fixture(() => Response.json({ detail }, { status }));
+    const response = await invoke(f.handler, { action: 'tts', text: 'Read this lesson.' }, auth(await unlock(f)));
+    assert.equal(response.status, 402);
+    assert.deepEqual(response.json(), {
+      error: 'provider_quota_exceeded',
+      message: 'There are not enough ElevenLabs credits for this request. You can keep listening with your device voice.'
+    });
+    assert.equal(f.calls.length, 1, 'A rejected TTS request must not trigger an automatic paid retry');
+    assert.deepEqual(f.providerErrors, [['Voice provider request failed', { status, category: 'provider_quota_exceeded' }]]);
+    assert.ok(!response.bytes.includes(privateDetail));
+    assert.ok(!JSON.stringify(f.providerErrors).includes(ENV.ELEVENLABS_API_KEY));
+  }
+});
+
+test('provider configuration failures do not masquerade as a bad learner access code or exhausted credits', async () => {
+  for (const code of ['invalid_api_key', 'missing_api_key', 'voice_not_found', 'agent_not_found', 'model_access_denied', 'insufficient_permissions']) {
+    const f = fixture(() => Response.json({ detail: { code, status: 'quota_exceeded', message: ENV.ELEVENLABS_API_KEY } }, { status: 401 }));
+    const response = await invoke(f.handler, { action: 'session' }, auth(await unlock(f)));
+    assert.equal(response.status, 503);
+    assert.equal(response.json().error, 'provider_not_configured');
+    assert.match(response.json().message, /academy owner/);
+    assert.ok(!response.bytes.includes(ENV.ELEVENLABS_API_KEY));
+    assert.equal(f.providerErrors[0][1].category, 'provider_not_configured', 'Modern code takes precedence over legacy status');
+  }
+  const f = fixture();
+  const response = await invoke(f.handler, { action: 'login', code: 'incorrect-access-code' });
+  assert.equal(response.status, 401);
+  assert.equal(response.json().error, 'invalid_code');
+  assert.equal(f.calls.length, 0, 'Learner authentication still happens before any provider request');
+});
+
+test('provider text length, busy and timeout failures return stable actionable codes', async () => {
+  for (const code of ['max_character_limit_exceeded', 'text_too_long']) {
+    const f = fixture(() => Response.json({ detail: { code, message: 'private input text' } }, { status: 400 }));
+    const response = await invoke(f.handler, { action: 'tts', text: 'A valid local passage.' }, auth(await unlock(f)));
+    assert.equal(response.status, 413);
+    assert.equal(response.json().error, 'provider_text_too_long');
+    assert.ok(!response.bytes.includes('private input text'));
+  }
+  for (const [status, expected] of [[429, 'provider_busy'], [504, 'provider_timeout']]) {
+    const f = fixture(() => new Response('not-json-private-error', { status }));
+    const response = await invoke(f.handler, { action: 'session' }, auth(await unlock(f)));
+    assert.equal(response.status, status);
+    assert.equal(response.json().error, expected);
+    assert.ok(!response.bytes.includes('not-json-private-error'));
+  }
+});
+
+test('unknown or oversized provider error details remain generic and cannot reach public responses or logs', async () => {
+  const secret = 'unknown-provider-detail-that-must-stay-private';
+  for (const responseFactory of [
+    () => Response.json({ detail: { code: secret, status: 'quota_exceeded', message: ENV.ELEVENLABS_API_KEY } }, { status: 401 }),
+    () => Response.json({ detail: { code: 'quota_exceeded', message: secret.repeat(400) } }, { status: 401 }),
+    () => new Response(secret, { status: 401 }),
+    () => Response.json({ detail: { code: { message: secret } } }, { status: 400 })
+  ]) {
+    const f = fixture(responseFactory);
+    const response = await invoke(f.handler, { action: 'session' }, auth(await unlock(f)));
+    assert.equal(response.status, 502);
+    assert.equal(response.json().error, 'provider_unavailable');
+    assert.ok(!response.bytes.includes(secret));
+    const logs = JSON.stringify(f.providerErrors);
+    assert.ok(!logs.includes(secret));
+    assert.ok(!logs.includes(ENV.ELEVENLABS_API_KEY));
+  }
+});
+
+test('oversized provider errors are cancelled before reading and HTTP 402 still signals credits', async () => {
+  let cancelled = false;
+  const f = fixture(() => new Response(new ReadableStream({ cancel() { cancelled = true; } }), {
+    status: 402, headers: { 'content-length': '9000' }
+  }));
+  const response = await invoke(f.handler, { action: 'dictation-token' }, auth(await unlock(f)));
+  assert.equal(cancelled, true);
+  assert.equal(response.status, 402);
+  assert.equal(response.json().error, 'provider_quota_exceeded');
 });

@@ -15,7 +15,7 @@
   if (!['device', 'elevenlabs'].includes(prefs.engine)) prefs.engine = 'device';
   let endpoint = normalizeEndpoint(prefs.endpoint || config.endpoint ||
     (location.hostname.endsWith('.vercel.app') ? `${location.origin}/api/voice` : ''));
-  let sessionToken = '', sessionExpiresAt = 0;
+  let sessionToken = '', sessionExpiresAt = 0, voiceNotice = '';
   let expanded = false, selectedMode = 'listen', currentRoute = '';
   let sections = [], sectionIndex = 0, generation = 0, tutorGeneration = 0, operation = 0;
   let continuationTimer = null, autoContinueRoute = '', wakeGeneration = 0;
@@ -53,9 +53,20 @@
     find('voice-badge').textContent = active ? 'LIVE' : 'VOICE';
     updateSurface();
   }
+  function notice(message = '') {
+    voiceNotice = message;
+    for (const id of ['voice-notice', 'voice-inline-notice']) {
+      const element = find(id);
+      if (element) { element.textContent = message; element.hidden = !message; }
+    }
+  }
+  function chooseDeviceVoice(message = '') {
+    prefs.engine = 'device'; find('voice-engine').value = 'device'; storePreferences(); notice(message);
+  }
   function error(message = '') {
     find('voice-error').textContent = message;
     find('voice-error').hidden = !message;
+    if (!message) find('voice-use-device').hidden = true;
     if (message) setExpanded(true);
   }
   function updateSurface() {
@@ -103,8 +114,8 @@
   function mountInline() {
     const slot = find('voice-learning-slot');
     if (!slot || slot.querySelector('.voice-inline')) return;
-    slot.innerHTML = `<div class="voice-inline"><div class="voice-inline-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div class="voice-inline-copy"><span class="eyebrow">LEARN YOUR WAY</span><strong>Read. Listen. Talk it through.</strong><p id="voice-inline-status" role="status" aria-live="polite"></p><small id="voice-inline-section" hidden></small></div><div class="voice-inline-actions"><button type="button" class="button primary" id="voice-inline-listen" data-voice-action="listen">▶ Listen to lesson</button><button type="button" class="button" id="voice-inline-tutor" data-voice-action="tutor">Ask your tutor ↗</button><button type="button" class="voice-text-button" id="voice-inline-next" data-voice-next hidden>Next section →</button><button type="button" class="voice-text-button voice-options" data-voice-panel="listen" aria-label="Listening options and audio download">Listening options</button></div></div>`;
-    updateSurface();
+    slot.innerHTML = `<div class="voice-inline"><div class="voice-inline-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div class="voice-inline-copy"><span class="eyebrow">LEARN YOUR WAY</span><strong>Read. Listen. Talk it through.</strong><p id="voice-inline-status" role="status" aria-live="polite"></p><small id="voice-inline-section" hidden></small><small id="voice-inline-notice" hidden></small></div><div class="voice-inline-actions"><button type="button" class="button primary" id="voice-inline-listen" data-voice-action="listen">▶ Listen to lesson</button><button type="button" class="button" id="voice-inline-tutor" data-voice-action="tutor">Ask your tutor ↗</button><button type="button" class="voice-text-button" id="voice-inline-next" data-voice-next hidden>Next section →</button><button type="button" class="voice-text-button voice-options" data-voice-panel="listen" aria-label="Listening options and audio download">Listening options</button></div></div>`;
+    notice(voiceNotice); updateSurface();
   }
   async function startMode(mode, options = {}) {
     if (!['listen', 'tutor', 'dictate'].includes(mode)) return;
@@ -156,7 +167,7 @@
         <button class="button" id="voice-tutor-tab" role="tab" tabindex="-1" data-voice-mode="tutor" aria-selected="false" aria-controls="voice-tutor-pane">Ask tutor</button>
         <button class="button" id="voice-dictate-tab" role="tab" tabindex="-1" data-voice-mode="dictate" aria-selected="false" aria-controls="voice-dictate-pane">Dictate</button>
       </div>
-      <p id="voice-error" class="voice-error" role="alert" hidden></p>
+      <p id="voice-error" class="voice-error" role="alert" hidden></p><p id="voice-notice" class="voice-notice" role="status" hidden></p><button id="voice-use-device" class="button" hidden>Listen with device voice</button>
       <div class="voice-auth" id="voice-auth" hidden>
         <div class="voice-auth-icon" aria-hidden="true">✦</div><h3>A conversation away<br>from understanding.</h3><p class="voice-help">Enter your academy access code to talk with your tutor. You only need to do this once while this page stays open.</p>
         <label class="voice-field" for="voice-access-code">Your access code<input id="voice-access-code" type="password" autocomplete="current-password" maxlength="256" placeholder="Enter your academy code"></label>
@@ -217,7 +228,21 @@
           429: 'Voice usage is temporarily limited. Please try again later.',
           503: 'The private voice service has not been configured yet.',
         };
-        throw new Error(messages[response.status] || 'The voice service could not complete the request. Try again shortly.');
+        const knownErrors = {
+          provider_quota_exceeded: 'There are not enough ElevenLabs credits for this request. Lesson listening can use your device voice. Add credits in ElevenLabs to use its voice and downloadable audio.',
+          provider_not_configured: 'The academy’s ElevenLabs connection needs attention. Device listening is still available.',
+          provider_text_too_long: 'This passage is too long for one audio request. Listen one section at a time.',
+          provider_busy: 'ElevenLabs is busy. Wait a moment and try again, or listen with your device voice.',
+          provider_timeout: 'ElevenLabs took too long to respond. Try again, or listen with your device voice.',
+          provider_unavailable: 'ElevenLabs could not prepare this request. Try again, or listen with your device voice.',
+          provider_response_invalid: 'ElevenLabs returned an incomplete response. Try again, or listen with your device voice.',
+        };
+        let detail;
+        try { detail = await response.json(); } catch (_) {}
+        const code = typeof detail?.error === 'string' && Object.prototype.hasOwnProperty.call(knownErrors, detail.error) ? detail.error : '';
+        const failure = new Error(knownErrors[code] || messages[response.status] || 'The voice service could not complete the request. Try again shortly.');
+        failure.code = code; failure.status = response.status;
+        throw failure;
       }
       if (action === 'tts') {
         if (!response.headers.get('content-type')?.startsWith('audio/')) throw new Error('The voice service returned an unexpected audio format.');
@@ -454,7 +479,19 @@
         try { await currentAudio.play(); status(`Reading · ${part.title}`, true); }
         catch (_) { pendingPlay = true; find('voice-read').textContent = 'Tap to hear'; status('Audio ready · tap to hear'); }
       }
-    } catch (err) { if (run === generation) { stopNarration(); keepAwake(false); error(err.message); status('Reading unavailable'); } }
+    } catch (err) {
+      if (run !== generation) return;
+      if (err.code === 'provider_quota_exceeded' && window.speechSynthesis && window.SpeechSynthesisUtterance) {
+        chooseDeviceVoice('ElevenLabs credits are too low for this lesson. Listening continues with your device voice.');
+        try {
+          status(`Device voice · ${part.title}`, true);
+          deviceNarration(`${part.title}. ${part.text}`, run, done);
+          return;
+        } catch (_) {}
+      }
+      stopNarration(); keepAwake(false); error(err.message); status('Reading unavailable');
+      if (err.code?.startsWith('provider_')) find('voice-use-device').hidden = false;
+    }
   }
   async function advanceReading() {
     if (sectionIndex + 1 < sections.length) { await startReading(sectionIndex + 1); return; }
@@ -509,7 +546,7 @@
         link.download = `toolcraft-${currentRoute.replace(/[^a-z0-9-]/gi, '-')}.mp3`; link.click();
       };
       status('Page audio ready · press play');
-    } catch (err) { if (run === generation) { error(err.message); status('Could not prepare audio'); } }
+    } catch (err) { if (run === generation) { error(err.message); status('Could not prepare downloadable audio'); if (err.code?.startsWith('provider_')) find('voice-use-device').hidden = false; } }
     finally { find('voice-full-audio').disabled = false; }
   }
 
@@ -908,6 +945,7 @@
       event.preventDefault(); selectMode(modes[i]); find(`voice-${modes[i]}-tab`).focus();
     };
   });
+  find('voice-use-device').onclick = () => { chooseDeviceVoice('Listening uses your device voice; no ElevenLabs credits are needed.'); error(); selectMode('listen'); startReading(sectionIndex); };
   find('voice-read').onclick = toggleReading;
   find('voice-previous').onclick = () => moveSection(-1);
   find('voice-next').onclick = () => moveSection(1);
@@ -919,7 +957,7 @@
     if (playing && prefs.engine === 'device') startReading(sectionIndex);
   };
   find('voice-engine').value = prefs.engine;
-  find('voice-engine').onchange = event => { stopNarration(); prefs.engine = event.target.value; storePreferences(); status('Voice changed · press Play'); };
+  find('voice-engine').onchange = event => { stopNarration(); prefs.engine = event.target.value; storePreferences(); notice(); status('Voice changed · press Play'); };
   find('voice-continue').checked = Boolean(prefs.continueLesson);
   find('voice-continue').onchange = event => { prefs.continueLesson = event.target.checked; storePreferences(); };
   find('voice-full-audio').onclick = preparePageAudio;

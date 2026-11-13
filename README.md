@@ -48,6 +48,8 @@ Choose **Listen to lesson** in the lesson companion, or **Listen** beside a spec
 
 **Ask tutor**, or **Ask about this** beside a section, supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template. The current frontend points to the deployed private voice service; a learner access code is supplied separately. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
 
+If ElevenLabs cannot cover a lesson passage with the remaining account credits, narration switches to the device voice and explains the change. A download that exceeds the allowance shows a clear credit message and offers device listening instead. Live tutoring and downloadable audio still require available ElevenLabs credits.
+
 Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Listening options → Download this lesson as audio → Prepare audio** creates a downloadable track for a separate audio player. The hosted service has been checked against ElevenLabs, including live text tutoring and WebRTC with a simulated microphone. Browser layouts are tested at phone widths; physical iOS/Android behavior may still vary.
 
 ## Learning data and scope

@@ -470,3 +470,59 @@ test('real content bridge keeps hidden answers and private notes out of live tut
   assert.match(revealed, /HIDDEN_QUIZ_EXPLANATION/);
   assert.doesNotMatch(revealed, /PRIVATE_NOTE_MARKER|PRIVATE_BRIEF_MARKER/);
 });
+
+test('exhausted ElevenLabs credits continue the same lesson using device speech without another paid request', async () => {
+  const h = fixture({ lessonText: 'Compare 0.025 mm per tooth with 0.05 mm per tooth.' });
+  await h.unlock(); h.change('voice-engine', 'elevenlabs'); let requests = 0;
+  h.context.fetch = async () => { requests++; return { ok: false, status: 402, json: async () => ({ error: 'provider_quota_exceeded', message: 'PRIVATE_PROVIDER_DETAIL' }) }; };
+  h.click('voice-read'); await flush();
+  assert.equal(requests, 1);
+  assert.equal(h.get('voice-engine').value, 'device');
+  assert.equal(h.voice.getStatus().playing, true);
+  assert.equal(h.get('voice-error').hidden, true);
+  assert.match(h.get('voice-notice').textContent, /device voice/);
+  assert.equal(h.records.spoken[0].text, 'Dimensions. Compare 0.025 mm per tooth with 0.05 mm per tooth.');
+  assert.equal(JSON.parse(h.context.localStorage.getItem('ctc-voice-preferences-v1')).engine, 'device');
+  await h.drainSpeech(); h.click('voice-read'); await flush();
+  assert.equal(requests, 1, 'Continuing or replaying must not repeat a paid request after fallback');
+  assert.ok(!h.document.body.textContent.includes('PRIVATE_PROVIDER_DETAIL'));
+});
+
+for (const cancellation of ['stop', 'route']) {
+  test(`a late quota response cannot start fallback speech after ${cancellation}`, async () => {
+    const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs'); const reply = deferred();
+    h.context.fetch = () => reply.promise;
+    h.click('voice-read'); await flush();
+    if (cancellation === 'stop') await h.voice.stop(); else h.route('learn');
+    reply.resolve({ ok: false, status: 402, json: async () => ({ error: 'provider_quota_exceeded' }) });
+    await flush();
+    assert.equal(h.records.spoken.length, 0);
+    assert.equal(h.voice.getStatus().playing, false);
+    assert.equal(h.get('voice-engine').value, 'elevenlabs', 'A stale response cannot change saved preferences');
+  });
+}
+
+test('download credit failure explains the limit and offers real device listening without claiming an audio file', async () => {
+  const h = fixture(); await h.unlock(); let requests = 0;
+  h.context.fetch = async () => { requests++; return { ok: false, status: 402, json: async () => ({ error: 'provider_quota_exceeded' }) }; };
+  await h.click('voice-full-audio'); await flush();
+  assert.match(h.get('voice-error').textContent, /not enough ElevenLabs credits/);
+  assert.equal(h.get('voice-download-audio').hidden, true);
+  assert.equal(h.get('voice-audio-player').hidden, true);
+  assert.equal(h.get('voice-use-device').hidden, false);
+  assert.equal(h.records.spoken.length, 0, 'Preparing a download does not unexpectedly start speech');
+  h.click('voice-use-device'); await flush();
+  assert.equal(h.records.spoken.length, 1);
+  assert.equal(requests, 1);
+  assert.equal(h.get('voice-error').hidden, true);
+});
+
+test('unknown gateway errors and raw provider messages are never rendered or mistaken for a quota fallback', async () => {
+  const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+  h.context.fetch = async () => ({ ok: false, status: 502, json: async () => ({ error: 'constructor', message: 'SECRET_PROVIDER_BODY' }) });
+  h.click('voice-read'); await flush();
+  assert.equal(h.records.spoken.length, 0);
+  assert.equal(h.voice.getStatus().playing, false);
+  assert.ok(!h.document.body.textContent.includes('SECRET_PROVIDER_BODY'));
+  assert.match(h.get('voice-error').textContent, /voice service could not complete/);
+});

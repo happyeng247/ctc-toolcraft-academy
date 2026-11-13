@@ -30,6 +30,8 @@ Voice is part of every lesson. On a phone, open the menu at the top left to move
 3. **Dictate:** tap the button beside **Your notes**, speak, choose **Finish**, review your words, then tap **Add to notes**. **Undo last addition** preserves later edits. You can also type or use your phone keyboard's microphone.
 4. **Download lesson audio:** open **Listening options → Download this lesson as audio → Prepare audio**, then download the track for playback in a separate audio player. This uses your private ElevenLabs voice.
 
+If ElevenLabs credits are too low, lesson listening continues with your device voice. Downloads need enough ElevenLabs credits; choose **Listen with device voice** to keep learning without downloading.
+
 Use **Stop all** to end playback and microphone capture. Keep this page open for live conversation; switching apps or locking the phone may interrupt it. Listening does not automatically pass a quiz or complete a lesson.
 
 Use the hosted academy for cloud voice and enter your private learner access code when prompted. Downloaded files retain offline lessons; browser security may prevent cloud voice from a file URL. For a separate deployment, see [Voice setup](VOICE-SETUP.md). The voice panel accepts an academy access code, never a provider API key. Saved learning notes are not automatically sent to the tutor; live audio and course context are processed by ElevenLabs when used.
