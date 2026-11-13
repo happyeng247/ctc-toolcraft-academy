@@ -1,5 +1,5 @@
 from pathlib import Path
-import json, re
+import json, re, base64
 
 root=Path(__file__).resolve().parent.parent
 work=root/'src'
@@ -36,10 +36,13 @@ html=(work/'template.html').read_text()
 runtime=(work/'vendor/three.min.js').read_text()
 license=(work/'vendor/THREE-LICENSE.txt').read_text()
 runtime='/*\n'+license.replace('*/','* /')+'\n*/\n'+runtime
-for token,value in {'__STYLES__':(work/'styles.css').read_text()+'\n'+(work/'voice.css').read_text(),'__THREE__':runtime,'__DATA__':json.dumps(data,ensure_ascii=False).replace('</','<\/'),'__APP__':(work/'app.js').read_text(),'__VOICE_CONFIG__':json.dumps(json.loads((work/'voice-config.json').read_text())).replace('</','<\/'),'__VOICE_CONTENT__':(work/'voice-content.js').read_text(),'__VOICE__':(work/'voice.js').read_text()}.items():
+font_data=base64.b64encode((work/'vendor/InterVariable.woff2').read_bytes()).decode()
+font_css="@font-face{font-family:Inter;font-style:normal;font-weight:100 900;font-display:swap;src:url(data:font/woff2;base64,"+font_data+") format('woff2')}\n"
+for token,value in {'__STYLES__':font_css+(work/'styles.css').read_text()+'\n'+(work/'voice.css').read_text(),'__THREE__':runtime,'__DATA__':json.dumps(data,ensure_ascii=False).replace('</','<\/'),'__APP__':(work/'app.js').read_text(),'__VOICE_CONFIG__':json.dumps(json.loads((work/'voice-config.json').read_text())).replace('</','<\/'),'__VOICE_CONTENT__':(work/'voice-content.js').read_text(),'__VOICE__':(work/'voice.js').read_text()}.items():
     html=html.replace(token,value)
 out=root/'docs'
 out.mkdir(exist_ok=True)
 (out/'index.html').write_text(html)
 (out/'THREE-LICENSE.txt').write_text(license)
+(out/'INTER-LICENSE.txt').write_text((work/'vendor/INTER-LICENSE.txt').read_text())
 print(f'Built {len(html.encode()):,} bytes; {len(data["modules"])} lessons; {len(data["glossary"])} terms; {len(data["sources"])} primary references.')

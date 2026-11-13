@@ -26,7 +26,7 @@
   let scribePartial = '', finishingDictation = false, dictationFinishTimer = null, questionSending = false;
   let lastAppend = null, sdkPromise = null, pendingAfterLogin = null;
   let wakeLock = null, wakeRequested = false;
-  let previousFocusedField = null, lastAgentMessage = '', contextTimer = null;
+  let previousFocusedField = null, lastAgentMessage = '', contextTimer = null, launchElement = null;
   let lastContext = '', fetchControllers = new Set(), pendingTypedMessage = '';
   function courseContext() {
     return { ...content.getContext(), narration: { sectionIndex: sectionIndex + 1, sectionId: sections[sectionIndex]?.id, sectionTitle: sections[sectionIndex]?.title } };
@@ -50,20 +50,79 @@
   function status(message, active = false) {
     find('voice-status').textContent = message;
     find('voice-dock').classList.toggle('voice-active', active);
-    find('voice-badge').textContent = active ? 'ACTIVE' : 'VOICE';
+    find('voice-badge').textContent = active ? 'LIVE' : 'VOICE';
+    updateSurface();
   }
   function error(message = '') {
     find('voice-error').textContent = message;
     find('voice-error').hidden = !message;
+    if (message) setExpanded(true);
+  }
+  function updateSurface() {
+    const busy = playing || pendingPlay || dictating || !!conversation || tutorConnecting;
+    find('voice-dock').hidden = !expanded && !busy;
+    find('voice-dock').classList.toggle('voice-auth-open', !find('voice-auth').hidden);
+    document.body.classList.toggle('voice-has-activity', busy || expanded);
+    find('voice-quick-pause').hidden = !playing;
+    find('voice-quick-pause').textContent = paused ? 'Resume' : pendingPlay ? 'Play' : 'Pause';
+    find('voice-bar-title').textContent = dictating ? 'Capturing your notes' : conversation || tutorConnecting || selectedMode === 'tutor' ? 'Your learning companion' : selectedMode === 'dictate' ? 'Your learning notes' : 'Lesson audio';
+    const inlineStatus = find('voice-inline-status');
+    if (inlineStatus) inlineStatus.textContent = busy ? find('voice-status').textContent : 'Listen at your pace. Ask whenever something is unclear.';
+    const inlinePlay = find('voice-inline-listen');
+    if (inlinePlay) {
+      inlinePlay.textContent = playing ? paused ? '▶ Resume' : pendingPlay ? '▶ Play audio' : 'Ⅱ Pause' : currentRoute.startsWith('lesson/') ? '▶ Listen to lesson' : '▶ Listen to page';
+      inlinePlay.setAttribute('aria-pressed', String(playing && !paused));
+      inlinePlay.disabled = !sections.length;
+    }
+    const inlineNext = find('voice-inline-next');
+    if (inlineNext) inlineNext.hidden = !playing;
+    const inlineSection = find('voice-inline-section');
+    if (inlineSection) {
+      inlineSection.hidden = !playing;
+      inlineSection.textContent = `Section ${sectionIndex + 1} of ${sections.length} · ${sections[sectionIndex]?.title || ''}`;
+    }
+    const inlineAsk = find('voice-inline-tutor');
+    if (inlineAsk) inlineAsk.textContent = conversation || tutorConnecting ? 'Open conversation ↗' : 'Ask your tutor ↗';
   }
   function setExpanded(value) {
-    if (!value && find('voice-panel').contains(document.activeElement)) find('voice-toggle').focus();
+    if (!value && find('voice-panel').contains?.(document.activeElement)) {
+      const fallback = launchElement?.parentNode && launchElement.isConnected !== false ? launchElement : find('voice-inline-listen') || document.querySelector('[data-voice-action="tutor"]') || find('voice-toggle');
+      fallback?.focus();
+    }
+    if (!value && !find('voice-auth').hidden) {
+      pendingAfterLogin = null; find('voice-auth').hidden = true; find('voice-access-code').value = '';
+    }
     expanded = value;
     find('voice-panel').hidden = !value;
     find('voice-dock').classList.toggle('voice-expanded', value);
     find('voice-toggle').setAttribute('aria-expanded', String(value));
-    find('voice-toggle').textContent = value ? 'Minimize' : 'Open voice';
+    find('voice-toggle').textContent = value ? 'Minimize' : 'Controls';
     document.body.classList.toggle('voice-panel-open', value);
+    updateSurface();
+  }
+  function mountInline() {
+    const slot = find('voice-learning-slot');
+    if (!slot || slot.querySelector('.voice-inline')) return;
+    slot.innerHTML = `<div class="voice-inline"><div class="voice-inline-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div class="voice-inline-copy"><span class="eyebrow">LEARN YOUR WAY</span><strong>Read. Listen. Talk it through.</strong><p id="voice-inline-status" role="status" aria-live="polite"></p><small id="voice-inline-section" hidden></small></div><div class="voice-inline-actions"><button type="button" class="button primary" id="voice-inline-listen" data-voice-action="listen">▶ Listen to lesson</button><button type="button" class="button" id="voice-inline-tutor" data-voice-action="tutor">Ask your tutor ↗</button><button type="button" class="voice-text-button" id="voice-inline-next" data-voice-next hidden>Next section →</button><button type="button" class="voice-text-button voice-options" data-voice-panel="listen" aria-label="Listening options and audio download">Listening options</button></div></div>`;
+    updateSurface();
+  }
+  async function startMode(mode, options = {}) {
+    if (!['listen', 'tutor', 'dictate'].includes(mode)) return;
+    if (Number.isInteger(options.sectionIndex)) {
+      sectionIndex = Math.max(0, Math.min(sections.length - 1, options.sectionIndex));
+      highlight(); sendContext();
+    }
+    selectMode(mode);
+    if (mode === 'listen') {
+      if (playing && !Number.isInteger(options.sectionIndex)) toggleReading();
+      else await startReading(sectionIndex);
+      return;
+    }
+    if (playing) { stopNarration(); status('Ready for your question'); }
+    setExpanded(true);
+    if (mode === 'tutor') {
+      if (!conversation && !tutorConnecting) await startTutor(false);
+    } else if (!dictating) await startDictation();
   }
   function selectMode(mode) {
     selectedMode = mode;
@@ -83,51 +142,51 @@
   dock.setAttribute('aria-label', 'Voice learning controls');
   dock.innerHTML = `
     <div class="voice-bar">
-      <div class="voice-heading"><span class="voice-badge" id="voice-badge">VOICE</span><div><strong>Learn by listening & talking</strong><span id="voice-status" role="status" aria-live="polite">Ready · device narration available</span></div></div>
-      <div class="voice-actions"><button class="button" id="voice-stop" title="Stop all playback and microphone capture">Stop all</button><button class="button primary" id="voice-toggle" aria-expanded="false" aria-controls="voice-panel">Open voice</button></div>
+      <div class="voice-heading"><span class="voice-badge" id="voice-badge">VOICE</span><div><strong id="voice-bar-title">Your learning companion</strong><span id="voice-status" role="status" aria-live="polite">Ready when you are</span></div></div>
+      <div class="voice-actions voice-bar-actions"><button class="button" id="voice-quick-pause" hidden>Pause</button><button class="button" id="voice-stop" title="Stop playback and turn off the microphone">Stop all</button><button class="button" id="voice-toggle" aria-expanded="false" aria-controls="voice-panel">Controls</button></div>
     </div>
     <div id="voice-panel" hidden>
-      <div class="voice-current"><span class="eyebrow">YOUR CURRENT PLACE</span><strong id="voice-place"></strong></div>
+      <div class="voice-panel-header"><div><span class="eyebrow">YOUR LEARNING COMPANION</span><strong id="voice-place"></strong></div><button id="voice-close" class="voice-icon-button" aria-label="Close voice panel">×</button></div>
       <div class="voice-tabs" role="tablist" aria-label="Voice learning mode">
         <button class="button active" id="voice-listen-tab" role="tab" tabindex="0" data-voice-mode="listen" aria-selected="true" aria-controls="voice-listen-pane">Listen</button>
-        <button class="button" id="voice-tutor-tab" role="tab" tabindex="-1" data-voice-mode="tutor" aria-selected="false" aria-controls="voice-tutor-pane">Talk to tutor</button>
-        <button class="button" id="voice-dictate-tab" role="tab" tabindex="-1" data-voice-mode="dictate" aria-selected="false" aria-controls="voice-dictate-pane">Dictate notes</button>
+        <button class="button" id="voice-tutor-tab" role="tab" tabindex="-1" data-voice-mode="tutor" aria-selected="false" aria-controls="voice-tutor-pane">Ask tutor</button>
+        <button class="button" id="voice-dictate-tab" role="tab" tabindex="-1" data-voice-mode="dictate" aria-selected="false" aria-controls="voice-dictate-pane">Dictate</button>
       </div>
       <p id="voice-error" class="voice-error" role="alert" hidden></p>
       <div class="voice-auth" id="voice-auth" hidden>
-        <h3>Connect private voice</h3><p class="voice-help">Use the access code for this academy’s voice service. This is not an ElevenLabs API key.</p>
-        <label class="voice-field" for="voice-access-code">Access code<input id="voice-access-code" type="password" autocomplete="current-password" maxlength="256"></label>
-        <div class="voice-actions"><button class="button primary" id="voice-login">Unlock voice</button><button class="button" id="voice-auth-cancel">Cancel</button></div>
+        <div class="voice-auth-icon" aria-hidden="true">✦</div><h3>A conversation away<br>from understanding.</h3><p class="voice-help">Enter your academy access code to talk with your tutor. You only need to do this once while this page stays open.</p>
+        <label class="voice-field" for="voice-access-code">Your access code<input id="voice-access-code" type="password" autocomplete="current-password" maxlength="256" placeholder="Enter your academy code"></label>
+        <div class="voice-actions"><button class="button primary" id="voice-login">Continue</button><button class="button" id="voice-auth-cancel">Go back</button></div>
         <p id="voice-auth-status" class="voice-inline-status" aria-live="polite"></p>
       </div>
       <div class="voice-pane" id="voice-listen-pane" data-voice-pane="listen" aria-labelledby="voice-listen-tab" role="tabpanel">
-        <label class="voice-field" for="voice-section-select">Section<select id="voice-section-select" class="voice-section-list"></select></label>
+        <p class="voice-intro">Take the lesson with you.</p><p class="voice-help">Listen section by section, at your own pace. Your place is remembered.</p>
+        <label class="voice-field" for="voice-section-select">Where to begin<select id="voice-section-select" class="voice-section-list"></select></label>
         <div class="voice-section-controls"><button class="button" id="voice-previous" aria-label="Previous section">← Back</button><button class="button primary voice-primary" id="voice-read">Play from here</button><button class="button" id="voice-next" aria-label="Next section">Next →</button></div>
-        <div class="voice-actions"><label class="voice-field" for="voice-speed">Speed<select id="voice-speed"><option value="0.75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></label><label class="voice-field" for="voice-engine">Voice<select id="voice-engine"><option value="device">Device voice</option><option value="elevenlabs">ElevenLabs</option></select></label></div>
-        <label class="voice-help"><input id="voice-continue" type="checkbox"> Continue to the next lesson when this lesson ends</label>
-        <p class="voice-help">Reading follows each section. You can pause, repeat or skip. Listening alone does not complete a quiz.</p>
-        <details class="voice-settings"><summary>Longer listening</summary><p class="voice-help">Prepare the current page as a single ElevenLabs audio track. After it loads, use the player or download it for your phone’s audio player.</p><button class="button" id="voice-full-audio">Prepare page audio</button><audio id="voice-audio-player" controls preload="none" hidden></audio><button class="button" id="voice-download-audio" hidden>Download audio</button></details>
+        <details class="voice-settings"><summary>Listening preferences</summary><div class="voice-actions"><label class="voice-field" for="voice-speed">Speed<select id="voice-speed"><option value="0.75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></label><label class="voice-field" for="voice-engine">Voice<select id="voice-engine"><option value="device">Device voice · ready now</option><option value="elevenlabs">ElevenLabs · access code</option></select></label></div><label class="voice-check"><input id="voice-continue" type="checkbox"><span>Continue to the next lesson automatically</span></label><p class="voice-help">Listening does not complete the knowledge check. You can answer it yourself or ask your tutor to quiz you.</p></details>
+        <details class="voice-settings"><summary>Download this lesson as audio</summary><p class="voice-help">Prepare a single audio track, then save it to listen when your screen is locked. Uses your private ElevenLabs voice.</p><button class="button" id="voice-full-audio">Prepare audio</button><audio id="voice-audio-player" controls preload="none" hidden></audio><button class="button" id="voice-download-audio" hidden>Download audio</button></details>
       </div>
       <div class="voice-pane" id="voice-tutor-pane" data-voice-pane="tutor" aria-labelledby="voice-tutor-tab" role="tabpanel" hidden>
-        <p class="voice-help">Ask “explain that more simply”, “show the core”, “quiz me”, or “go to the next lesson”. The tutor receives the current course context, not your saved notes.</p>
-        <div class="voice-actions"><button class="button primary voice-primary" id="voice-start-tutor">Start conversation</button><button class="button" id="voice-mute" disabled>Mute mic</button><button class="button" id="voice-text-tutor">Use text instead</button></div>
+        <p class="voice-intro">Make it a conversation.</p><p class="voice-help">Your tutor knows which lesson you’re in. Ask a question, explore a concept, or say “quiz me”.</p>
+        <div class="voice-actions"><button class="button primary voice-primary" id="voice-start-tutor">Start conversation</button><button class="button" id="voice-mute" disabled>Mute mic</button></div>
+        <div class="voice-prompts" aria-label="Question ideas"><button type="button" data-voice-prompt="Explain this section in simpler terms.">Explain it simply</button><button type="button" data-voice-prompt="Give me a practical example of this concept.">Give me an example</button><button type="button" data-voice-prompt="Quiz me on this lesson, one question at a time.">Quiz me</button></div>
         <div class="voice-transcript" id="voice-transcript" role="log" aria-label="Tutor conversation" aria-live="polite"></div>
-        <form class="voice-compose" id="voice-question-form"><label class="voice-field" for="voice-question">Ask a question<textarea id="voice-question" rows="2" maxlength="2000" placeholder="What does the helix angle change?"></textarea></label><button class="button primary" type="submit">Send</button></form>
-        <div class="voice-actions"><button class="button" id="voice-save-reply" disabled>Save last reply as a note</button><button class="button" id="voice-clear-transcript">Clear transcript</button></div>
-        <p class="voice-help">Live tutoring sends microphone audio and course context to ElevenLabs. It requires internet and private access. The tutor provides explanations; production decisions still need engineering validation.</p>
+        <form class="voice-compose" id="voice-question-form"><label class="voice-field" for="voice-question">Or type your question<textarea id="voice-question" rows="2" maxlength="2000" placeholder="What does the helix angle change?"></textarea></label><button class="button primary" type="submit">Send →</button></form>
+        <div class="voice-actions"><button class="voice-text-button" id="voice-text-tutor">Use text only</button><button class="voice-text-button" id="voice-save-reply" disabled>Save last reply to notes</button></div>
+        <details class="voice-settings"><summary>Conversation details</summary><p class="voice-help">Your microphone and current lesson are shared with ElevenLabs. Your saved notes are not sent automatically. Use your team’s checks before making production decisions.</p><button class="button" id="voice-clear-transcript">Clear transcript</button></details>
       </div>
       <div class="voice-pane" id="voice-dictate-pane" data-voice-pane="dictate" aria-labelledby="voice-dictate-tab" role="tabpanel" hidden>
-        <label class="voice-field" for="voice-dictation-target">Save to<select id="voice-dictation-target"></select></label>
-        <label class="voice-field" for="voice-dictation-engine">Dictation service<select id="voice-dictation-engine"><option value="browser">Browser dictation</option><option value="elevenlabs">ElevenLabs Scribe</option></select></label>
-        <div class="voice-actions"><button class="button primary voice-primary" id="voice-dictate">Start dictation</button><button class="button" id="voice-finish-dictation" disabled>Finish dictation</button></div>
+        <p class="voice-intro">Keep the thought.</p><p class="voice-help">Speak your notes, then review the words before saving them.</p>
+        <label class="voice-field" for="voice-dictation-target">Add to<select id="voice-dictation-target"></select></label>
+        <div class="voice-actions"><button class="button primary voice-primary" id="voice-dictate">Start dictation</button><button class="button" id="voice-finish-dictation" disabled>Finish</button></div>
         <p id="voice-interim" class="voice-inline-status" aria-live="polite"></p>
-        <label class="voice-field" for="voice-draft">Review your words<textarea id="voice-draft" rows="4" maxlength="8000" placeholder="Dictate or type here, then add to your notes."></textarea></label>
-        <div class="voice-actions"><button class="button primary" id="voice-save-dictation">Add text</button><button class="button" id="voice-undo-dictation" disabled>Undo last addition</button></div>
-        <details class="voice-settings"><summary>Saved words at this destination</summary><pre id="voice-saved-words" class="voice-saved-words"></pre></details>
-        <p class="voice-help">Nothing is saved until you choose Add text. Existing notes are preserved. Browser dictation may send audio to your browser’s speech service; Scribe sends it to ElevenLabs. You can always use your phone keyboard’s microphone.</p>
+        <label class="voice-field" for="voice-draft">Review your words<textarea id="voice-draft" rows="4" maxlength="8000" placeholder="Your words will appear here. You can edit them before adding them to your notes."></textarea></label>
+        <div class="voice-actions"><button class="button primary" id="voice-save-dictation">Add to notes</button><button class="voice-text-button" id="voice-undo-dictation" disabled>Undo last addition</button></div>
+        <details class="voice-settings"><summary>Dictation preferences & saved notes</summary><label class="voice-field" for="voice-dictation-engine">Dictation service<select id="voice-dictation-engine"><option value="browser">Browser dictation</option><option value="elevenlabs">ElevenLabs Scribe</option></select></label><p class="voice-help">Existing notes stay intact. Your browser or ElevenLabs processes the microphone audio. You can also type or use your phone keyboard’s microphone.</p><pre id="voice-saved-words" class="voice-saved-words"></pre></details>
       </div>
-      <details class="voice-settings" id="voice-service-settings"><summary>Voice connection & privacy</summary><p class="voice-help">Device narration works without an account. Live tutoring and ElevenLabs audio need a connected private voice service. Your API key belongs on that server, never in this page.</p><label class="voice-field" for="voice-endpoint">Voice service address<input type="url" id="voice-endpoint" placeholder="https://your-voice-service.vercel.app/api/voice" autocomplete="off"></label><div class="voice-actions"><button class="button" id="voice-save-endpoint">Save connection</button><button class="button" id="voice-signout">Lock private voice</button></div><p id="voice-connection-status" class="voice-inline-status"></p><p class="voice-help">Keep this page open during a conversation. Phone lock, switching apps or incoming calls may interrupt microphone sessions or device narration. Downloaded audio can be played separately.</p></details>
-    </div>`;
+      <details class="voice-settings voice-service-details" id="voice-service-settings"><summary>Connection & privacy</summary><p class="voice-help">Listening with your device voice needs no code. Conversations and ElevenLabs audio use the academy’s private voice service.</p><details><summary>Advanced connection settings</summary><label class="voice-field" for="voice-endpoint">Voice service address<input type="url" id="voice-endpoint" placeholder="https://your-voice-service.vercel.app/api/voice" autocomplete="off"></label><div class="voice-actions"><button class="button" id="voice-save-endpoint">Save connection</button></div></details><button class="voice-text-button" id="voice-signout">Lock private voice</button><p id="voice-connection-status" class="voice-inline-status"></p><p class="voice-help">Keep this page open while talking. Locking your phone or switching apps may interrupt voice. Download lesson audio to listen separately.</p></details>
+    </div>
+    `;
   document.body.appendChild(dock);
 
   async function request(action, extra = {}, signal) {
@@ -176,12 +235,16 @@
     if (!endpoint) {
       error('ElevenLabs is not connected yet. Device narration and supported browser dictation work now.');
       find('voice-service-settings').open = true;
+      const advanced = find('voice-service-settings').querySelector('details');
+      if (advanced) advanced.open = true;
       find('voice-endpoint').focus();
       return false;
     }
     pendingAfterLogin = continuation;
     find('voice-auth').hidden = false;
     find('voice-auth-status').textContent = '';
+    status('Enter your academy access code');
+    updateSurface();
     find('voice-access-code').focus();
     return false;
   }
@@ -200,6 +263,7 @@
       if (!response.sessionToken || !Number.isFinite(Date.parse(response.expiresAt))) throw new Error('The voice service returned an invalid session.');
       sessionToken = response.sessionToken; sessionExpiresAt = Date.parse(response.expiresAt);
       find('voice-auth').hidden = true;
+      updateSurface();
       find('voice-access-code').value = '';
       find('voice-connection-status').textContent = 'Private voice unlocked for this page session.';
       error();
@@ -290,6 +354,7 @@
     prefs.bookmarks[currentRoute] = sectionIndex;
     storePreferences();
     find('voice-section-select').value = String(sectionIndex);
+    updateSurface();
   }
   function speakable(value) {
     return text(value).replace(/\bPCBN\b/g, 'P C B N').replace(/\bPCB\b/g, 'P C B').replace(/\bPCD\b/g, 'P C D')
@@ -724,14 +789,20 @@
     select.replaceChildren(...sections.map((part, i) => { const option = document.createElement('option'); option.value = String(i); option.textContent = `${i + 1}. ${part.title}`; return option; }));
     select.value = String(sectionIndex);
     find('voice-read').disabled = !sections.length;
-    document.querySelectorAll('.voice-section-trigger').forEach(el => el.remove());
+    document.querySelectorAll('.voice-section-actions').forEach(el => el.remove());
     sections.forEach((part, i) => {
-      if (!part.element || !part.element.matches('section, .learning-objectives')) return;
-      const trigger = document.createElement('button'); trigger.className = 'voice-section-trigger'; trigger.type = 'button';
-      trigger.textContent = 'Listen'; trigger.setAttribute('aria-label', `Listen to ${part.title}`);
-      trigger.onclick = () => { setExpanded(true); selectMode('listen'); startReading(i); };
-      part.element.appendChild(trigger);
+      if (currentRoute === 'learn' || !part.element || !part.element.matches('section, .learning-objectives')) return;
+      const actions = document.createElement('div'); actions.className = 'voice-section-actions';
+      for (const [mode, label] of [['listen', 'Listen'], ['tutor', 'Ask about this']]) {
+        const trigger = document.createElement('button'); trigger.className = 'voice-section-trigger'; trigger.type = 'button';
+        trigger.textContent = `${mode === 'listen' ? '▷' : '✦'} ${label}`;
+        trigger.setAttribute('aria-label', `${label}: ${part.title}`);
+        trigger.setAttribute('data-voice-action', mode); trigger.setAttribute('data-voice-section', String(i));
+        actions.appendChild(trigger);
+      }
+      part.element.appendChild(actions);
     });
+    mountInline(); updateSurface();
     refreshDictationTargets();
   }
   function sendContext() {
@@ -742,7 +813,7 @@
     try { conversation.sendContextualUpdate(`Course state changed. Use the current section and values for the next answer; do not speak just because of this update. ${next}`); } catch (_) {}
   }
   function onRoute() {
-    const nextRoute = location.hash.slice(1) || 'lab';
+    const nextRoute = location.hash.slice(1) || 'learn';
     const changed = nextRoute !== currentRoute;
     const continueHere = autoContinueRoute === nextRoute;
     currentRoute = nextRoute;
@@ -750,7 +821,8 @@
       operation++; stopNarration(); stopDictation(); discardAudio();
       if (tutorConnecting) endTutor();
       fetchControllers.forEach(controller => controller.abort());
-      if (!conversation && !tutorConnecting) { keepAwake(false); status('Ready · your place is updated'); }
+      if (!conversation && !tutorConnecting) { keepAwake(false); status('Ready · your place is updated'); setExpanded(false); }
+      pendingAfterLogin = null; find('voice-auth').hidden = true;
     }
     refreshSections(changed); sendContext();
     if (conversation && !tutorTextOnly) keepAwake(true);
@@ -781,7 +853,7 @@
     if (event.target.matches('#lesson-notes, [data-brief], #voice-question')) previousFocusedField = event.target;
   });
   for (const name of ['click', 'input', 'change']) document.getElementById('main').addEventListener(name, event => {
-    if (event.target.closest('.voice-section-trigger') || event.target.matches('textarea')) return;
+    if (event.target.closest('[data-voice-action], [data-voice-panel], [data-voice-next], .voice-section-trigger') || event.target.matches('textarea')) return;
     clearTimeout(contextTimer); contextTimer = setTimeout(() => { refreshSections(); sendContext(); }, 200);
   });
   document.addEventListener('visibilitychange', () => {
@@ -794,7 +866,23 @@
   window.addEventListener('pagehide', () => { stopAll(); audioCache.clear(); if (currentAudioUrl) URL.revokeObjectURL(currentAudioUrl); });
   document.addEventListener('keydown', event => { if (event.key === 'Escape' && expanded) setExpanded(false); });
 
+  document.addEventListener('click', event => {
+    const action = event.target.closest?.('[data-voice-action]');
+    const panel = event.target.closest?.('[data-voice-panel]');
+    if (action) {
+      launchElement = action;
+      const value = action.getAttribute('data-voice-section');
+      startMode(action.dataset.voiceAction, value === null ? {} : { sectionIndex: Number(value) });
+    } else if (panel) {
+      launchElement = panel; selectMode(panel.dataset.voicePanel); setExpanded(true);
+    } else if (event.target.closest?.('[data-voice-next]')) moveSection(1);
+  });
   find('voice-toggle').onclick = () => setExpanded(!expanded);
+  find('voice-close').onclick = () => setExpanded(false);
+  find('voice-quick-pause').onclick = toggleReading;
+  document.querySelectorAll('[data-voice-prompt]').forEach(button => {
+    button.onclick = () => { find('voice-question').value = button.dataset.voicePrompt; sendQuestion(); };
+  });
   find('voice-stop').onclick = () => stopAll();
   document.querySelectorAll('[data-voice-mode]').forEach(button => {
     button.onclick = () => selectMode(button.dataset.voiceMode);
@@ -834,6 +922,7 @@
     status(result.message || 'Tutor reply saved as a local note');
   };
   find('voice-clear-transcript').onclick = () => { find('voice-transcript').replaceChildren(); messageNodes.clear(); lastAgentMessage = ''; find('voice-save-reply').disabled = true; };
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) find('voice-dictation-engine').value = 'elevenlabs';
   find('voice-dictate').onclick = startDictation;
   find('voice-finish-dictation').onclick = () => {
     if (recognizer) { try { recognizer.stop(); } catch (_) { stopDictation(); } }
@@ -846,7 +935,7 @@
   find('voice-undo-dictation').onclick = undoDraft;
   find('voice-login').onclick = login;
   find('voice-access-code').onkeydown = event => { if (event.key === 'Enter') login(); };
-  find('voice-auth-cancel').onclick = () => { pendingAfterLogin = null; find('voice-auth').hidden = true; find('voice-access-code').value = ''; };
+  find('voice-auth-cancel').onclick = () => { pendingAfterLogin = null; find('voice-auth').hidden = true; find('voice-access-code').value = ''; updateSurface(); };
   find('voice-endpoint').value = endpoint;
   find('voice-save-endpoint').onclick = async () => {
     const raw = find('voice-endpoint').value.trim(); const valid = normalizeEndpoint(raw);
@@ -857,5 +946,5 @@
   find('voice-signout').onclick = async () => { await stopAll(); sessionToken = ''; sessionExpiresAt = 0; audioCache.clear(); find('voice-connection-status').textContent = 'Private voice locked.'; };
   find('voice-connection-status').textContent = endpoint ? 'Private voice service configured; enter your access code when connecting.' : 'ElevenLabs is not connected yet. Device narration is available.';
   onRoute();
-  window.AcademyVoice = { stop: stopAll, open: mode => { setExpanded(true); if (mode) selectMode(mode); }, getStatus: () => ({ mode: selectedMode, playing, paused, dictating, connected: !!conversation, connecting: tutorConnecting, sectionIndex, sectionTitle: sections[sectionIndex]?.title, privateVoiceConfigured: !!endpoint }) };
+  window.AcademyVoice = { start: startMode, stop: stopAll, open: mode => { setExpanded(true); if (mode) selectMode(mode); }, getStatus: () => ({ mode: selectedMode, playing, paused, dictating, connected: !!conversation, connecting: tutorConnecting, sectionIndex, sectionTitle: sections[sectionIndex]?.title, privateVoiceConfigured: !!endpoint }) };
 })();

@@ -9,14 +9,14 @@ An interactive educational prototype for learning cutting-tool design, from cutt
 - Rotatable 3D end mill, PCB microdrill and PCD tipped tool models.
 - Adjustable flute geometry, cross-sections, rake and clearance.
 - 17 beginner lessons with exercises and knowledge checks.
-- A persistent voice panel: section narration, reviewed dictation, and an optional private ElevenLabs tutor with natural-language navigation and quiz interaction.
+- An integrated voice companion in every lesson: section narration, contextual questions, reviewed dictation and a private ElevenLabs tutor with natural-language navigation and quiz interaction.
 - Page audio preparation and MP3 download for longer mobile listening when the private service is connected.
 - Milling calculations and an overhang demonstration with explicit assumptions.
 - Rollomatic and Tool Sketcher workflow lessons.
 - Seven failure investigations and a six-week shop-floor learning plan.
 - A customer brief builder, AI development roadmap, 49 glossary terms and 53 primary references.
 
-Start with the **Geometry lab**, then the first three lessons in **Learning path**. See the [quick-start guide](docs/Start-here.md).
+Start with **Start learning** on the learning path. **Continue lesson** returns to your most recently opened, unfinished lesson; **Listen & learn** opens it with narration. Explore the **Geometry lab** as concepts become familiar. See the [quick-start guide](docs/Start-here.md).
 
 ## Run locally
 
@@ -40,15 +40,15 @@ python3 scripts/build.py
 
 Commit the source changes and the regenerated `docs/` files, then push to `main`. GitHub Pages publishes the `docs/` directory from that branch.
 
-No package installation or build service is required. Python 3 uses only its standard library; the Three.js browser runtime is vendored in the repository.
+No package installation or build service is required. Python 3 uses only its standard library; the Three.js browser runtime and Inter font are vendored in the repository.
 
 ## Voice learning
 
-Open **Voice → Listen** to read the current lesson with play/pause, speed, section selection, and optional progression to the next lesson. **Dictate notes** lets you review words before appending them to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable.
+Choose **Listen to lesson** in the lesson companion, or **Listen** beside a specific section. The activity bar provides play/pause and stop without covering the reading flow; **Listening options** offers speed, section selection and optional progression to the next lesson. **Dictate** beside your notes opens a draft to review before adding words to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable.
 
-**Talk to tutor** supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template. The current frontend points to the deployed private voice service; a learner access code is supplied separately. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
+**Ask tutor**, or **Ask about this** beside a section, supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template. The current frontend points to the deployed private voice service; a learner access code is supplied separately. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
 
-Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Longer listening → Prepare page audio** creates a downloadable track for a separate audio player. The hosted service has been checked against ElevenLabs, including live text tutoring and WebRTC with a simulated microphone. Browser layouts are tested at phone widths; physical iOS/Android behavior may still vary.
+Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Listening options → Download this lesson as audio → Prepare audio** creates a downloadable track for a separate audio player. The hosted service has been checked against ElevenLabs, including live text tutoring and WebRTC with a simulated microphone. Browser layouts are tested at phone widths; physical iOS/Android behavior may still vary.
 
 ## Learning data and scope
 
@@ -60,4 +60,4 @@ The models are schematic and the calculations use stated idealizations. This is 
 
 ## Third-party software
 
-Three.js r128 is included under the [MIT License](src/vendor/THREE-LICENSE.txt). Its license is retained in the generated page and in `docs/THREE-LICENSE.txt`. The optional voice client loads the pinned official `@elevenlabs/client` 1.36.0 browser bundle from jsDelivr only when cloud voice is used. Linked reference material remains with its respective publishers.
+Three.js r128 is included under the [MIT License](src/vendor/THREE-LICENSE.txt). Its license is retained in the generated page and in `docs/THREE-LICENSE.txt`. The optional voice client loads the pinned official `@elevenlabs/client` 1.36.0 browser bundle from jsDelivr only when cloud voice is used. Inter by Rasmus Andersson is embedded under the [SIL Open Font License](src/vendor/INTER-LICENSE.txt), also included in `docs/INTER-LICENSE.txt`. Linked reference material remains with its respective publishers.

@@ -4,9 +4,11 @@ Open **index.html** in Chrome, Edge or another modern browser. The entire academ
 
 ## Start with these three activities
 
-1. **Geometry lab — 10 minutes.** Rotate the end mill, change flute count and core size, then compare its cross-section. Switch to the PCD tool and separate its segments. Finally, vary rake and clearance in the cutting-edge view.
-2. **Learning path — lessons 1–3.** Learn the complete cutting system, tool anatomy, and chips/forces/heat. Answer each knowledge check and record one question for the shop floor.
-3. **Shop-floor fieldbook — week 1.** Follow one real order from the customer requirement through design, manufacture, inspection and shipment. Record who owns each decision and the evidence they use.
+1. **Start learning — your first lesson.** Open the learning path and choose **Start learning**, or **Listen & learn** to begin with audio. Work through the first three lessons to understand the complete cutting system, tool anatomy, and chips, forces and heat. Answer each knowledge check and capture a question for the shop floor.
+2. **Geometry lab — 10 minutes.** Rotate the end mill, change flute count and core size, then compare its cross-section. Switch to the PCD tool and separate its segments. Finally, vary rake and clearance in the cutting-edge view.
+3. **Shop-floor fieldbook — week 1.** Follow one real order from customer requirement through design, manufacture, inspection and shipment. Record who owns each decision and the evidence they use.
+
+The home page remembers the last unfinished lesson you opened. Use **Continue lesson** when you return.
 
 ## What is included
 
@@ -21,12 +23,12 @@ Open **index.html** in Chrome, Edge or another modern browser. The entire academ
 
 ## Train by voice on your phone
 
-Open **Voice** at the bottom of any page.
+Voice is part of every lesson. On a phone, open the menu at the top left to move between the course and the labs.
 
-1. **Listen:** play the current section, adjust speed, skip sections, and optionally continue to the next lesson. Device narration uses your browser's speech feature.
-2. **Talk to tutor:** when the private service is connected, ask natural questions, request a simpler explanation, navigate lessons, explore the models, or answer a knowledge check aloud. You can interrupt the tutor or switch to text.
-3. **Dictate notes:** choose a destination, dictate or use your phone keyboard's microphone, review the draft, then tap **Add text**. **Undo last addition** preserves later edits. Saved notes remain available under **Saved words at this destination**.
-4. **Longer listening:** with ElevenLabs connected, prepare and download a page as MP3 for playback in a separate audio player.
+1. **Listen to lesson:** tap the lesson companion to begin. Use **Listen** beside any section to start there. Pause or resume from the small activity bar. **Listening options** contains speed, voice selection and automatic progression.
+2. **Ask your tutor:** talk naturally, request a simpler explanation, explore a model or answer a knowledge check aloud. **Ask about this** focuses the conversation on that section. Enter your private academy access code when prompted; you can interrupt the tutor or use text.
+3. **Dictate:** tap the button beside **Your notes**, speak, choose **Finish**, review your words, then tap **Add to notes**. **Undo last addition** preserves later edits. You can also type or use your phone keyboard's microphone.
+4. **Download lesson audio:** open **Listening options → Download this lesson as audio → Prepare audio**, then download the track for playback in a separate audio player. This uses your private ElevenLabs voice.
 
 Use **Stop all** to end playback and microphone capture. Keep this page open for live conversation; switching apps or locking the phone may interrupt it. Listening does not automatically pass a quiz or complete a lesson.
 
@@ -34,16 +36,16 @@ Use the hosted academy for cloud voice and enter your private learner access cod
 
 ## Keep your work
 
-Lesson progress, notes and brief entries save in the current browser. Use **Export learning record** to keep a backup, and **Export engineering brief** to save your intake form. These exports are readable JSON records; this edition does not have a restore/import feature. Browser storage may differ when you open the file in a different browser, move it, or use the local preview instead of the file.
+Lesson progress, notes and brief entries save in the current browser. Use **Export your notes** to keep a backup, and **Export engineering brief** to save your intake form. These exports are readable JSON records; this edition does not have a restore/import feature. Browser storage may differ when you open the file in a different browser, move it, or use the local preview instead of the file.
 
 ## Scope of this edition
 
 This is a broad foundation for rotary PCB, carbide and PCD tooling, tailored to a beginner entering an AI leadership role. The geometry is schematic; the arithmetic uses stated idealizations. The academy does not produce CAD/CAM files, qualified grinding or cutting settings, or a validated tool design.
 
-Rollomatic documents it as producing 2D drawings from VirtualGrind Pro 3D tool simulations. Confirm the installed machine models, software versions, tooling options and approved application specifications before applying any workflow.
+Rollomatic documents Tool Sketcher as producing 2D drawings from VirtualGrind Pro 3D tool simulations. Confirm the installed machine models, software versions, tooling options and approved application specifications before applying any workflow.
 
 To make the next edition specific to CTC, assemble a redacted approved drawing, parent simulation/program reference, inspection report and trial history for one PCB drill, one PCB router, one carbide milling tool and one PCD tool. Include a known failure as well as a successful revision.
 
 The longer-term AI opportunity is to connect customer inputs to proven design families and their evidence, generate constrained proposals, verify manufacturing feasibility, and learn from measured trials under engineering release control.
 
-Original academy built 23 September 2026; local voice edition added 12 November 2026. Three.js r128 is included under the MIT License; see THREE-LICENSE.txt.
+Original academy built 23 September 2026; voice learning redesigned 12 November 2026. Three.js r128 is included under the MIT License; see THREE-LICENSE.txt. Inter is included under the SIL Open Font License; see INTER-LICENSE.txt.

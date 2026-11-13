@@ -72,7 +72,7 @@
   function currentRoute() {
     const hash = location.hash.replace(/^#/, '');
     if (hash.startsWith('lesson/') && DATA.modules.some(module => `lesson/${module.id}` === hash)) return hash;
-    return nav.some(([id]) => id === hash) ? hash : 'lab';
+    return nav.some(([id]) => id === hash) ? hash : 'learn';
   }
 
   function currentLesson() {
@@ -223,12 +223,12 @@
 
     if (routeName === 'learn') {
       return [section('learn:intro', 'Your learning path',
-        'Work through the lessons in order. Each includes concepts, a shop-floor exercise and a knowledge check. Pair study with the six-week fieldbook.', query('.page-heading')),
+        'Work through the lessons in order. Each includes concepts, a shop-floor exercise and a knowledge check. Pair study with the six-week fieldbook.', query('.academy-hero')),
       ...['Fundamentals', 'Applications', 'Manufacturing', 'AI & Leadership'].map((group, index) => section(
         `learn:group:${index}`, group,
         lessonCatalogue().filter(module => module.group === group)
           .map(module => `Lesson ${module.number}. ${module.title}. ${module.subtitle}`).join('\n'),
-        queryAll('.module-grid')[index]
+        queryAll('.module-list')[index]
       ))];
     }
 
