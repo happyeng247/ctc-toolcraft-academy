@@ -159,7 +159,7 @@ function fixture({ lessonText = 'Understand the cutting edge.', realContent = fa
     exercise: { prompt: 'Observe one edge.', answer: 'HIDDEN_EXERCISE_ANSWER' },
     quiz: { question: 'Which part cuts?', options: ['The edge', 'The label'], correct: 0, explanation: 'HIDDEN_QUIZ_EXPLANATION' }, sources: [],
   };
-  main.innerHTML = '<div class="page-heading"><h1>First lesson</h1></div><article class="lesson-body"><div class="learning-objectives">Objectives</div><section class="lesson-section"><h3>Dimensions</h3></section><section class="lesson-section"><details><summary>Reveal</summary></details></section><section class="lesson-section"><div class="quiz-options"><button data-answer="0">The edge</button><button data-answer="1">The label</button></div><div id="quiz-feedback"></div></section></article><textarea id="lesson-notes"></textarea>';
+  main.innerHTML = '<div class="page-heading"><h1>First lesson</h1></div><div id="voice-learning-slot"></div><article class="lesson-body"><div class="learning-objectives">Objectives</div><section class="lesson-section"><h3>Dimensions</h3></section><section class="lesson-section"><details><summary>Reveal</summary></details></section><section class="lesson-section"><div class="quiz-options"><button data-answer="0">The edge</button><button data-answer="1">The label</button></div><div id="quiz-feedback"></div></section></article><textarea id="lesson-notes"></textarea>';
   const records = { spoken: [], cancellations: 0, fetches: [], sessions: [], recognizers: [], scribes: [], saves: 0 };
   const sessionStartGate = delaySessionStart ? deferred() : null;
   const timers = new Map(); let timerId = 0;
@@ -487,6 +487,139 @@ test('exhausted ElevenLabs credits continue the same lesson using device speech 
   await h.drainSpeech(); h.click('voice-read'); await flush();
   assert.equal(requests, 1, 'Continuing or replaying must not repeat a paid request after fallback');
   assert.ok(!h.document.body.textContent.includes('PRIVATE_PROVIDER_DETAIL'));
+  const saved = JSON.parse(h.context.localStorage.getItem('ctc-voice-preferences-v1'));
+  const reopened = fixture({ initialPreferences: saved });
+  assert.equal(reopened.get('voice-notice').hidden, false, 'The reason for device listening survives a reload');
+  assert.match(reopened.get('voice-inline-notice').textContent, /ElevenLabs.*credits.*device voice/);
+  assert.equal(reopened.get('voice-inline-elevenlabs').hidden, false);
+  await reopened.voice.start('listen'); await flush();
+  assert.equal(reopened.records.fetches.length, 0, 'Reloading never retries paid audio automatically');
+  assert.equal(reopened.records.spoken.length, 1);
+});
+
+test('deliberate engine choices clear the saved fallback reason without forcing a cloud retry', () => {
+  const fresh = fixture();
+  assert.equal(fresh.get('voice-engine').value, 'device');
+  assert.equal(fresh.get('voice-inline-elevenlabs').hidden, false);
+  assert.equal(fresh.get('voice-inline-notice').hidden, true);
+  for (const engine of ['device', 'elevenlabs']) {
+    const h = fixture({ initialPreferences: { engine: 'device', fallbackReason: 'quota' } });
+    h.change('voice-engine', engine);
+    const saved = JSON.parse(h.context.localStorage.getItem('ctc-voice-preferences-v1'));
+    const reopened = fixture({ initialPreferences: saved });
+    assert.equal(reopened.get('voice-engine').value, engine);
+    assert.equal(reopened.get('voice-inline-notice').hidden, true);
+    assert.equal(reopened.get('voice-inline-elevenlabs').hidden, engine === 'elevenlabs');
+    assert.equal(h.records.fetches.length + reopened.records.fetches.length, 0);
+  }
+});
+
+test('the visible ElevenLabs choice starts the selected section only after normal authentication', async () => {
+  const h = visualLessonFixture({ initialPreferences: { engine: 'device', fallbackReason: 'quota' } });
+  h.window.dispatchEvent(new MockEvent('academy:visual-step', { detail: { lessonId: 'first', sectionIndex: 1 } }));
+  h.document.dispatchEvent(new MockEvent('click', { target: h.get('voice-inline-elevenlabs') })); await flush();
+  assert.equal(h.get('voice-engine').value, 'elevenlabs');
+  assert.equal(h.get('voice-auth').hidden, false);
+  assert.equal(h.get('voice-inline-elevenlabs').hidden, true);
+  assert.equal(h.get('voice-inline-notice').hidden, true);
+  assert.equal(h.records.fetches.length + h.records.spoken.length, 0, 'Choosing a cloud voice cannot bypass the access code');
+  await h.unlock(); await flush();
+  const requests = h.records.fetches.filter(call => call.action === 'tts');
+  assert.equal(requests.length, 1);
+  assert.match(requests[0].text, /PLAIN_SECOND_SECTION/);
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.equal(h.get('voice-audio-player').plays, 1);
+});
+
+for (const responseKind of ['audio', 'quota fallback']) {
+  test(`Pause while TTS is preparing also pauses the eventual ${responseKind}`, async () => {
+    const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+    const response = deferred(); h.context.fetch = () => response.promise;
+    const pending = h.voice.start('listen'); await flush();
+    h.click('voice-quick-pause');
+    response.resolve(responseKind === 'audio'
+      ? { ok: true, headers: { get: () => 'audio/mpeg' }, blob: async () => new Blob(['offline-audio'], { type: 'audio/mpeg' }) }
+      : { ok: false, status: 402, json: async () => ({ error: 'provider_quota_exceeded' }) });
+    await pending; await flush();
+    assert.equal(h.voice.getStatus().paused, true);
+    assert.equal(h.get('voice-audio-player').plays || 0, 0);
+    assert.equal(h.records.spoken.length, 0, 'No output begins while the learner has paused');
+    h.click('voice-read'); await flush();
+    assert.equal(h.voice.getStatus().paused, false);
+    assert.equal(responseKind === 'audio' ? h.get('voice-audio-player').plays : h.records.spoken.length, 1);
+  });
+}
+
+for (const outcome of ['resolve', 'reject']) {
+  for (const stage of ['initial playback', 'blocked playback retry', 'paused playback resume']) {
+    test(`Stop survives a late media ${outcome} during ${stage}`, async () => {
+      const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+      const audio = h.get('voice-audio-player');
+      if (stage === 'blocked playback retry') audio.play = () => Promise.reject(new Error('gesture required'));
+      if (stage !== 'initial playback') {
+        await h.voice.start('listen'); await flush();
+        if (stage === 'paused playback resume') h.click('voice-read');
+      }
+      const media = deferred(); audio.play = () => media.promise;
+      const pending = stage === 'initial playback' ? h.voice.start('listen') : h.click('voice-read'); await flush();
+      await h.voice.stop();
+      const stoppedStatus = h.get('voice-status').textContent;
+      outcome === 'resolve' ? media.resolve() : media.reject(new Error('play interrupted'));
+      await pending; await flush();
+      assert.equal(h.voice.getStatus().playing, false);
+      assert.equal(h.get('voice-read').textContent, 'Play from here');
+      assert.equal(h.get('voice-status').textContent, stoppedStatus);
+      assert.equal(h.get('voice-error').hidden, true);
+      assert.equal(h.get('voice-dock').hidden, true, 'A stale media callback cannot reopen the controls');
+    });
+  }
+  test(`Pause survives a late media ${outcome} and can subsequently resume`, async () => {
+    const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+    const audio = h.get('voice-audio-player');
+    const media = deferred(); audio.play = () => media.promise;
+    const pending = h.voice.start('listen'); await flush();
+    h.click('voice-quick-pause');
+    outcome === 'resolve' ? media.resolve() : media.reject(new Error('play interrupted'));
+    await pending; await flush();
+    assert.equal(h.voice.getStatus().paused, true);
+    assert.equal(h.get('voice-read').textContent, 'Resume');
+    assert.equal(h.get('voice-error').hidden, true);
+    audio.play = Element.prototype.play;
+    await h.click('voice-read'); await flush();
+    assert.equal(h.voice.getStatus().paused, false);
+    assert.equal(audio.plays, 1);
+  });
+}
+
+test('Listen and watch retries the prepared mobile audio without rebuilding or requesting it again', async () => {
+  const h = visualLessonFixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+  let blobUrls = 0;
+  h.context.URL.createObjectURL = () => `blob:offline-${++blobUrls}`;
+  const audio = h.get('voice-audio-player');
+  audio.play = () => Promise.reject(new Error('gesture required'));
+  await h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  audio.play = Element.prototype.play;
+  h.window.dispatchEvent(new MockEvent('academy:visual-listen', { detail: { lessonId: 'first', sectionIndex: 1 } })); await flush();
+  assert.equal(blobUrls, 1, 'The tap uses the already prepared audio source');
+  assert.equal(audio.plays, 1);
+  assert.equal(h.records.fetches.filter(call => call.action === 'tts').length, 1);
+  assert.equal(h.voice.getStatus().paused, false);
+});
+
+test('mobile media controls keep narration state aligned and cannot restart stopped audio', async () => {
+  const h = fixture(); await h.unlock(); h.change('voice-engine', 'elevenlabs');
+  const controls = new Map();
+  h.context.navigator.mediaSession = { setActionHandler: (name, handler) => controls.set(name, handler) };
+  h.window.MediaMetadata = h.context.MediaMetadata = class {};
+  await h.voice.start('listen'); await flush();
+  controls.get('pause')();
+  assert.equal(h.voice.getStatus().paused, true);
+  await controls.get('play')(); await flush();
+  assert.equal(h.voice.getStatus().paused, false);
+  const plays = h.get('voice-audio-player').plays;
+  await h.voice.stop(); controls.get('play')(); await flush();
+  assert.equal(h.get('voice-audio-player').plays, plays);
+  assert.equal(h.voice.getStatus().playing, false);
 });
 
 for (const cancellation of ['stop', 'route']) {

@@ -1406,19 +1406,21 @@ route();
   let preferences = {};
   try { preferences = JSON.parse(localStorage.getItem('ctc-voice-preferences-v1') || '{}'); } catch (_) {}
   const prefs = {
-    rate: 1, engine: 'device', continueLesson: false, bookmarks: {}, bookmarkIds: {},
+    rate: 1, engine: 'device', fallbackReason: '', continueLesson: false, bookmarks: {}, bookmarkIds: {},
     ...preferences,
   };
   if (![0.75, 1, 1.25, 1.5].includes(Number(prefs.rate))) prefs.rate = 1;
   if (!['device', 'elevenlabs'].includes(prefs.engine)) prefs.engine = 'device';
+  if (prefs.engine !== 'device' || prefs.fallbackReason !== 'quota') prefs.fallbackReason = '';
+  const quotaFallbackNotice = 'ElevenLabs reported insufficient credits. Listening uses your device voice. Choose Use ElevenLabs voice to try again.';
   let endpoint = normalizeEndpoint(prefs.endpoint || config.endpoint ||
     (location.hostname.endsWith('.vercel.app') ? `${location.origin}/api/voice` : ''));
-  let sessionToken = '', sessionExpiresAt = 0, voiceNotice = '';
+  let sessionToken = '', sessionExpiresAt = 0, voiceNotice = prefs.fallbackReason === 'quota' ? quotaFallbackNotice : '';
   let expanded = false, selectedMode = 'listen', currentRoute = '';
   let sections = [], sectionIndex = 0, generation = 0, tutorGeneration = 0, operation = 0;
   let continuationTimer = null, autoContinueRoute = '', wakeGeneration = 0;
   let playing = false, paused = false, narrationKind = '', utterance = null;
-  let currentAudio = null, currentAudioUrl = '', pendingPlay = false;
+  let currentAudio = null, currentAudioUrl = '', pendingPlay = false, mediaPlayGeneration = 0;
   let conversation = null, tutorConnecting = false, tutorTextOnly = false, muted = false;
   let recognizer = null, scribe = null, dictating = false, dictateGeneration = 0;
   let scribePartial = '', finishingDictation = false, dictationFinishTimer = null, questionSending = false;
@@ -1458,8 +1460,13 @@ route();
       if (element) { element.textContent = message; element.hidden = !message; }
     }
   }
-  function chooseDeviceVoice(message = '') {
-    prefs.engine = 'device'; find('voice-engine').value = 'device'; storePreferences(); notice(message);
+  function chooseDeviceVoice(message = '', fallbackReason = '') {
+    prefs.engine = 'device'; prefs.fallbackReason = fallbackReason;
+    find('voice-engine').value = 'device'; storePreferences(); notice(message); updateSurface();
+  }
+  function changeListeningEngine(engine) {
+    stopNarration(); prefs.engine = engine; prefs.fallbackReason = '';
+    find('voice-engine').value = engine; storePreferences(); notice(); status('Voice changed · press Play');
   }
   function error(message = '') {
     find('voice-error').textContent = message;
@@ -1492,6 +1499,8 @@ route();
     }
     const inlineAsk = find('voice-inline-tutor');
     if (inlineAsk) inlineAsk.textContent = conversation || tutorConnecting ? 'Open conversation ↗' : 'Ask your tutor ↗';
+    const inlineElevenLabs = find('voice-inline-elevenlabs');
+    if (inlineElevenLabs) { inlineElevenLabs.hidden = prefs.engine !== 'device'; inlineElevenLabs.disabled = !sections.length; }
   }
   function setExpanded(value) {
     if (!value && find('voice-panel').contains?.(document.activeElement)) {
@@ -1512,11 +1521,12 @@ route();
   function mountInline() {
     const slot = find('voice-learning-slot');
     if (!slot || slot.querySelector('.voice-inline')) return;
-    slot.innerHTML = `<div class="voice-inline"><div class="voice-inline-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div class="voice-inline-copy"><span class="eyebrow">LEARN YOUR WAY</span><strong>Read. Listen. Talk it through.</strong><p id="voice-inline-status" role="status" aria-live="polite"></p><small id="voice-inline-section" hidden></small><small id="voice-inline-notice" hidden></small></div><div class="voice-inline-actions"><button type="button" class="button primary" id="voice-inline-listen" data-voice-action="listen">▶ Listen to lesson</button><button type="button" class="button" id="voice-inline-tutor" data-voice-action="tutor">Ask your tutor ↗</button><button type="button" class="voice-text-button" id="voice-inline-next" data-voice-next hidden>Next section →</button><button type="button" class="voice-text-button voice-options" data-voice-panel="listen" aria-label="Listening options and audio download">Listening options</button></div></div>`;
+    slot.innerHTML = `<div class="voice-inline"><div class="voice-inline-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div><div class="voice-inline-copy"><span class="eyebrow">LEARN YOUR WAY</span><strong>Read. Listen. Talk it through.</strong><p id="voice-inline-status" role="status" aria-live="polite"></p><small id="voice-inline-section" hidden></small><small id="voice-inline-notice" hidden></small></div><div class="voice-inline-actions"><button type="button" class="button primary" id="voice-inline-listen" data-voice-action="listen">▶ Listen to lesson</button><button type="button" class="button" id="voice-inline-elevenlabs" data-voice-engine-choice="elevenlabs">Use ElevenLabs voice</button><button type="button" class="button" id="voice-inline-tutor" data-voice-action="tutor">Ask your tutor ↗</button><button type="button" class="voice-text-button" id="voice-inline-next" data-voice-next hidden>Next section →</button><button type="button" class="voice-text-button voice-options" data-voice-panel="listen" aria-label="Listening options and audio download">Listening options</button></div></div>`;
     notice(voiceNotice); updateSurface();
   }
   async function startMode(mode, options = {}) {
     if (!['listen', 'tutor', 'dictate'].includes(mode)) return;
+    const previousSectionId = sections[sectionIndex]?.id;
     if (typeof options.sectionId === 'string') {
       refreshSections();
       const selected = sections.findIndex(part => part.id === options.sectionId);
@@ -1533,7 +1543,7 @@ route();
       showSavedWords();
     }
     if (mode === 'listen') {
-      if (playing && !Number.isInteger(options.sectionIndex)) toggleReading();
+      if (playing && (!Number.isInteger(options.sectionIndex) || ((paused || pendingPlay) && sections[sectionIndex]?.id === previousSectionId))) toggleReading();
       else await startReading(sectionIndex);
       return;
     }
@@ -1740,7 +1750,7 @@ route();
     } catch (_) {}
   }
   function stopNarration() {
-    generation++; clearTimeout(continuationTimer); autoContinueRoute = '';
+    generation++; mediaPlayGeneration++; clearTimeout(continuationTimer); autoContinueRoute = '';
     keepAwake(false);
     playing = false; paused = false; pendingPlay = false;
     window.speechSynthesis?.cancel();
@@ -1859,9 +1869,31 @@ route();
     currentAudio.onpause = () => { if (navigator.mediaSession) navigator.mediaSession.playbackState = 'paused'; };
     if (navigator.mediaSession && window.MediaMetadata) {
       navigator.mediaSession.metadata = new MediaMetadata({ title, artist: 'CTC Toolcraft Academy', album: 'Voice learning' });
-      for (const [action, handler] of Object.entries({ play: () => currentAudio?.play().catch(() => {}), pause: () => currentAudio?.pause(), stop: () => stopAll(), nexttrack: () => moveSection(1), previoustrack: () => moveSection(-1) })) {
+      for (const [action, handler] of Object.entries({
+        play: () => narrationKind === 'section' ? playing && (paused || pendingPlay) && toggleReading() : currentAudio?.play().catch(() => {}),
+        pause: () => narrationKind === 'section' ? playing && !paused && toggleReading() : currentAudio?.pause(),
+        stop: () => stopAll(), nexttrack: () => moveSection(1), previoustrack: () => moveSection(-1)
+      })) {
         try { navigator.mediaSession.setActionHandler(action, handler); } catch (_) {}
       }
+    }
+  }
+  async function playNarrationAudio(run = generation) {
+    const audio = currentAudio;
+    if (!audio || run !== generation || !playing || paused) return;
+    const attempt = ++mediaPlayGeneration;
+    pendingPlay = false;
+    find('voice-read').textContent = 'Pause';
+    status('Starting audio…', true); keepAwake(true);
+    try {
+      await audio.play();
+      if (run !== generation || attempt !== mediaPlayGeneration || audio !== currentAudio || !playing || paused) return;
+      find('voice-read').textContent = 'Pause';
+      status(`Reading · ${sections[sectionIndex]?.title}`, true); keepAwake(true);
+    } catch (_) {
+      if (run !== generation || attempt !== mediaPlayGeneration || audio !== currentAudio || !playing || paused) return;
+      pendingPlay = true; find('voice-read').textContent = 'Tap to hear';
+      status('Audio ready · tap Play to hear it'); keepAwake(false);
     }
   }
   async function startReading(index = sectionIndex, requestedId = sections[index]?.id) {
@@ -1887,14 +1919,14 @@ route();
         if (run !== generation) return;
         useAudioBlob(blob, part.title, done);
         find('voice-audio-player').hidden = true;
-        try { await currentAudio.play(); status(`Reading · ${part.title}`, true); }
-        catch (_) { pendingPlay = true; find('voice-read').textContent = 'Tap to hear'; status('Audio ready · tap to hear'); }
+        if (!paused) await playNarrationAudio(run);
       }
     } catch (err) {
       if (run !== generation) return;
       if (err.code === 'provider_quota_exceeded' && window.speechSynthesis && window.SpeechSynthesisUtterance) {
-        chooseDeviceVoice('ElevenLabs credits are too low for this lesson. Listening continues with your device voice.');
+        chooseDeviceVoice(quotaFallbackNotice, 'quota');
         try {
+          if (paused) return;
           status(`Device voice · ${part.title}`, true);
           deviceNarration(`${part.title}. ${part.text}`, run, done);
           return;
@@ -1917,14 +1949,19 @@ route();
   }
   function toggleReading() {
     if (pendingPlay && currentAudio) {
-      currentAudio.play().then(() => { pendingPlay = false; status('Reading with ElevenLabs', true); find('voice-read').textContent = 'Pause'; })
-        .catch(() => error('Tap the audio player to allow playback in this browser.'));
-      return;
+      paused = false;
+      return playNarrationAudio();
     }
     if (!playing) { startReading(); return; }
     paused = !paused;
-    if (prefs.engine === 'device') paused ? speechSynthesis.pause() : speechSynthesis.resume();
-    else if (currentAudio) paused ? currentAudio.pause() : currentAudio.play().catch(() => { pendingPlay = true; });
+    if (paused) mediaPlayGeneration++;
+    if (prefs.engine === 'device') {
+      if (!paused && !utterance) return startReading(sectionIndex);
+      paused ? speechSynthesis.pause() : speechSynthesis.resume();
+    } else if (currentAudio) {
+      if (paused) currentAudio.pause();
+      else return playNarrationAudio();
+    }
     find('voice-read').textContent = paused ? 'Resume' : 'Pause';
     status(paused ? 'Reading paused' : `Reading · ${sections[sectionIndex]?.title}`, !paused);
     keepAwake(!paused);
@@ -2351,7 +2388,7 @@ route();
     if (event.target.matches('#lesson-notes, [data-brief], #voice-question')) previousFocusedField = event.target;
   });
   for (const name of ['click', 'input', 'change']) document.getElementById('main').addEventListener(name, event => {
-    if (event.target.closest('#lesson-visual, [data-voice-action], [data-voice-panel], [data-voice-next], .voice-section-trigger') || event.target.matches('textarea')) return;
+    if (event.target.closest('#lesson-visual, [data-voice-action], [data-voice-engine-choice], [data-voice-panel], [data-voice-next], .voice-section-trigger') || event.target.matches('textarea')) return;
     clearTimeout(contextTimer); contextTimer = setTimeout(() => { refreshSections(); sendContext(); }, 200);
   });
   document.addEventListener('visibilitychange', () => {
@@ -2367,6 +2404,7 @@ route();
   document.addEventListener('click', event => {
     const action = event.target.closest?.('[data-voice-action]');
     const panel = event.target.closest?.('[data-voice-panel]');
+    const engineChoice = event.target.closest?.('[data-voice-engine-choice]');
     if (action) {
       launchElement = action;
       const sectionId = action.getAttribute('data-voice-section-id');
@@ -2374,6 +2412,9 @@ route();
       const options = sectionId !== null ? { sectionId } : value === null ? {} : { sectionIndex: Number(value) };
       if (action.dataset.voiceTarget) options.target = action.dataset.voiceTarget;
       startMode(action.dataset.voiceAction, options);
+    } else if (engineChoice?.dataset.voiceEngineChoice === 'elevenlabs') {
+      launchElement = find('voice-inline-listen') || engineChoice;
+      launchElement.focus(); changeListeningEngine('elevenlabs'); selectMode('listen'); startReading(sectionIndex);
     } else if (panel) {
       launchElement = panel; selectMode(panel.dataset.voicePanel); setExpanded(true);
     } else if (event.target.closest?.('[data-voice-next]')) moveSection(1);
@@ -2410,7 +2451,7 @@ route();
     if (playing && prefs.engine === 'device') startReading(sectionIndex);
   };
   find('voice-engine').value = prefs.engine;
-  find('voice-engine').onchange = event => { stopNarration(); prefs.engine = event.target.value; storePreferences(); notice(); status('Voice changed · press Play'); };
+  find('voice-engine').onchange = event => changeListeningEngine(event.target.value);
   find('voice-continue').checked = Boolean(prefs.continueLesson);
   find('voice-continue').onchange = event => { prefs.continueLesson = event.target.checked; storePreferences(); };
   find('voice-full-audio').onclick = preparePageAudio;
@@ -2447,7 +2488,7 @@ route();
   };
   find('voice-signout').onclick = async () => { await stopAll(); sessionToken = ''; sessionExpiresAt = 0; audioCache.clear(); find('voice-connection-status').textContent = 'Private voice locked.'; };
   find('voice-connection-status').textContent = endpoint ? 'Private voice service configured; enter your access code when connecting.' : 'ElevenLabs is not connected yet. Device narration is available.';
-  onRoute();
+  notice(voiceNotice); onRoute();
   window.AcademyVoice = { start: startMode, stop: stopAll, open: mode => { setExpanded(true); if (mode) selectMode(mode); }, getStatus: () => ({ mode: selectedMode, playing, paused, dictating, connected: !!conversation, connecting: tutorConnecting, sectionIndex, sectionTitle: sections[sectionIndex]?.title, privateVoiceConfigured: !!endpoint }) };
 })();
 </script>

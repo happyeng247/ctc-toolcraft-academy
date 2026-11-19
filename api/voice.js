@@ -123,10 +123,10 @@ function providerFailure(status, code) {
   // Only fixed categories cross the provider boundary. Never forward its message,
   // request ID, parameter values, or an unrecognized code to the browser or logs.
   if (status === 429) return new VoiceError(429, 'provider_busy', 'The voice service is busy. Try again shortly.');
-  if (status === 402 || ['quota_exceeded', 'insufficient_credits'].includes(code)) {
+  if (status === 402 || ['quota_exceeded', 'insufficient_credits', 'payment_required'].includes(code)) {
     return new VoiceError(402, 'provider_quota_exceeded', 'There are not enough ElevenLabs credits for this request. You can keep listening with your device voice.');
   }
-  if (['invalid_api_key', 'missing_api_key', 'voice_not_found', 'agent_not_found', 'model_access_denied', 'insufficient_permissions'].includes(code)) {
+  if (status === 401 || ['invalid_api_key', 'missing_api_key', 'authentication_error', 'authorization_error', 'voice_not_found', 'agent_not_found', 'model_access_denied', 'insufficient_permissions'].includes(code)) {
     return new VoiceError(503, 'provider_not_configured', 'The private voice service needs attention from the academy owner. You can keep listening with your device voice.');
   }
   if (['max_character_limit_exceeded', 'text_too_long'].includes(code)) {
@@ -171,11 +171,11 @@ function createHandler({ env = process.env, fetchImpl = (...args) => fetch(...ar
         try {
           const bytes = await readLimited(response, MAX_PROVIDER_ERROR_BYTES);
           const detail = JSON.parse(bytes.toString('utf8'))?.detail;
-          code = typeof detail?.code === 'string' && detail.code ? detail.code : detail?.status;
+          code = typeof detail?.code === 'string' && detail.code ? detail.code : detail?.status || detail?.type;
         } catch (error) {
           if (controller.signal.aborted) throw error;
           // Malformed and oversized error bodies remain generic; status-only
-          // payment, busy, and timeout failures are still actionable.
+          // authentication, payment, busy, and timeout failures are still actionable.
         }
         const failure = providerFailure(response.status, code);
         logger.warn('Voice provider request failed', { status: response.status, category: failure.code });

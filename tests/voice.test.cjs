@@ -184,16 +184,16 @@ test('dictation mints only a realtime_scribe single-use token', async () => {
 
 test('provider errors, invalid data and failures never expose provider response details', async () => {
   const secret = 'private-provider-error-detail';
-  for (const responder of [
-    () => new Response(secret, { status: 401 }),
-    () => { throw Error(secret); },
-    () => new Response(secret),
-    () => Response.json({ unexpected: secret }),
-    () => new Response('{}', { headers: { 'content-length': '99999999' } })
+  for (const [responder, expectedStatus] of [
+    [() => new Response(secret, { status: 401 }), 503],
+    [() => { throw Error(secret); }, 502],
+    [() => new Response(secret), 502],
+    [() => Response.json({ unexpected: secret }), 502],
+    [() => new Response('{}', { headers: { 'content-length': '99999999' } }), 502]
   ]) {
     const f = fixture(responder);
     const response = await invoke(f.handler, { action: 'session' }, auth(await unlock(f)));
-    assert.equal(response.status, 502);
+    assert.equal(response.status, expectedStatus);
     assert.ok(!response.bytes.includes(secret));
     assert.ok(!response.bytes.includes(ENV.ELEVENLABS_API_KEY));
   }
@@ -266,22 +266,39 @@ test('provider text length, busy and timeout failures return stable actionable c
   }
 });
 
-test('unknown or oversized provider error details remain generic and cannot reach public responses or logs', async () => {
+test('unknown or oversized provider errors expose only a safe status category, never details or keys', async () => {
   const secret = 'unknown-provider-detail-that-must-stay-private';
-  for (const responseFactory of [
-    () => Response.json({ detail: { code: secret, status: 'quota_exceeded', message: ENV.ELEVENLABS_API_KEY } }, { status: 401 }),
-    () => Response.json({ detail: { code: 'quota_exceeded', message: secret.repeat(400) } }, { status: 401 }),
-    () => new Response(secret, { status: 401 }),
-    () => Response.json({ detail: { code: { message: secret } } }, { status: 400 })
+  for (const [responseFactory, status, code] of [
+    [() => Response.json({ detail: { code: secret, status: 'quota_exceeded', message: ENV.ELEVENLABS_API_KEY } }, { status: 401 }), 503, 'provider_not_configured'],
+    [() => Response.json({ detail: { code: 'quota_exceeded', message: secret.repeat(400) } }, { status: 401 }), 503, 'provider_not_configured'],
+    [() => new Response(secret, { status: 401 }), 503, 'provider_not_configured'],
+    [() => Response.json({ detail: { code: { message: secret } } }, { status: 400 }), 502, 'provider_unavailable']
   ]) {
     const f = fixture(responseFactory);
     const response = await invoke(f.handler, { action: 'session' }, auth(await unlock(f)));
-    assert.equal(response.status, 502);
-    assert.equal(response.json().error, 'provider_unavailable');
+    assert.equal(response.status, status);
+    assert.equal(response.json().error, code);
     assert.ok(!response.bytes.includes(secret));
     const logs = JSON.stringify(f.providerErrors);
     assert.ok(!logs.includes(secret));
     assert.ok(!logs.includes(ENV.ELEVENLABS_API_KEY));
+  }
+});
+
+test('typed provider authentication and payment errors stay actionable without exposing details', async () => {
+  for (const [status, type, expectedStatus, expectedCode] of [
+    [401, 'authentication_error', 503, 'provider_not_configured'],
+    [400, 'authentication_error', 503, 'provider_not_configured'],
+    [403, 'authorization_error', 503, 'provider_not_configured'],
+    [402, 'payment_required', 402, 'provider_quota_exceeded'],
+    [400, 'payment_required', 402, 'provider_quota_exceeded']
+  ]) {
+    const f = fixture(() => Response.json({ detail: { type, message: ENV.ELEVENLABS_API_KEY } }, { status }));
+    const response = await invoke(f.handler, { action: 'tts', text: 'Voice check.' }, auth(await unlock(f)));
+    assert.equal(response.status, expectedStatus);
+    assert.equal(response.json().error, expectedCode);
+    assert.equal(f.calls.length, 1, 'No automatic paid retries');
+    assert.ok(!response.bytes.includes(ENV.ELEVENLABS_API_KEY));
   }
 });
 

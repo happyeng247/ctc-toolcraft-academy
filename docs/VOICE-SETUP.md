@@ -85,6 +85,8 @@ Dictation uses a [single-use realtime Scribe token](https://elevenlabs.io/docs/a
 
 Errors have the shape `{"error":"stable_code","message":"safe explanation"}`. Typical statuses are 400 for invalid input, 401 for a wrong code or expired session, 403 for origin rejection, 413 for size, 415 for content type, 429 for limits, 502/504 for provider failures, and 503 when private voice is not configured. Provider error bodies and keys are not forwarded. Responses are never cached.
 
+A provider HTTP 401 is classified as `provider_not_configured` (HTTP 503), unless its recognized error identifies insufficient credits. This keeps rejected or expired provider credentials distinct from a learner's access code and from a temporary outage. The gateway accepts legacy `detail.status`, modern `detail.code`, and typed `detail.type` errors. Check the provider key's expiry and permissions when reconnecting; updating the host secret requires a new deployment.
+
 ## Tutor controls and learning boundaries
 
 The browser registers exactly two [client tools](https://elevenlabs.io/docs/eleven-agents/customization/tools/client-tools):

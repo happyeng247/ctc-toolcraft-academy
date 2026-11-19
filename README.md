@@ -53,6 +53,8 @@ Choose **Listen & watch** in the 3D demonstration to start at the selected step,
 
 If ElevenLabs cannot cover a lesson passage with the remaining account credits, narration switches to the device voice and explains the change. A download that exceeds the allowance shows a clear credit message and offers device listening instead. Live tutoring and downloadable audio still require available ElevenLabs credits.
 
+Choose **Use ElevenLabs voice** in the lesson companion to switch back explicitly. A credit fallback remains explained after a reload, and never triggers an automatic paid retry. Pause and Stop also apply while audio is being prepared. If a provider key expires or is rejected, the service reports that its connection needs attention instead of asking the learner to retry indefinitely.
+
 Keep the page in the foreground for live conversation. Mobile browsers may suspend the microphone or narration when locked or backgrounded. Once connected, **Listening options → Download this lesson as audio → Prepare audio** creates a downloadable track for a separate audio player. The hosted service has been checked against ElevenLabs, including live text tutoring and WebRTC with a simulated microphone. Browser layouts are tested at phone widths; physical iOS/Android behavior may still vary.
 
 ## Learning data and scope
