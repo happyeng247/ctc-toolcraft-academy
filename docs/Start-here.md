@@ -4,15 +4,18 @@ Open **index.html** in Chrome, Edge or another modern browser. The entire academ
 
 ## Start with these three activities
 
-1. **Start learning — your first lesson.** Open the learning path and choose **Start learning**, or **Listen & learn** to begin with audio. Work through the first three lessons to understand the complete cutting system, tool anatomy, and chips, forces and heat. Answer each knowledge check and capture a question for the shop floor.
+1. **Start learning — your first lesson.** Open the learning path and choose **Start learning**. Read the big idea, then watch the moving 3D example. Tap **Listen & watch** for an explanation, or explore the numbered steps yourself. Begin with the first three lessons: how a tool works, its parts, and how it takes a bite. Answer each knowledge check and capture a question for the shop floor.
 2. **Geometry lab — 10 minutes.** Rotate the end mill, change flute count and core size, then compare its cross-section. Switch to the PCD tool and separate its segments. Finally, vary rake and clearance in the cutting-edge view.
 3. **Shop-floor fieldbook — week 1.** Follow one real order from customer requirement through design, manufacture, inspection and shipment. Record who owns each decision and the evidence they use.
 
 The home page remembers the last unfinished lesson you opened. Use **Continue lesson** when you return.
 
+The numbered steps are the main reading flow: each shows a different animation beside its explanation. On a phone, the model stays above the explanation while you read. Use **Next idea** to move on, or let **Listen & watch** advance the model and explanation together. An optional text transcript sits below the visual lesson.
+
 ## What is included
 
-- 17 lessons with exercises, answer guides and knowledge checks.
+- 17 lessons, each with a moving 3D example, simple explanations and a knowledge check.
+- 76 visual steps, everyday comparisons and practical examples. Open **Go deeper** when you want the engineering detail.
 - Three schematic tool families: carbide end mill, PCB microdrill and PCD tipped tool.
 - Adjustable cross-section and cutting-edge views.
 - A milling calculator for speed, feed, engagement, chip thickness and removal rate; a separate overhang demonstration.
@@ -25,7 +28,7 @@ The home page remembers the last unfinished lesson you opened. Use **Continue le
 
 Voice is part of every lesson. On a phone, open the menu at the top left to move between the course and the labs.
 
-1. **Listen to lesson:** tap the lesson companion to begin. Use **Listen** beside any section to start there. Pause or resume from the small activity bar. **Listening options** contains speed, voice selection and automatic progression.
+1. **Listen & watch:** tap this in the 3D example to hear the selected step. The visual changes with the explanation. Tap another numbered step to jump to that idea. **Listen to lesson** includes the introduction; **Listen** beside a section starts there. Pause audio from the activity bar, and use **Pause motion** to pause only the animation. **Listening options** contains speed, voice selection and automatic progression. Open **Go deeper** before listening if you want its engineering detail included.
 2. **Ask your tutor:** talk naturally, request a simpler explanation, explore a model or answer a knowledge check aloud. **Ask about this** focuses the conversation on that section. Enter your private academy access code when prompted; you can interrupt the tutor or use text.
 3. **Dictate:** tap the button beside **Your notes**, speak, choose **Finish**, review your words, then tap **Add to notes**. **Undo last addition** preserves later edits. You can also type or use your phone keyboard's microphone.
 4. **Download lesson audio:** open **Listening options → Download this lesson as audio → Prepare audio**, then download the track for playback in a separate audio player. This uses your private ElevenLabs voice.
@@ -50,4 +53,4 @@ To make the next edition specific to CTC, assemble a redacted approved drawing, 
 
 The longer-term AI opportunity is to connect customer inputs to proven design families and their evidence, generate constrained proposals, verify manufacturing feasibility, and learn from measured trials under engineering release control.
 
-Original academy built 23 September 2026; voice learning redesigned 12 November 2026. Three.js r128 is included under the MIT License; see THREE-LICENSE.txt. Inter is included under the SIL Open Font License; see INTER-LICENSE.txt.
+Original academy built 23 September 2026; animated lessons and plain-language teaching updated 19 November 2026. Three.js r128 is included under the MIT License; see THREE-LICENSE.txt. Inter is included under the SIL Open Font License; see INTER-LICENSE.txt.

@@ -8,7 +8,8 @@ An interactive educational prototype for learning cutting-tool design, from cutt
 
 - Rotatable 3D end mill, PCB microdrill and PCD tipped tool models.
 - Adjustable flute geometry, cross-sections, rake and clearance.
-- 17 beginner lessons with exercises and knowledge checks.
+- 17 beginner lessons with an animated 3D demonstration in every lesson, covering 76 teaching steps.
+- Plain-language explanations, familiar comparisons and practical examples, with the original engineering detail under **Go deeper**.
 - An integrated voice companion in every lesson: section narration, contextual questions, reviewed dictation and a private ElevenLabs tutor with natural-language navigation and quiz interaction.
 - Page audio preparation and MP3 download for longer mobile listening when the private service is connected.
 - Milling calculations and an overhang demonstration with explicit assumptions.
@@ -16,7 +17,7 @@ An interactive educational prototype for learning cutting-tool design, from cutt
 - Seven failure investigations and a six-week shop-floor learning plan.
 - A customer brief builder, AI development roadmap, 49 glossary terms and 53 primary references.
 
-Start with **Start learning** on the learning path. **Continue lesson** returns to your most recently opened, unfinished lesson; **Listen & learn** opens it with narration. Explore the **Geometry lab** as concepts become familiar. See the [quick-start guide](docs/Start-here.md).
+Start with **Start learning** on the learning path. Each numbered step pairs its moving 3D example with the full plain-language explanation, practical example and takeaway. The model stays in view as you read. Choose another step to change both the model and explanation, drag to turn the model, or use **Listen & watch** to advance them with narration. **Read all lesson steps as text** opens an optional transcript; **Go deeper** opens that step's original engineering detail. **Continue lesson** returns to your most recently opened, unfinished lesson. See the [quick-start guide](docs/Start-here.md).
 
 ## Run locally
 
@@ -44,7 +45,9 @@ No package installation or build service is required. Python 3 uses only its sta
 
 ## Voice learning
 
-Choose **Listen to lesson** in the lesson companion, or **Listen** beside a specific section. The activity bar provides play/pause and stop without covering the reading flow; **Listening options** offers speed, section selection and optional progression to the next lesson. **Dictate** beside your notes opens a draft to review before adding words to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable.
+Choose **Listen & watch** in the 3D demonstration to start at the selected step, **Listen to lesson** for the full introduction, or **Listen** beside a specific section. Narration selects the matching visual step automatically. Choosing another visual step while listening continues from that section. **Pause motion** controls the animation separately from audio. The activity bar provides audio play/pause and stop; **Listening options** offers speed, section selection and optional progression to the next lesson. Engineering detail is included in narration only while its **Go deeper** panel is open.
+
+**Dictate** beside your notes opens a draft to review before adding words to a lesson, page notebook, customer brief, or tutor question. You can use the phone keyboard microphone whenever browser dictation is unavailable. The tutor receives the selected visual's teaching description so you can ask about the current step.
 
 **Ask tutor**, or **Ask about this** beside a section, supports spoken questions, interruptible replies, text chat, navigation, permitted 3D/calculator changes, and quiz answers through the academy's existing completion rules. This requires the private ElevenLabs service in [Voice setup](docs/VOICE-SETUP.md). The repository includes the gateway and agent provisioning template. The current frontend points to the deployed private voice service; a learner access code is supplied separately. GitHub Pages cannot host that gateway. No provider credential is embedded in the website.
 

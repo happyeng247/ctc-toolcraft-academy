@@ -120,16 +120,23 @@
 
   function lessonSections(module) {
     const visible = lessonIsVisible(module);
-    const nodes = visible ? queryAll('.lesson-body > section') : [];
+    const nodes = visible ? queryAll('.lesson-body section.lesson-section') : [];
     const sections = [section(
       `${module.id}:objectives`, module.title,
-      join([module.subtitle, 'By the end, you should be able to:', ...module.objectives]),
+      join([module.subtitle, module.takeaway ? 'The big idea. ' + module.takeaway : '', module.analogy ? 'Think of it like this. ' + module.analogy : '', 'You will learn to:', ...module.objectives]),
       visible ? query('.learning-objectives') : undefined
     )];
-    module.sections.forEach((item, index) => sections.push(section(
-      `${module.id}:section:${index}`, item.heading,
-      join([item.body, ...(item.bullets || [])]), nodes[index]
-    )));
+    module.sections.forEach((item, index) => {
+      sections.push(section(
+        `${module.id}:section:${index}`, item.heading,
+        join([item.body, ...(item.bullets || []), item.example ? 'Picture this. ' + item.example : '', item.takeaway ? 'Remember. ' + item.takeaway : '']), nodes[index]
+      ));
+      const deeper = nodes[index]?.querySelector('details.lesson-technical');
+      if (deeper?.open && item.technical) sections.push(section(
+        `${module.id}:technical:${index}`, `Go deeper: ${item.heading}`,
+        join([item.technical.body, ...(item.technical.bullets || [])]), deeper
+      ));
+    });
     sections.push(section(
       `${module.id}:exercise`, 'Try it on the shop floor', module.exercise.prompt,
       nodes[module.sections.length]
@@ -323,6 +330,7 @@
       course: 'CTC Toolcraft Academy — educational prototype',
       scope: 'Beginner rotary cutting-tool design, PCB and PCD, manufacturing, inspection and AI-assisted engineering. Teaching examples are not released designs or production recipes.',
       route: routeName,
+      learningStyle: 'Beginner. Use everyday words, one idea at a time, and the familiar examples in this lesson. Define a technical word before using it. Explain what the current 3D motion demonstrates; it is a teaching model.',
       supportedActions: [...ACTIONS],
       availableControls: availableControls(),
       controlValueFormat: 'Use the displayed units. Numeric controls accept numbers or decimal strings. Boolean controls accept true/false or the strings "true"/"false". Enum strings must match a listed value.',
@@ -339,6 +347,11 @@
         exercise: {prompt: lesson.exercise.prompt},
         quiz: {question: lesson.quiz.question, options: [...lesson.quiz.options]},
         completed: state.completed.includes(lesson.id), passed: state.passed.includes(lesson.id)
+      };
+      const visual = window.AcademyLessonVisuals?.getState();
+      if (visual?.lessonId === lesson.id) context.lessonVisual = {
+        lessonId: visual.lessonId, sectionIndex: visual.sectionIndex, sectionTitle: visual.sectionTitle,
+        motionPlaying: visual.motionPlaying, sceneDescription: visual.sceneDescription, scope: visual.scope
       };
     } else if (routeName === 'lab') context.lab = labSnapshot();
     else if (routeName === 'cutting') context.cutting = cuttingSnapshot();

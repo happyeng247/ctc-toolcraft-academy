@@ -1,0 +1,116 @@
+/* Lesson demonstrations share Toolcraft's indigo, ink and soft surfaces. */
+.lesson-visual { margin:0 0 28px; }
+.lv-shell { overflow:clip; margin:0 0 28px; background:#fff; border:1px solid #e3e8ee; border-radius:18px; box-shadow:0 12px 32px rgba(0,55,112,.055); }
+.lv-shell *, .lv-shell *::before, .lv-shell *::after { box-sizing:border-box; }
+.lv-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; padding:28px 30px 24px; }
+.lv-heading .eyebrow { color:#533afd; }
+.lv-heading h2 { margin:9px 0 8px; font-size:28px; line-height:1.15; letter-spacing:-.65px; font-weight:300; color:#0d253d; }
+.lv-heading p { margin:0; color:#61718a; font-size:14px; line-height:1.5; }
+.lv-kind { flex:none; margin-top:3px; border:1px solid #e3e8ee; border-radius:999px; padding:7px 12px; color:#61718a; font-size:11px; line-height:1.4; }
+.lv-layout { display:grid; align-items:start; grid-template-columns:minmax(0,1.3fr) minmax(290px,1fr); border-top:1px solid #e3e8ee; border-bottom:1px solid #e3e8ee; }
+.lv-media { position:sticky; top:20px; min-width:0; background:#f6f9fc; border-right:1px solid #e3e8ee; }
+.lv-stage { height:400px; position:relative; overflow:hidden; isolation:isolate; background:radial-gradient(ellipse at 50% 24%,#fff 0,#f5f7fc 72%,#edf1f8 100%); }
+.lv-canvas-host,.lv-labels { position:absolute; inset:0; }
+.lv-canvas-host { overflow:hidden; }
+.lv-canvas-host canvas { width:100%; height:100%; display:block; touch-action:pan-y; cursor:grab; outline-offset:-4px; }
+.lv-canvas-host canvas:active { cursor:grabbing; }
+.lv-canvas-host canvas:focus-visible { outline:2px solid #533afd; }
+.lv-labels { pointer-events:none; z-index:2; }
+.lv-model-label { position:absolute; left:0; top:0; display:block; max-width:155px; padding:5px 9px; color:#273951; border:1px solid rgba(168,195,222,.6); border-radius:7px; box-shadow:0 2px 7px rgba(0,55,112,.045); background:rgba(255,255,255,.95); font-size:10px; font-weight:500; line-height:1.35; text-align:center; white-space:normal; }
+.lv-model-label[hidden] { display:none; }
+.lv-drag-hint { position:absolute; bottom:11px; left:50%; transform:translateX(-50%); z-index:3; white-space:nowrap; padding:5px 10px; color:#64748d; font-size:10px; background:rgba(255,255,255,.8); border-radius:999px; pointer-events:none; }
+.lv-transport { display:flex; flex-wrap:wrap; align-items:center; gap:7px; padding:11px 16px; border-top:1px solid #e3e8ee; background:#fff; }
+.lv-shell button { font-family:inherit; cursor:pointer; }
+.lv-transport button,.lv-bottom button { min-height:44px; padding:9px 13px; border:1px solid #d8e1ed; border-radius:999px; background:#fff; color:#273951; font-size:12px; line-height:1.3; }
+.lv-transport button:hover:not(:disabled),.lv-bottom button:hover:not(:disabled) { background:#f0edff; border-color:#b9b9f9; color:#4434d4; }
+.lv-shell button:focus-visible { outline:2px solid #533afd; outline-offset:3px; }
+.lv-shell button:disabled { opacity:.45; cursor:default; }
+.lv-motion { color:#4434d4!important; background:#f4f1ff!important; border-color:#e0d9ff!important; }
+.lv-motion-state { margin-left:auto; color:#64748d; font-size:10px; line-height:1.4; }
+.lv-explanation { min-width:0; display:flex; flex-direction:column; justify-content:center; padding:28px; }
+.lv-step-count { color:#665efd; font-size:10px; font-weight:500; letter-spacing:1.1px; font-variant-numeric:tabular-nums; }
+.lv-step-heading { margin:13px 0 14px; color:#0d253d; font-size:22px; font-weight:400; line-height:1.25; letter-spacing:-.4px; }
+.lv-watch { margin:0; color:#273951; font-size:15px; line-height:1.7; }
+.lv-reading p,.lv-reading li { color:#273951; font-size:15px; line-height:1.75; }
+.lv-reading p { margin:0 0 14px; }
+.lv-reading ul { padding-left:20px; margin:0 0 20px; }
+.lv-reading li+li { margin-top:8px; }
+.lv-watch { padding:14px 16px; border-left:2px solid #665efd; background:#f6f9fc; font-size:13px; }
+.lv-watch::before { content:'WATCH THE MOTION'; display:block; margin-bottom:7px; font-size:9px; color:#533afd; letter-spacing:1px; }
+.lv-example { margin-top:20px; }
+.lv-example p { margin:8px 0 0; color:#61718a; font-size:14px; line-height:1.7; }
+.lv-example[hidden] { display:none; }
+.lv-key-point { margin:22px 0; padding:15px 16px; background:#f6f4ff; border-left:2px solid #b9b9f9; border-radius:0 10px 10px 0; }
+.lv-key-point>span { color:#4434d4; font-size:10px; letter-spacing:.7px; text-transform:uppercase; }
+.lv-key-point p { margin:7px 0 0; font-size:13px; line-height:1.65; color:#273951; }
+.lv-voice-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.lv-voice-actions .button { min-height:44px; padding:11px 16px; font-size:12px; white-space:normal; }
+.lv-voice-actions .text-button { display:block; min-height:44px; border:0; background:transparent; padding:9px 4px; font-size:12px; color:#533afd; }
+.lv-steps { display:flex; padding:14px 20px; gap:8px; background:#fff; }
+.lv-step { min-width:0; flex:1 1 0; display:flex; align-items:flex-start; gap:9px; text-align:left; min-height:64px; padding:12px; background:#f8fafc; border:1px solid transparent; border-radius:11px; color:#64748d; }
+.lv-step>span:first-child { flex:none; padding-top:1px; color:#8190aa; font-size:11px; font-variant-numeric:tabular-nums; }
+.lv-step .lv-step-name { font-size:11px; line-height:1.45; }
+.lv-step[aria-pressed="true"] { color:#273951; background:#f0edff; border-color:#d6ceff; }
+.lv-step[aria-pressed="true"]>span:first-child { color:#533afd; }
+.lv-step:hover { border-color:#d6ceff; }
+.lv-bottom { display:flex; align-items:center; gap:16px; padding:0 20px 18px; }
+.lv-bottom button { flex:none; }
+.lv-scope { flex:1; margin:0; color:#8190a6; font-size:10px; line-height:1.5; text-align:center; }
+.lv-fallback-diagram { display:block; width:100%; height:100%; }
+@media (max-width:1150px) {
+ .lv-layout { grid-template-columns:minmax(0,1.3fr) minmax(210px,1fr); }
+ .lv-explanation { padding:23px; }
+ .lv-stage { height:380px; }
+ .lv-motion-state { flex-basis:100%; margin-left:0; }
+ .lv-steps { padding:12px; gap:6px; }
+ .lv-step { padding:10px 8px; gap:6px; }
+}
+@media (max-width:900px) {
+ .lv-layout { display:block; }
+ .lv-media { z-index:4; top:72px; border-right:0; border-bottom:1px solid #e3e8ee; box-shadow:0 8px 18px #0d253d08; }
+ .lv-stage { height:350px; }
+ .lv-explanation { padding:24px; }
+ .lv-key-point { margin:18px 0; }
+ .lv-motion-state { flex-basis:auto; margin-left:auto; }
+ .lv-step-heading { font-size:23px; }
+}
+@media (max-width:600px) {
+ .lv-media { top:68px; }
+ .lv-shell { display:flex; flex-direction:column; border-radius:16px; margin-bottom:24px; }
+ .lv-heading { order:0; }
+ .lv-layout { order:2; }
+ .lv-steps { order:1; border-top:1px solid #e3e8ee; }
+ .lv-bottom { order:3; }
+ .lv-heading { padding:21px 20px 18px; gap:12px; }
+ .lv-heading h2 { font-size:24px; }
+ .lv-heading p { font-size:12px; }
+ .lv-kind { padding:5px 8px; font-size:9px; max-width:75px; text-align:center; }
+ .lv-stage { height:clamp(170px,30svh,280px); }
+ .lv-explanation { padding:21px 20px; }
+ .lv-step-heading { font-size:22px; }
+ .lv-watch { font-size:14px; line-height:1.7; }
+ .lv-transport { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); padding:10px 12px; gap:6px; }
+ .lv-transport button { padding:9px 11px; font-size:11px; }
+ .lv-motion-state { grid-column:1/-1; margin:2px 0 0; font-size:10px; text-align:center; }
+ .lv-steps { padding:12px 16px; gap:8px; }
+ .lv-step { justify-content:center; align-items:center; min-height:44px; padding:10px 8px; border-radius:999px; }
+ .lv-step>span:first-child { font-size:13px; }
+ .lv-step-name { display:none; }
+ .lv-bottom { flex-wrap:wrap; justify-content:space-between; padding:0 16px 16px; gap:10px; }
+ .lv-bottom button { font-size:11px; padding:9px 11px; }
+ .lv-scope { order:3; flex-basis:100%; font-size:10px; }
+ .lv-voice-actions .button { flex:1; }
+ .lv-voice-actions .text-button { flex-basis:100%; text-align:left; }
+ .lv-model-label { max-width:125px; padding:4px 7px; font-size:9px; }
+}
+@media (max-width:360px) {
+ .lv-heading { padding:18px 16px; }
+ .lv-heading h2 { font-size:22px; }
+ .lv-kind { display:none; }
+ .lv-stage { height:clamp(160px,29svh,230px); }
+ .lv-explanation { padding:20px 16px; }
+ .lv-voice-actions .button { font-size:11px; padding:10px 12px; }
+ .lv-step-heading { font-size:20px; }
+ .lv-model-label { max-width:105px; font-size:9px; }
+}
+@media (prefers-reduced-motion:reduce) { .lv-shell *, .lv-shell *::before, .lv-shell *::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; } }

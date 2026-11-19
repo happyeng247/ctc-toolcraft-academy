@@ -2,423 +2,568 @@
   "modules": [
     {
       "id": "mfg-requirements",
-      "title": "From customer need to a controlled tool design",
-      "subtitle": "Learn what must be known before anyone chooses a flute or opens a program.",
+      "title": "Start with the job the customer needs done",
+      "subtitle": "Before designing a cutter, understand the part it needs to make.",
       "group": "Manufacturing",
       "minutes": 25,
       "objectives": [
-        "Separate component requirements from tool dimensions",
-        "Read a drawing using reference surfaces and tolerances",
-        "Build a reviewable specification for one real SKU"
+        "Explain the difference between making a cutter and using one.",
+        "Ask what the finished part must look like and how it will be checked.",
+        "Follow one design from the customer request to the approved version."
       ],
       "sections": [
         {
-          "heading": "Two different manufacturing jobs",
-          "body": "CTC makes a cutting tool. Its customer then uses that tool to make a component. A Rollomatic grinder removes material from the tool blank to create cutting edges; the customer's drilling, routing or milling machine uses those edges on the workpiece. Their machine programs, settings and acceptance tests are different. First ask which component feature the tool must produce: a hole, slot, pocket, contour, chamfer or finished surface. A tool that matches its drawing can still fail the customer's process."
+          "heading": "CTC makes the cutter. The customer makes the part.",
+          "body": "There are two separate jobs. CTC shapes the cutting tool, often using a grinding machine. The customer puts that finished tool into another machine to cut a part. The instructions for making the cutter are different from the instructions for using it. A perfectly made cutter still has to prove that it can do the customer’s job.",
+          "example": "Think of a company making a pencil sharpener and a person using it to sharpen a pencil. Making the device and using it are different jobs.",
+          "takeaway": "Always ask whether someone is talking about making the tool or using the tool.",
+          "technical": {
+            "body": "CTC makes a cutting tool. Its customer then uses that tool to make a component. A Rollomatic grinder removes material from the tool blank to create cutting edges; the customer's drilling, routing or milling machine uses those edges on the workpiece. Their machine programs, settings and acceptance tests are different. First ask which component feature the tool must produce: a hole, slot, pocket, contour, chamfer or finished surface. A tool that matches its drawing can still fail the customer's process."
+          }
         },
         {
-          "heading": "Write the application before drawing the tool",
-          "body": "Use a one-page application brief. Record workpiece material and condition, the feature and stock to remove, acceptable size and surface condition, access restrictions, machine and spindle, holder and overhang, coolant or extraction, batch volume, and the current failure. For PCB work add the laminate construction, copper, board stack, entry and backing materials, hole or routed-feature requirement, and downstream quality criteria. Treat these as fields to establish with the customer, rather than assumptions about a customer product.",
+          "heading": "Ask what a good result looks like",
+          "body": "Start with the part: what material is it, and what hole, groove or edge must be made? Then ask what is going wrong today. Find out how the customer will judge success, which machine will use the tool, and what holds the part still. For circuit boards, also ask which layers the cutter must pass through.",
           "bullets": [
-            "Goal: what customer outcome must improve\u2014yield, burrs, hole quality, cycle time, tool life or cost per acceptable part?",
-            "Constraint: which limits must never be traded away?",
-            "Evidence: what measurement or trial will show the requirement was met?"
-          ]
+            "What should improve: fewer rough edges, more good parts, or less time?",
+            "What must stay the same, such as the required hole size?",
+            "What will we measure to show that the new tool helped?"
+          ],
+          "example": "“Make a better drill” is vague. “Reduce the rough edge around this hole while keeping its size correct” gives the team a problem it can investigate.",
+          "takeaway": "Turn a general request into a result that someone can check.",
+          "technical": {
+            "body": "Use a one-page application brief. Record workpiece material and condition, the feature and stock to remove, acceptable size and surface condition, access restrictions, machine and spindle, holder and overhang, coolant or extraction, batch volume, and the current failure. For PCB work add the laminate construction, copper, board stack, entry and backing materials, hole or routed-feature requirement, and downstream quality criteria. Treat these as fields to establish with the customer, rather than assumptions about a customer product.",
+            "bullets": [
+              "Goal: what customer outcome must improve—yield, burrs, hole quality, cycle time, tool life or cost per acceptable part?",
+              "Constraint: which limits must never be traded away?",
+              "Evidence: what measurement or trial will show the requirement was met?"
+            ]
+          }
         },
         {
-          "heading": "Understand the drawing's contract",
-          "body": "A nominal dimension is the intended value. A tolerance defines permitted variation. A datum is an agreed reference used to locate or orient other features. Keep shank diameter, cutting diameter, flute length, overall length, corner geometry and relevant angles unambiguous. Define the measurement location and method for tiny edges or complex profiles. A beautiful 3D image does not specify inspection acceptance. Tool Sketcher can produce drawing views and annotations from a VirtualGrind Pro simulation; the designer must still select the correct requirements."
+          "heading": "A drawing needs clear measuring rules",
+          "body": "A drawing says what to make and how much variation is allowed. That allowed variation is called a tolerance. A datum is the agreed starting surface or line for a measurement. The drawing must make these choices clear. A 3D picture shows the shape, but it does not automatically explain how to decide whether the real tool is acceptable.",
+          "example": "If two people measure a shelf from different walls, their numbers may disagree. Agreeing on a datum is like agreeing which wall to start from.",
+          "takeaway": "Agree on the size, the allowed variation, and where the measurement starts.",
+          "technical": {
+            "body": "A nominal dimension is the intended value. A tolerance defines permitted variation. A datum is an agreed reference used to locate or orient other features. Keep shank diameter, cutting diameter, flute length, overall length, corner geometry and relevant angles unambiguous. Define the measurement location and method for tiny edges or complex profiles. A beautiful 3D image does not specify inspection acceptance. Tool Sketcher can produce drawing views and annotations from a VirtualGrind Pro simulation; the designer must still select the correct requirements."
+          }
         },
         {
-          "heading": "Connect decisions to revisions",
-          "body": "Create a small design record linking the customer brief, drawing revision, material grade, geometry, manufacturing route, inspection plan and trial outcome. Record why a choice was made, including rejected choices and their evidence. Separate an experimental revision from the released production revision. A proposed change to the edge, coating, material or process needs its effect reviewed across manufacturing and customer use; visual similarity is not proof of equivalence."
+          "heading": "Keep the reason for each change",
+          "body": "A revision is a named version of a design. When a tool changes, keep the old version, the new version, and the reason for the change together. Link each version to its drawing, material, manufacturing instructions and test results. Make it obvious which version is an experiment and which one the team has approved for production.",
+          "example": "Imagine changing a cake recipe but keeping only a photo of the finished cake. Without the recipe version, you cannot reliably repeat the result. Tool records have the same problem.",
+          "takeaway": "A new shape needs a clear version and a recorded reason.",
+          "technical": {
+            "body": "Create a small design record linking the customer brief, drawing revision, material grade, geometry, manufacturing route, inspection plan and trial outcome. Record why a choice was made, including rejected choices and their evidence. Separate an experimental revision from the released production revision. A proposed change to the edge, coating, material or process needs its effect reviewed across manufacturing and customer use; visual similarity is not proof of equivalence."
+          }
         },
         {
-          "heading": "Your shop-floor assignment",
-          "body": "Choose one frequent SKU and ask the designer, operator, quality engineer and application engineer to walk through the same requirement. Ask: Which dimension controls the customer's result? Which requirement is missing from the drawing? Who approves a revision? Capture disagreements as questions to resolve. Release evidence should include the agreed brief, approved drawing, feasible manufacturing route, measurable acceptance criteria and named owner. This checklist is a proposed learning framework, not a claim about CTC's current procedures."
+          "heading": "Follow one tool with the whole team",
+          "body": "Choose one tool the factory makes often. Ask the designer, machine operator, quality checker and customer-facing engineer to explain what makes it successful. Use the same tool and drawing in every conversation. If their answers differ, write down the question to resolve together. This is a learning exercise, not an assumption about how the team currently works.",
+          "example": "Ask each person, “Which part of this tool matters most to the customer’s hole?” Their different answers can reveal a useful gap in the shared explanation.",
+          "takeaway": "Use one real tool to connect the customer’s need with the team’s decisions.",
+          "technical": {
+            "body": "Choose one frequent SKU and ask the designer, operator, quality engineer and application engineer to walk through the same requirement. Ask: Which dimension controls the customer's result? Which requirement is missing from the drawing? Who approves a revision? Capture disagreements as questions to resolve. Release evidence should include the agreed brief, approved drawing, feasible manufacturing route, measurable acceptance criteria and named owner. This checklist is a proposed learning framework, not a claim about CTC's current procedures."
+          }
         }
       ],
       "exercise": {
-        "prompt": "A customer says: \u2018Make the drill last longer.\u2019 List the missing information before proposing geometry.",
-        "answer": "Establish the drilled material and stack, hole requirement, machine/holder/runout, operating method, current tool and failure evidence, agreed end-of-life criterion, baseline life and acceptable tradeoffs. Then define a controlled comparison."
+        "prompt": "A customer says, “Make this drill last longer.” What three questions would you ask first?",
+        "answer": "Start with: What material and hole are we making? What makes you stop using the current drill? What machine and setup are you using? Then agree how to compare the old and new tools fairly."
       },
       "quiz": {
-        "question": "What does a drawing-compliant tool prove by itself?",
+        "question": "A tool passes every measurement on its drawing. What do we know so far?",
         "options": [
-          "The inspected tool characteristics met the stated drawing acceptance rules",
-          "The customer will achieve the desired life on every machine",
-          "The cutting program needs no trial"
+          "It meets the checked drawing requirements, but still needs a suitable cutting trial.",
+          "It will make good parts on every customer machine.",
+          "The customer can skip testing because the drawing passed."
         ],
         "correct": 0,
-        "explanation": "Manufacturing conformance and performance in the customer's process are separate claims and require separate evidence."
+        "explanation": "Matching the drawing proves that the tool was made as specified. A cutting trial checks whether that design works for the customer’s job."
       },
       "sources": [
         {
-          "title": "Sandvik Coromant \u2014 Milling tools 2025, component and process selection guide",
+          "title": "Sandvik Coromant — Milling tools 2025, component and process selection guide",
           "url": "https://epublications.sandvik.coromant.com/frontend/catalogs/1157651/1/pdf/complete.pdf"
         },
         {
-          "title": "Rollomatic \u2014 Tool Sketcher",
+          "title": "Rollomatic — Tool Sketcher",
           "url": "https://www.rollomatic.ch/product/tool-sketcher/"
         },
         {
-          "title": "NIST \u2014 Defining experimental objectives",
+          "title": "NIST — Defining experimental objectives",
           "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri31.htm"
         }
-      ]
+      ],
+      "analogy": "Ordering a custom pair of shoes starts with where you will wear them, not just their size. A custom cutter also needs a clear job to do.",
+      "takeaway": "A good tool design starts with a clear description of a good customer part."
     },
     {
       "id": "mfg-carbide",
-      "title": "How a carbide blank becomes a cutting tool",
-      "subtitle": "The wheel, machine motion and coolant together create the edge.",
+      "title": "How a carbide rod becomes a cutter",
+      "subtitle": "Watch a grinding wheel create the grooves and edges that do the cutting.",
       "group": "Manufacturing",
       "minutes": 30,
       "objectives": [
-        "Describe blank preparation, fluting and relief grinding",
-        "Distinguish abrasive, grit, bond, truing and dressing",
-        "Explain why a drawing alone cannot reproduce the manufacturing process"
+        "Describe how an unfinished carbide rod becomes a cutting tool.",
+        "Explain what the grinding wheel does and why its condition matters.",
+        "Ask which manufacturing steps produced the features on a sample tool."
       ],
       "sections": [
         {
-          "heading": "Start with the blank",
-          "body": "A blank is the unfinished material from which the tool is made. Its carbide grade, dimensions, straightness, internal coolant features if present, and batch identity matter. Preparation establishes shank and stepped diameters, shoulders or necks before or alongside edge generation. Rollomatic's ShapeSmart family is associated with cylindrical pinch-and-peel grinding. A later tool-grinding operation creates the flutes and the surfaces that meet to form each cutting edge. The exact route varies with the tool and available equipment."
+          "heading": "Begin with an unfinished rod",
+          "body": "The starting piece of material is called a blank. For many carbide cutters, it looks like a plain rod. The team checks its material, size and straightness before shaping it. Some tools need steps or narrow sections formed first. Later grinding creates the chip-carrying grooves, called flutes, and the surfaces that meet to form the cutting edges.",
+          "example": "Place an unfinished rod beside a finished cutter. The missing material has become the spaces that let the edges cut and the chips escape.",
+          "takeaway": "The blank is the starting material, not a ready-to-use cutter.",
+          "technical": {
+            "body": "A blank is the unfinished material from which the tool is made. Its carbide grade, dimensions, straightness, internal coolant features if present, and batch identity matter. Preparation establishes shank and stepped diameters, shoulders or necks before or alongside edge generation. Rollomatic's ShapeSmart family is associated with cylindrical pinch-and-peel grinding. A later tool-grinding operation creates the flutes and the surfaces that meet to form each cutting edge. The exact route varies with the tool and available equipment."
+          }
         },
         {
-          "heading": "The wheel is a cutting tool too",
-          "body": "A grinding wheel contains many abrasive particles. For cemented carbide, diamond abrasives are a common choice. Grit size describes particle size; the bond holds the particles. Resin, vitrified and metal bonds have different behavior in retention, porosity and wear. Wheel profile, abrasive concentration and conditioning also affect the result. Do not reduce wheel selection to \u2018finer means better\u2019: productivity, heat, form retention and edge quality interact. Use the actual supplier specification and proven process for the application."
+          "heading": "The wheel cuts the cutter",
+          "body": "A grinding wheel has many tiny hard particles on its surface. These particles remove small pieces from the blank. Diamond particles are commonly used to grind carbide. Their size, the material holding them in place, and the wheel’s shape all affect the result. A finer particle is not automatically better: the team must balance finish, heat and cutting speed.",
+          "example": "Fine and coarse sandpaper do different jobs. Grinding wheels also have different jobs, although their materials and operating conditions are very different from ordinary sandpaper.",
+          "takeaway": "Choose a wheel for the job; “finer” does not always mean “better”.",
+          "technical": {
+            "body": "A grinding wheel contains many abrasive particles. For cemented carbide, diamond abrasives are a common choice. Grit size describes particle size; the bond holds the particles. Resin, vitrified and metal bonds have different behavior in retention, porosity and wear. Wheel profile, abrasive concentration and conditioning also affect the result. Do not reduce wheel selection to ‘finer means better’: productivity, heat, form retention and edge quality interact. Use the actual supplier specification and proven process for the application."
+          }
         },
         {
-          "heading": "Motion creates geometry",
-          "body": "The machine moves and rotates the blank relative to the wheel. Those coordinated motions create helix, flute cross-section, core, rake and clearance. The rake face is the surface over which the chip flows; clearance prevents the tool surface behind the edge rubbing excessively. Different operations and wheel orientations create different surfaces. Wheel access and interference can make an apparently simple geometry hard to manufacture. Inspect a section through the simulated tool as well as its outside shape."
+          "heading": "The machine’s movements create the shape",
+          "body": "The machine moves and turns the blank against the wheel. Those movements create the spiral grooves and cutting surfaces. One surface guides the chip away; another leaves space behind the edge so the tool does not just rub. The wheel also needs room to reach the surface it is meant to shape.",
+          "example": "If you turn a rod while moving a shaping tool along it, the path can wrap around the rod. Coordinated movement is what makes a spiral feature possible.",
+          "takeaway": "The shape comes from the wheel and the path it takes together.",
+          "technical": {
+            "body": "The machine moves and rotates the blank relative to the wheel. Those coordinated motions create helix, flute cross-section, core, rake and clearance. The rake face is the surface over which the chip flows; clearance prevents the tool surface behind the edge rubbing excessively. Different operations and wheel orientations create different surfaces. Wheel access and interference can make an apparently simple geometry hard to manufacture. Inspect a section through the simulated tool as well as its outside shape."
+          }
         },
         {
-          "heading": "Condition the wheel and control the contact",
-          "body": "Truing restores the wheel's shape and its concentric running. Dressing changes the condition of its abrasive face, exposing or modifying cutting points. They are related but distinct. The permitted conditioning method depends on the wheel construction. Coolant must reach the wheel\u2013blank contact; delivery, filtration and thermal stability are part of the process, not background utilities. A worn profile, loaded wheel, poor clamping or changing coolant condition can cause variation even when the program is unchanged."
+          "heading": "Keep the wheel in shape and able to cut",
+          "body": "A wheel can have the wrong shape, or the right shape with a worn or clogged cutting surface. Truing restores its shape and how evenly it runs. Dressing refreshes its cutting surface. The correct method depends on the wheel. Cooling fluid must also reach the contact area and stay in suitable condition as the job runs.",
+          "example": "A sanding block can be curved when it should be flat, or flat but covered in dust. These are different problems, even though both can spoil the result.",
+          "takeaway": "Check both the wheel’s shape and the condition of its cutting surface.",
+          "technical": {
+            "body": "Truing restores the wheel's shape and its concentric running. Dressing changes the condition of its abrasive face, exposing or modifying cutting points. They are related but distinct. The permitted conditioning method depends on the wheel construction. Coolant must reach the wheel–blank contact; delivery, filtration and thermal stability are part of the process, not background utilities. A worn profile, loaded wheel, poor clamping or changing coolant condition can cause variation even when the program is unchanged."
+          }
         },
         {
-          "heading": "Observe one tool through the route",
-          "body": "Ask an operator to identify the wheel and operation that produces each critical surface on a sample. Ask how wheel geometry is measured, when it is conditioned, how wear compensation is determined, and what triggers inspection. Compare the blank, simulated tool and measured first article. Preserve the wheel specification and offsets, setup and support details, coolant requirements, program revision and inspection results with the process record. Never infer spindle speed, infeed or coolant settings from this lesson; these require the installed machine's documentation and an approved process."
+          "heading": "Ask how each feature was made",
+          "body": "Ask an operator to show you which operation makes each important surface on a sample tool. Compare the starting blank, the computer model and the first measured tool. Ask how the team notices wheel wear and checks the result. Learn from the approved process; this lesson does not provide machine speeds or grinding settings.",
+          "example": "Point to one flute and ask, “Which wheel made this, and how do you check that it came out correctly?” Follow that one feature through the process.",
+          "takeaway": "Connect a visible tool feature to the operation and measurement behind it.",
+          "technical": {
+            "body": "Ask an operator to identify the wheel and operation that produces each critical surface on a sample. Ask how wheel geometry is measured, when it is conditioned, how wear compensation is determined, and what triggers inspection. Compare the blank, simulated tool and measured first article. Preserve the wheel specification and offsets, setup and support details, coolant requirements, program revision and inspection results with the process record. Never infer spindle speed, infeed or coolant settings from this lesson; these require the installed machine's documentation and an approved process."
+          }
         }
       ],
       "exercise": {
-        "prompt": "A flute becomes shallower across a batch although the nominal program is unchanged. What evidence would you collect?",
-        "answer": "Verify the measurement first, then review the wheel profile and wear, dressing/conditioning history, offsets and compensation, blank dimensions, clamping/support, thermal conditions and sequence of inspected tools. Compare trends before altering geometry."
+        "prompt": "Tools made later in a batch have shallower grooves than the first ones. What would you ask the operator to check before changing the design?",
+        "answer": "First confirm the measurements are trustworthy. Then ask whether the wheel’s shape or wear, its position settings, the starting rods, the clamping, or the temperature changed during the batch."
       },
       "quiz": {
-        "question": "Which statement correctly distinguishes truing and dressing?",
+        "question": "A wheel has the correct shape, but its cutting surface is clogged. Which statement is right?",
         "options": [
-          "Truing concerns wheel geometry and running; dressing concerns the abrasive face condition",
-          "Both mean changing the tool drawing",
-          "Dressing guarantees the wheel has the correct profile"
+          "Its surface condition needs attention; having the right shape is not enough.",
+          "The tool drawing must be changed before checking the wheel.",
+          "A correctly shaped wheel must also be cutting properly."
         ],
         "correct": 0,
-        "explanation": "A wheel may have the right profile but poor cutting condition, or a sharp face but the wrong profile. Both need appropriate control."
+        "explanation": "Truing concerns the wheel’s shape and even running. Dressing concerns its cutting surface. A good result needs both to be suitable."
       },
       "sources": [
         {
-          "title": "Rollomatic \u2014 Cylindrical and punch grinding",
+          "title": "Rollomatic — Cylindrical and punch grinding",
           "url": "https://www.rollomatic.ch/tools/solutions/blank-prep-and-punches/"
         },
         {
-          "title": "Norton \u2014 Superabrasives and bond families",
+          "title": "Norton — Superabrasives and bond families",
           "url": "https://www.nortonabrasives.com/en-us/superabrasives"
         },
         {
-          "title": "Norton \u2014 Understanding truing and dressing, June 2025",
+          "title": "Norton — Understanding truing and dressing, June 2025",
           "url": "https://www.nortonabrasives.com/en-us/resources/expertise/understanding-truing-dressing"
         },
         {
-          "title": "Norton \u2014 Industrial technical data, grinding and coolant guidance",
+          "title": "Norton — Industrial technical data, grinding and coolant guidance",
           "url": "https://www.nortonabrasives.com/sites/mac3-acs-norton/files/Norton_Industrial_technical_data_health_safety_8.pdf"
         }
-      ]
+      ],
+      "analogy": "Think of shaping wood with sandpaper. Grinding also removes tiny pieces, but carbide needs special abrasives and precise machine control.",
+      "takeaway": "The finished cutter depends on the starting rod, the grinding wheel, and how the machine brings them together."
     },
     {
       "id": "mfg-pcd",
-      "title": "Manufacturing a PCD cutting edge",
-      "subtitle": "Understand the diamond, its support, the joint and the finishing route.",
+      "title": "How a diamond cutting tip is made",
+      "subtitle": "Understand the hard tip, what supports it, and how its edge is finished.",
       "group": "Manufacturing",
       "minutes": 30,
       "objectives": [
-        "Distinguish a PCD segment from the supporting body and braze",
-        "Compare grinding, EDM and laser machining at a conceptual level",
-        "Identify release evidence for joint and edge integrity"
+        "Tell a PCD cutting material apart from a PCB circuit board.",
+        "Identify the cutting tip, its support and its connection to the tool.",
+        "Explain why checking the edge matters as much as checking the overall size."
       ],
       "sections": [
         {
-          "heading": "PCD is a material, PCB is an application",
-          "body": "PCD means polycrystalline diamond. PCB means printed circuit board. A PCB tool is named for what it machines; a PCD tool is named for its cutting material. These categories can overlap but are not synonyms. A common PCD construction uses a diamond layer supported by carbide, with a segment joined to a prepared tool body. Other architectures exist: veined blanks integrate diamond regions into a carbide blank and do not require the same separate-segment braze route."
+          "heading": "PCD and PCB mean different things",
+          "body": "PCD means polycrystalline diamond: a cutting material made from many diamond crystals. PCB means printed circuit board: something a tool may cut. A common PCD tool has a diamond layer on a carbide support, joined to a tool body. Other constructions exist. The two names can describe the same tool’s material and job, but they do not mean the same thing.",
+          "example": "“Steel knife” tells you what a knife is made from. “Bread knife” tells you its job. PCD and PCB tooling describe different kinds of information in a similar way.",
+          "takeaway": "PCD names a cutting material. PCB names a type of part being machined.",
+          "technical": {
+            "body": "PCD means polycrystalline diamond. PCB means printed circuit board. A PCB tool is named for what it machines; a PCD tool is named for its cutting material. These categories can overlap but are not synonyms. A common PCD construction uses a diamond layer supported by carbide, with a segment joined to a prepared tool body. Other architectures exist: veined blanks integrate diamond regions into a carbide blank and do not require the same separate-segment braze route."
+          }
         },
         {
-          "heading": "The joint belongs in the design",
-          "body": "For brazed construction, the pocket, support and segment positioning must allow the required edge geometry after finishing. The braze is a joining alloy between the prepared surfaces. Element Six's brazing guidance emphasizes designing the joint, controlling preparation and cleanliness, selecting compatible alloy and flux or atmosphere, and controlling heating and cooling. Temperature exposure matters to superhard materials. There is no universal braze cycle: the selected materials, joint and process must be qualified together. Check alignment, braze flow, cracks, chips, delamination and visible joint defects after joining."
+          "heading": "The tip needs strong, accurate support",
+          "body": "In one common construction, a small PCD segment sits in a prepared pocket in the tool body. Brazing joins it using a separate joining metal. The surfaces, fit, alignment, heating and cooling all matter. The team must use a proven joining process for those materials, then check the joint and tip for damage.",
+          "example": "A hard knife blade is not useful if it moves in its handle. In a cutting tool, the support and connection must also keep the cutting edge in the right place.",
+          "takeaway": "A hard cutting tip is only part of the design; its support and joint matter too.",
+          "technical": {
+            "body": "For brazed construction, the pocket, support and segment positioning must allow the required edge geometry after finishing. The braze is a joining alloy between the prepared surfaces. Element Six's brazing guidance emphasizes designing the joint, controlling preparation and cleanliness, selecting compatible alloy and flux or atmosphere, and controlling heating and cooling. Temperature exposure matters to superhard materials. There is no universal braze cycle: the selected materials, joint and process must be qualified together. Check alignment, braze flow, cracks, chips, delamination and visible joint defects after joining."
+          }
         },
         {
-          "heading": "Three ways to create an edge",
-          "body": "Grinding removes material with abrasive contact and can finish functional surfaces. Electrical discharge machining, or EDM, removes material through controlled electrical discharges; its applicability depends on the material's electrical behavior and the specific machine. Wire EDM is also used to cut suitable PCD blanks into segments. Laser machining removes material with focused light, offering access to geometries that can be difficult with a wheel. These methods may be combined in a route. A segment-cutting operation is not automatically the final cutting-edge preparation."
+          "heading": "Different processes can shape the edge",
+          "body": "A grinding wheel removes material through contact. EDM, short for electrical discharge machining, removes suitable material using controlled electrical sparks. A laser removes material using focused light. A manufacturer may combine these methods. Cutting a rough tip to size is not necessarily the final step: the edge may still need careful finishing.",
+          "example": "Cutting a tile to its rough outline and finishing its edge are separate tasks. A PCD segment can also need more than one operation before its edge is ready.",
+          "takeaway": "Ask which operation creates the final cutting edge, not just the rough shape.",
+          "technical": {
+            "body": "Grinding removes material with abrasive contact and can finish functional surfaces. Electrical discharge machining, or EDM, removes material through controlled electrical discharges; its applicability depends on the material's electrical behavior and the specific machine. Wire EDM is also used to cut suitable PCD blanks into segments. Laser machining removes material with focused light, offering access to geometries that can be difficult with a wheel. These methods may be combined in a route. A segment-cutting operation is not automatically the final cutting-edge preparation."
+          }
         },
         {
-          "heading": "Compare outcomes rather than process labels",
-          "body": "Evaluate final edge radius, chipping, surface condition, profile accuracy, retained diamond volume, cycle time and subsequent finishing needs. Coarse and fine PCD grades do not respond identically. Laser source and pulse regime matter; do not apply one machine's capability to all lasers. Rollomatic lists LaserSmart machines for ultra-hard tool manufacture, but that does not establish that CTC owns one. Neither \u2018laser\u2019 nor \u2018EDM\u2019 alone is evidence that an edge is suitable for the customer's cut."
+          "heading": "Judge the finished edge, not the machine’s name",
+          "body": "“Laser-made” does not automatically mean “better.” Different PCD materials and machine settings can produce different results. Inspect the edge for tiny chips, its final shape and its surface condition. Then check how it cuts in the intended job. A machine’s advertised capability does not tell us which equipment or process CTC actually uses.",
+          "example": "Two knives can be made using different methods. The useful comparison is whether their edges suit the job and hold up in a fair test, not which method sounds newer.",
+          "takeaway": "A good process is one that produces a suitable, measured and tested edge.",
+          "technical": {
+            "body": "Evaluate final edge radius, chipping, surface condition, profile accuracy, retained diamond volume, cycle time and subsequent finishing needs. Coarse and fine PCD grades do not respond identically. Laser source and pulse regime matter; do not apply one machine's capability to all lasers. Rollomatic lists LaserSmart machines for ultra-hard tool manufacture, but that does not establish that CTC owns one. Neither ‘laser’ nor ‘EDM’ alone is evidence that an edge is suitable for the customer's cut."
+          }
         },
         {
-          "heading": "Follow the evidence through the route",
-          "body": "Ask: Where does the PCD blank come from? Which grade and layer construction are specified? Who defines the joining procedure? Which operation creates the final edge? What inspection detects a weak joint or damaged edge? Retain supplier and batch identity, segment layout, approved joining procedure, finishing program, inspection images and cutting-trial result. Use close-up images before and after cutting to distinguish a manufacturing defect from wear generated in service. The listed supplier examples describe their own products and processes, not CTC's qualified limits."
+          "heading": "Compare the tip before and after use",
+          "body": "Keep the tip’s material details, manufacturing steps and inspection pictures together. Take a close look before the tool cuts anything, then compare it after a trial. That helps the team separate damage already present from wear caused during use. Also check the customer’s setup before deciding that a broken edge is a manufacturing fault.",
+          "example": "A “before” photo can show whether a tiny chip was already on the edge. Without it, a damaged tool returned from a trial can be much harder to explain.",
+          "takeaway": "A before-and-after record makes a failed tool much more useful to learn from.",
+          "technical": {
+            "body": "Ask: Where does the PCD blank come from? Which grade and layer construction are specified? Who defines the joining procedure? Which operation creates the final edge? What inspection detects a weak joint or damaged edge? Retain supplier and batch identity, segment layout, approved joining procedure, finishing program, inspection images and cutting-trial result. Use close-up images before and after cutting to distinguish a manufacturing defect from wear generated in service. The listed supplier examples describe their own products and processes, not CTC's qualified limits."
+          }
         }
       ],
       "exercise": {
-        "prompt": "A new PCD tool has the right outside diameter but an edge breaks early. Why is a diameter check insufficient?",
-        "answer": "It does not establish edge integrity, local geometry, diamond grade, support or joint quality. Inspect those features, review the manufacturing record and confirm the customer's engagement, runout and operating conditions before assigning a cause."
+        "prompt": "A PCD tool has the correct outside size, but its edge breaks early. What else would you want to see?",
+        "answer": "Ask for close-up pictures of the edge before and after cutting, details of the tip’s material and support, checks of the joint, and the customer’s setup and cutting conditions. Correct overall size does not prove that all of these were right."
       },
       "quiz": {
-        "question": "Which is the best reason to choose between grinding, EDM and laser processing?",
+        "question": "What is the best way to choose a process for making a PCD edge?",
         "options": [
-          "Measured suitability of the resulting edge and qualified route for the application",
-          "The newest machine must always give the longest tool life",
-          "Every PCD grade responds identically"
+          "Check whether the finished edge and the proven process suit the customer’s job.",
+          "Always choose the newest machine because it must make the best tool.",
+          "Use the same process for every PCD material without testing."
         ],
         "correct": 0,
-        "explanation": "Material, geometry, process and customer conditions jointly determine suitability. A process name is not a release criterion."
+        "explanation": "The process must suit the material, shape and job. Its name alone does not prove that the finished edge will work."
       },
       "sources": [
         {
-          "title": "Element Six \u2014 Brazing superhard materials, technical case study",
+          "title": "Element Six — Brazing superhard materials, technical case study",
           "url": "https://e6-prd-cdn-01.azureedge.net/mediacontainer/medialibraries/element6/documents/brazing-superhard-materials-case-study_13-08-21_final.pdf"
         },
         {
-          "title": "Element Six \u2014 Machining, segment cutting by EDM and laser",
+          "title": "Element Six — Machining, segment cutting by EDM and laser",
           "url": "https://www.e6.com/products/automotive-and-aerospace"
         },
         {
-          "title": "Element Six \u2014 Advanced semiconductor solutions, PCD processing methods",
+          "title": "Element Six — Advanced semiconductor solutions, PCD processing methods",
           "url": "https://e6-prd-cdn-01.azureedge.net/mediacontainer/medialibraries/element6/documents/brochures/semiconductor-brochure.pdf?ext=.pdf"
         },
         {
-          "title": "Hyperion \u2014 PCD veined end mill blanks",
+          "title": "Hyperion — PCD veined end mill blanks",
           "url": "https://www.hyperionmt.com/ja-jp/products/PCD/compax-pcd/end-mill-blanks/"
         },
         {
-          "title": "Rollomatic \u2014 LaserSmart product family",
+          "title": "Rollomatic — LaserSmart product family",
           "url": "https://www.rollomatic.ch/tools/catalog/lasersmart/"
         }
-      ]
+      ],
+      "analogy": "A knife needs a good blade and a secure handle. A supported diamond tip also needs a sound connection to the tool body, though its construction is very different.",
+      "takeaway": "A PCD tool needs a good diamond edge, reliable support, and a suitable manufacturing process."
     },
     {
       "id": "mfg-rollomatic",
-      "title": "Your Rollomatic software and machine workflow",
-      "subtitle": "Place Tool Sketcher in the right part of the chain.",
+      "title": "What Rollomatic and Tool Sketcher do",
+      "subtitle": "See how the computer model, drawing, machine program and real tool fit together.",
       "group": "Manufacturing",
       "minutes": 25,
       "objectives": [
-        "Explain what Tool Sketcher does and where its geometry originates",
-        "Distinguish GrindSmart, ShapeSmart and LaserSmart",
-        "Trace one released drawing to its program and measured tool"
+        "Explain what Tool Sketcher makes and where its shape comes from.",
+        "Recognize the different jobs of Rollomatic’s main machine families.",
+        "Follow one tool from its editable program to its drawing and measured result."
       ],
       "sections": [
         {
-          "heading": "Start from what is actually known",
-          "body": "This lesson introduces Rollomatic machines and Tool Sketcher. Before applying it, identify the installed machine models, software versions, licenses, options and exact file formats. The descriptions here reflect official public product pages reviewed on 23 September 2026. They are an orientation to product roles; they are not an inventory of CTC equipment or a promise that every advertised function exists in your installation."
+          "heading": "First find out what is installed",
+          "body": "“We use Rollomatic” is a starting point, not a complete description. Different machine models and software versions can do different jobs. Ask the team to show you the actual machine name and the software they open for a real tool. This lesson explains the product families; it does not list the equipment installed at CTC.",
+          "example": "Knowing that a team uses a particular phone brand does not tell you which camera or features it has. You need the model and version. The same is true of manufacturing equipment.",
+          "takeaway": "Learn the names and versions of the machines and software your team actually uses.",
+          "technical": {
+            "body": "This lesson introduces Rollomatic machines and Tool Sketcher. Before applying it, identify the installed machine models, software versions, licenses, options and exact file formats. The descriptions here reflect official public product pages reviewed on 23 September 2026. They are an orientation to product roles; they are not an inventory of CTC equipment or a promise that every advertised function exists in your installation."
+          }
         },
         {
-          "heading": "The direction of Tool Sketcher matters",
-          "body": "Rollomatic describes Tool Sketcher as creating 2D drawings from 3D tool simulations directly in VirtualGrind Pro. It offers complete-tool, profile, core-section, blank and detail views, with dimensions and tolerances. Its public page lists DXF and PNG drawing exports. The stated relationship is programmed/simulated tool \u2192 drawing. Do not assume that importing a customer drawing automatically reconstructs the 3D tool or produces a validated machine program. Inspect the actual editable source behind a CTC drawing."
+          "heading": "Tool Sketcher makes drawings from a simulated tool",
+          "body": "Rollomatic describes Tool Sketcher as making 2D drawings from a 3D tool simulation in VirtualGrind Pro. The drawing can show views of the tool, sizes and allowed variation. The direction matters: simulated tool to drawing. A customer sketch or exported picture is not automatically a complete, checked program for making the tool.",
+          "example": "A drawing exported from a building model is useful, but a picture of that drawing does not contain everything needed to rebuild the original model. Ask for the editable source too.",
+          "takeaway": "Follow the drawing back to the editable tool program that produced it.",
+          "technical": {
+            "body": "Rollomatic describes Tool Sketcher as creating 2D drawings from 3D tool simulations directly in VirtualGrind Pro. It offers complete-tool, profile, core-section, blank and detail views, with dimensions and tolerances. Its public page lists DXF and PNG drawing exports. The stated relationship is programmed/simulated tool → drawing. Do not assume that importing a customer drawing automatically reconstructs the 3D tool or produces a validated machine program. Inspect the actual editable source behind a CTC drawing."
+          }
         },
         {
-          "heading": "Know the product families",
-          "body": "GrindSmart is Rollomatic's cutting-tool grinding family. VirtualGrind Pro is its tool-programming environment, with tool examples and editable operations. ShapeSmart concerns cylindrical blank and punch grinding, including pinch-and-peel processes; ShapeSmart Pro is associated programming software. LaserSmart machines process ultra-hard materials using lasers; Rollomatic's software catalog describes LaserSuite simulation and beam-trajectory review. These roles are related but their equipment, programs and process physics differ. Match each claim to the exact model and installed version."
+          "heading": "Three machine families, three different jobs",
+          "body": "GrindSmart machines grind cutting tools. ShapeSmart machines shape cylindrical blanks and punches. LaserSmart machines use lasers to process very hard tool materials. Each family has its own equipment and associated software. Learn these broad roles first, then ask what the exact model in front of you can do.",
+          "bullets": [
+            "GrindSmart: grinding the cutting tool.",
+            "ShapeSmart: shaping blanks and punches.",
+            "LaserSmart: using a laser on very hard tool materials."
+          ],
+          "example": "In a kitchen, a mixer, oven and knife all help make food, but they do different jobs. The Rollomatic product families also belong at different points in a manufacturing process.",
+          "takeaway": "Match the machine family to the job; do not treat all Rollomatic machines as interchangeable.",
+          "technical": {
+            "body": "GrindSmart is Rollomatic's cutting-tool grinding family. VirtualGrind Pro is its tool-programming environment, with tool examples and editable operations. ShapeSmart concerns cylindrical blank and punch grinding, including pinch-and-peel processes; ShapeSmart Pro is associated programming software. LaserSmart machines process ultra-hard materials using lasers; Rollomatic's software catalog describes LaserSuite simulation and beam-trajectory review. These roles are related but their equipment, programs and process physics differ. Match each claim to the exact model and installed version."
+          }
         },
         {
-          "heading": "Walk through a complete job",
-          "body": "Begin with the approved requirement and drawing revision. Open the associated source program with a qualified operator. Identify blank, wheel or laser setup, clamping, support, operations and compensation. Review the simulated geometry and machine motion in the appropriate vendor tools. Produce and inspect a first article using the approved shop procedure. Resolve deviations through controlled changes, then release the associated drawing, program and setup together. Simulation is valuable evidence of intended geometry and motion; it does not prove actual wheel condition, machine calibration or cutting performance."
+          "heading": "Follow one tool from screen to measurement",
+          "body": "Start with an approved tool design. With a qualified operator, look at its program, the starting blank and the machine setup. Review the simulated shape and movements. Then see how the first real tool is measured. The simulation shows what is intended; measuring and testing show what was actually made and how it performs.",
+          "example": "A recipe picture can show the intended cake. You still need to check the cake that came out of your oven. A tool simulation and a real tool also need to be compared.",
+          "takeaway": "A good-looking simulation is a starting point for checking the real tool.",
+          "technical": {
+            "body": "Begin with the approved requirement and drawing revision. Open the associated source program with a qualified operator. Identify blank, wheel or laser setup, clamping, support, operations and compensation. Review the simulated geometry and machine motion in the appropriate vendor tools. Produce and inspect a first article using the approved shop procedure. Resolve deviations through controlled changes, then release the associated drawing, program and setup together. Simulation is valuable evidence of intended geometry and motion; it does not prove actual wheel condition, machine calibration or cutting performance."
+          }
         },
         {
-          "heading": "What an AI project needs to discover",
-          "body": "Ask someone to demonstrate how a changed core diameter travels from the editable design to a new Tool Sketcher section, a new program revision and a measured tool. Determine which data can be exported in documented formats and which actions require an operator. Ask Rollomatic about supported interfaces and permissions rather than assuming an automation API exists. For every SKU preserve a traceable relationship between the customer requirement, editable source, released drawing, setup, manufactured lot and customer trial."
+          "heading": "Before adding AI, follow one small change",
+          "body": "Ask the team to demonstrate one change, such as making the centre of a tool thicker. Follow it into the editable design, the drawing, the machine instructions and the measured tool. Find out which files can be exported and which steps need an operator. Ask Rollomatic about supported connections rather than assuming the software can be automated.",
+          "example": "Use one change as a trail to follow: “Where did we edit it? Which drawing changed? Which program made it? Where is the measurement that checks it?”",
+          "takeaway": "Understand how one change moves through the existing workflow before trying to automate it.",
+          "technical": {
+            "body": "Ask someone to demonstrate how a changed core diameter travels from the editable design to a new Tool Sketcher section, a new program revision and a measured tool. Determine which data can be exported in documented formats and which actions require an operator. Ask Rollomatic about supported interfaces and permissions rather than assuming an automation API exists. For every SKU preserve a traceable relationship between the customer requirement, editable source, released drawing, setup, manufactured lot and customer trial."
+          }
         }
       ],
       "exercise": {
-        "prompt": "You receive a PNG exported from Tool Sketcher. What must you obtain before using it as the basis for repeatable manufacture?",
-        "answer": "Obtain the controlled drawing revision and requirements, its editable source program and applicable software version, the intended machine and setup, and inspection/validation evidence. A raster image alone does not carry the complete manufacturing definition."
+        "prompt": "Someone gives you a Tool Sketcher picture and says, “Make this tool again.” What would you ask for next?",
+        "answer": "Ask for the approved drawing version and the editable source program, then confirm the software, machine setup and inspection record. The picture helps explain the shape, but it is not the full set of manufacturing instructions."
       },
       "quiz": {
-        "question": "What direction does Rollomatic explicitly document for Tool Sketcher?",
+        "question": "What does Tool Sketcher turn into a 2D drawing?",
         "options": [
-          "VirtualGrind Pro 3D tool simulation to a 2D drawing",
-          "Any customer sketch to an automatically validated CNC program",
-          "Measured tool to a guaranteed cutting-life prediction"
+          "A 3D tool simulation in VirtualGrind Pro.",
+          "Any customer picture, automatically checked and ready for the machine.",
+          "A prediction of exactly how long the tool will last."
         ],
         "correct": 0,
-        "explanation": "Tool Sketcher documents simulated tool geometry. Additional design, manufacturing and validation work remains necessary."
+        "explanation": "Tool Sketcher creates drawings from simulated tool geometry. The team still has to check the design, manufacturing process and real cutting result."
       },
       "sources": [
         {
-          "title": "Rollomatic \u2014 Tool Sketcher",
+          "title": "Rollomatic — Tool Sketcher",
           "url": "https://www.rollomatic.ch/product/tool-sketcher/"
         },
         {
-          "title": "Rollomatic \u2014 VirtualGrind Pro",
+          "title": "Rollomatic — VirtualGrind Pro",
           "url": "https://www.rollomatic.ch/product/virtualgrindpro/"
         },
         {
-          "title": "Rollomatic \u2014 Software families",
+          "title": "Rollomatic — Software families",
           "url": "https://www.rollomatic.ch/solutions/software/"
         },
         {
-          "title": "Rollomatic \u2014 ShapeSmart family",
+          "title": "Rollomatic — ShapeSmart family",
           "url": "https://www.rollomatic.ch/tools/catalog/shapesmart/"
         },
         {
-          "title": "Rollomatic \u2014 LaserSmart 510, model-specific example",
+          "title": "Rollomatic — LaserSmart 510, model-specific example",
           "url": "https://www.rollomatic.ch/product/lasersmart-510/"
         }
-      ]
+      ],
+      "analogy": "A building model, its drawings and the instructions for construction are related, but they are not interchangeable. The same distinction helps when learning tool software.",
+      "takeaway": "Tool Sketcher turns a simulated tool into a drawing; making and proving the real tool takes further work."
     },
     {
       "id": "mfg-quality",
-      "title": "Prove the tool is correct\u2014and that it works",
-      "subtitle": "Metrology, measurement trust, process variation and customer trials.",
+      "title": "Check the tool—and check the parts it makes",
+      "subtitle": "Learn what to measure, how to trust the measurement, and how to compare tools fairly.",
       "group": "Manufacturing",
       "minutes": 30,
       "objectives": [
-        "Separate calibration, measurement-system studies and process capability",
-        "Design a meaningful tool comparison",
-        "Define a release evidence package"
+        "Explain why different tool features need different checks.",
+        "Ask whether a measurement can be repeated reliably.",
+        "Compare old and new tools without confusing a lucky result with a reliable improvement."
       ],
       "sections": [
         {
-          "heading": "Measure the feature that matters",
-          "body": "Metrology is the science and practice of measurement. Tool diameter, flute form, runout, edge radius and surface finish are different characteristics and may need different instruments or setups. Runout describes how a feature varies as the tool rotates relative to a reference axis. State the datum, location, magnification or filtering where relevant, fixturing and acceptance rule. A measured number without its method can be difficult to compare with another instrument or the customer's result."
+          "heading": "Measure what could affect the customer’s part",
+          "body": "Checking the outside diameter does not check everything. The edge shape, surface finish and how evenly the tool rotates can also matter. That unevenness during rotation is called runout. Each check may need a different instrument or setup. Agree on what is being measured and how, so two people can compare their results.",
+          "example": "A wheel can have the correct diameter and still wobble when it turns. A cutting tool can also be the right size but rotate unevenly.",
+          "takeaway": "One correct measurement does not prove that every important feature is correct.",
+          "technical": {
+            "body": "Metrology is the science and practice of measurement. Tool diameter, flute form, runout, edge radius and surface finish are different characteristics and may need different instruments or setups. Runout describes how a feature varies as the tool rotates relative to a reference axis. State the datum, location, magnification or filtering where relevant, fixturing and acceptance rule. A measured number without its method can be difficult to compare with another instrument or the customer's result."
+          }
         },
         {
-          "heading": "First establish trust in measurement",
-          "body": "Calibration relates an instrument's indication to a reference; it does not by itself prove that operators can repeatedly measure this tool feature. A gauge repeatability and reproducibility study examines variation when measurements are repeated and conditions such as operators change. Include representative parts, relevant geometry, re-fixturing and the intended working conditions. Also consider bias, resolution, drift and longer-term stability. A tiny display increment is not the same thing as small measurement uncertainty."
+          "heading": "Check the measuring method before trusting the number",
+          "body": "An instrument is calibrated by comparing its readings with a known reference. But people still need a reliable way to hold and measure the actual tool. Repeat the measurement, then ask another person to do it. If the results change too much, investigate the method before using those numbers to judge the tools.",
+          "example": "A bathroom scale may read correctly on a firm floor and differently on a soft rug. The instrument and the way it is used both affect the result.",
+          "takeaway": "A trustworthy number needs a suitable instrument and a repeatable method.",
+          "technical": {
+            "body": "Calibration relates an instrument's indication to a reference; it does not by itself prove that operators can repeatedly measure this tool feature. A gauge repeatability and reproducibility study examines variation when measurements are repeated and conditions such as operators change. Include representative parts, relevant geometry, re-fixturing and the intended working conditions. Also consider bias, resolution, drift and longer-term stability. A tiny display increment is not the same thing as small measurement uncertainty."
+          }
         },
         {
-          "heading": "Then study the manufacturing process",
-          "body": "Plot critical measurements in production order to look for drift, shifts and unusual variation. Capability compares a stable process with engineering specification limits. Cp describes spread relative to tolerance; Cpk also reflects how close the mean is to a limit. The interpretation depends on adequate data, measurement quality and distribution assumptions. Do not advertise a capability value from a handful of favorable parts or combine different revisions into a single flattering number. Customer or internal approval criteria must define the required evidence."
+          "heading": "Look for a pattern across many tools",
+          "body": "One good tool does not prove that the factory can keep making good tools. Look at measurements in the order the tools were made. Are they drifting towards a limit, or suddenly changing? Engineers use process capability measures to compare normal variation with the allowed range. Those measures only help when the measurements and process are trustworthy.",
+          "example": "Imagine filling a row of bottles to a marked range. The average may look right even if some bottles are too full and others too empty. Check the spread and the pattern.",
+          "takeaway": "Look for a stable pattern within the allowed limits, not just one good result.",
+          "technical": {
+            "body": "Plot critical measurements in production order to look for drift, shifts and unusual variation. Capability compares a stable process with engineering specification limits. Cp describes spread relative to tolerance; Cpk also reflects how close the mean is to a limit. The interpretation depends on adequate data, measurement quality and distribution assumptions. Do not advertise a capability value from a handful of favorable parts or combine different revisions into a single flattering number. Customer or internal approval criteria must define the required evidence."
+          }
         },
         {
-          "heading": "Run a fair cutting trial",
-          "body": "Write the trial objective and end-of-life rule before cutting. Compare against a known baseline on representative material and equipment. Record the tool revision, holder, runout, workpiece batch, engagement, speed, feed and coolant/extraction. Measure customer outcomes: acceptable features produced, finish, burrs or damage, time and failure mode. Use multiple tools and suitable randomization or blocking to avoid confusing a material batch or machine shift with a design improvement. A tool removed while still working provides incomplete life information; record that explicitly."
+          "heading": "Give the old and new tools a fair comparison",
+          "body": "Decide what success means before the trial starts. Compare the old and new tools on suitable material, with comparable machines and setups. Agree what makes a part acceptable and when a tool should be replaced. Try more than one tool of each kind, so a lucky result or a different batch of material does not decide the answer.",
+          "example": "Comparing two runners is unfair if one runs downhill and the other uphill. Tool comparisons also need conditions that let you tell what difference the design actually made.",
+          "takeaway": "Keep the comparison fair and judge it by acceptable customer parts.",
+          "technical": {
+            "body": "Write the trial objective and end-of-life rule before cutting. Compare against a known baseline on representative material and equipment. Record the tool revision, holder, runout, workpiece batch, engagement, speed, feed and coolant/extraction. Measure customer outcomes: acceptable features produced, finish, burrs or damage, time and failure mode. Use multiple tools and suitable randomization or blocking to avoid confusing a material batch or machine shift with a design improvement. A tool removed while still working provides incomplete life information; record that explicitly."
+          }
         },
         {
-          "heading": "Close the loop",
-          "body": "A release package should link the approved specification, material and process traceability, first-article results, trusted measurement method, production-control plan and customer trial. Preserve both passing and failing trials, including photographs and stop reasons. Ask: Can a different operator measure this edge the same way? Does quality see failures before shipment? Can we reconstruct the exact design used in a returned tool? Which customer outcome decides replacement? For AI, trustworthy labels and comparable trials are more valuable than a large folder of disconnected drawings."
+          "heading": "Keep the result connected to the exact tool",
+          "body": "Keep the drawing version, manufacturing record, measurements and cutting-trial results linked together. Save failed trials as well as successful ones, with pictures and a reason for stopping. Then the team can explain what happened and choose a sensible next step. This connected evidence is also what a useful AI design assistant will need.",
+          "example": "If a customer returns a failed tool, the record should tell you which design and batch it came from, what was checked, and what happened during the trial.",
+          "takeaway": "A result is most useful when you can trace it back to the exact tool and test.",
+          "technical": {
+            "body": "A release package should link the approved specification, material and process traceability, first-article results, trusted measurement method, production-control plan and customer trial. Preserve both passing and failing trials, including photographs and stop reasons. Ask: Can a different operator measure this edge the same way? Does quality see failures before shipment? Can we reconstruct the exact design used in a returned tool? Which customer outcome decides replacement? For AI, trustworthy labels and comparable trials are more valuable than a large folder of disconnected drawings."
+          }
         }
       ],
       "exercise": {
-        "prompt": "One new tool makes 1,200 acceptable holes; one baseline makes 1,000. Can you claim a reliable 20% life improvement?",
-        "answer": "Only an observed difference in those two trials is established. Review comparable conditions, failure/stop rules and measurement quality, then test enough independent tools under a suitable design to estimate variation and uncertainty."
+        "prompt": "In an example trial, one new drill makes 1,200 good holes and one old drill makes 1,000. Does that prove the new design will always last 20% longer?",
+        "answer": "No. It shows a difference between those two tools in those trials. Check whether conditions and the stopping rule were comparable, then test more tools to see how much results vary."
       },
       "quiz": {
-        "question": "What should you establish before interpreting Cpk as evidence of a capable process?",
+        "question": "What do we need before claiming that a process reliably makes tools within the allowed size range?",
         "options": [
-          "A suitable measurement system, stable process and justified data/assumptions",
-          "Only that the average dimension matches the drawing",
-          "That one first article passed"
+          "Measurements we can trust and enough results showing a stable process.",
+          "Just one tool that passed inspection.",
+          "An average size that looks right, even if individual tools vary widely."
         ],
         "correct": 0,
-        "explanation": "Capability is a statement about process variation relative to limits, not simply about one good tool or its average dimension."
+        "explanation": "Reliable manufacturing is about the pattern across many tools. One passing tool—or a good average that hides large variation—is not enough."
       },
       "sources": [
         {
-          "title": "NIST \u2014 Gauge R&R studies",
+          "title": "NIST — Gauge R&R studies",
           "url": "https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc4.htm"
         },
         {
-          "title": "NIST \u2014 Uncertainties from a gauge study",
+          "title": "NIST — Uncertainties from a gauge study",
           "url": "https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc46.htm"
         },
         {
-          "title": "NIST \u2014 What is process capability?",
+          "title": "NIST — What is process capability?",
           "url": "https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm"
         },
         {
-          "title": "NIST \u2014 Choosing an experimental design",
+          "title": "NIST — Choosing an experimental design",
           "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri3.htm"
         }
-      ]
+      ],
+      "analogy": "A cake can match the recipe and still need a taste test. A cutter must both match its design and make acceptable parts in the customer’s process.",
+      "takeaway": "A good tool needs trustworthy measurements and a fair test on the job it is meant to do."
     }
   ],
   "sources": [
     {
-      "title": "Sandvik Coromant \u2014 Milling tools 2025, component and process selection guide",
+      "title": "Sandvik Coromant — Milling tools 2025, component and process selection guide",
       "url": "https://epublications.sandvik.coromant.com/frontend/catalogs/1157651/1/pdf/complete.pdf"
     },
     {
-      "title": "Rollomatic \u2014 Tool Sketcher",
+      "title": "Rollomatic — Tool Sketcher",
       "url": "https://www.rollomatic.ch/product/tool-sketcher/"
     },
     {
-      "title": "NIST \u2014 Defining experimental objectives",
+      "title": "NIST — Defining experimental objectives",
       "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri31.htm"
     },
     {
-      "title": "Rollomatic \u2014 Cylindrical and punch grinding",
+      "title": "Rollomatic — Cylindrical and punch grinding",
       "url": "https://www.rollomatic.ch/tools/solutions/blank-prep-and-punches/"
     },
     {
-      "title": "Norton \u2014 Superabrasives and bond families",
+      "title": "Norton — Superabrasives and bond families",
       "url": "https://www.nortonabrasives.com/en-us/superabrasives"
     },
     {
-      "title": "Norton \u2014 Understanding truing and dressing, June 2025",
+      "title": "Norton — Understanding truing and dressing, June 2025",
       "url": "https://www.nortonabrasives.com/en-us/resources/expertise/understanding-truing-dressing"
     },
     {
-      "title": "Norton \u2014 Industrial technical data, grinding and coolant guidance",
+      "title": "Norton — Industrial technical data, grinding and coolant guidance",
       "url": "https://www.nortonabrasives.com/sites/mac3-acs-norton/files/Norton_Industrial_technical_data_health_safety_8.pdf"
     },
     {
-      "title": "Element Six \u2014 Brazing superhard materials, technical case study",
+      "title": "Element Six — Brazing superhard materials, technical case study",
       "url": "https://e6-prd-cdn-01.azureedge.net/mediacontainer/medialibraries/element6/documents/brazing-superhard-materials-case-study_13-08-21_final.pdf"
     },
     {
-      "title": "Element Six \u2014 Machining, segment cutting by EDM and laser",
+      "title": "Element Six — Machining, segment cutting by EDM and laser",
       "url": "https://www.e6.com/products/automotive-and-aerospace"
     },
     {
-      "title": "Element Six \u2014 Advanced semiconductor solutions, PCD processing methods",
+      "title": "Element Six — Advanced semiconductor solutions, PCD processing methods",
       "url": "https://e6-prd-cdn-01.azureedge.net/mediacontainer/medialibraries/element6/documents/brochures/semiconductor-brochure.pdf?ext=.pdf"
     },
     {
-      "title": "Hyperion \u2014 PCD veined end mill blanks",
+      "title": "Hyperion — PCD veined end mill blanks",
       "url": "https://www.hyperionmt.com/ja-jp/products/PCD/compax-pcd/end-mill-blanks/"
     },
     {
-      "title": "Rollomatic \u2014 LaserSmart product family",
+      "title": "Rollomatic — LaserSmart product family",
       "url": "https://www.rollomatic.ch/tools/catalog/lasersmart/"
     },
     {
-      "title": "Rollomatic \u2014 VirtualGrind Pro",
+      "title": "Rollomatic — VirtualGrind Pro",
       "url": "https://www.rollomatic.ch/product/virtualgrindpro/"
     },
     {
-      "title": "Rollomatic \u2014 Software families",
+      "title": "Rollomatic — Software families",
       "url": "https://www.rollomatic.ch/solutions/software/"
     },
     {
-      "title": "Rollomatic \u2014 ShapeSmart family",
+      "title": "Rollomatic — ShapeSmart family",
       "url": "https://www.rollomatic.ch/tools/catalog/shapesmart/"
     },
     {
-      "title": "Rollomatic \u2014 LaserSmart 510, model-specific example",
+      "title": "Rollomatic — LaserSmart 510, model-specific example",
       "url": "https://www.rollomatic.ch/product/lasersmart-510/"
     },
     {
-      "title": "NIST \u2014 Gauge R&R studies",
+      "title": "NIST — Gauge R&R studies",
       "url": "https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc4.htm"
     },
     {
-      "title": "NIST \u2014 Uncertainties from a gauge study",
+      "title": "NIST — Uncertainties from a gauge study",
       "url": "https://www.itl.nist.gov/div898/handbook/mpc/section4/mpc46.htm"
     },
     {
-      "title": "NIST \u2014 What is process capability?",
+      "title": "NIST — What is process capability?",
       "url": "https://www.itl.nist.gov/div898/handbook/pmc/section1/pmc16.htm"
     },
     {
-      "title": "NIST \u2014 Choosing an experimental design",
+      "title": "NIST — Choosing an experimental design",
       "url": "https://www.itl.nist.gov/div898/handbook/pri/section3/pri3.htm"
     }
   ],

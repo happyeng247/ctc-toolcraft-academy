@@ -2,51 +2,79 @@
   "modules": [
     {
       "id": "cutting-system",
-      "title": "Start with the complete cutting system",
-      "subtitle": "Understand what a cutting tool does, and what a successful design must deliver.",
+      "title": "How a cutting tool does its job",
+      "subtitle": "Follow a simple job: making a hole or a pocket in a part.",
       "group": "Fundamentals",
       "minutes": 20,
       "objectives": [
-        "Separate making a tool from using a tool.",
-        "Translate a customer request into measurable requirements.",
-        "Recognize the limits of a schematic 3D model."
+        "Explain the difference between making a tool and using it.",
+        "Ask what the finished part needs to do.",
+        "See what an animation can—and cannot—show you."
       ],
       "sections": [
         {
-          "heading": "Two factories, two different jobs",
-          "body": "A cutting tool removes material from a workpiece: the part the customer wants to manufacture. CTC makes the tool; the customer then uses it in a machining process. A tool grinder shapes the cutter itself. A machining centre moves that finished cutter through the customer’s material. The drawing of a tool, the program that makes the tool, and the program that uses the tool are different technical objects. Learning to distinguish them prevents confusion when people say “the machine” or “the program”."
+          "heading": "Making the tool is one job. Using it is another.",
+          "body": "CTC makes the cutting tool. A customer puts that tool into a machine to shape a part, called the workpiece. These are two different jobs: one machine shapes the cutter; another uses the finished cutter to remove material. Each job needs its own instructions.",
+          "example": "Imagine a tool for cutting a pocket in a metal case. CTC makes the cutter; the customer uses it to make the pocket.",
+          "takeaway": "Always ask whether someone means the machine that makes the tool or the machine that uses it.",
+          "technical": {
+            "body": "A cutting tool removes material from a workpiece: the part the customer wants to manufacture. CTC makes the tool; the customer then uses it in a machining process. A tool grinder shapes the cutter itself. A machining centre moves that finished cutter through the customer’s material. The drawing of a tool, the program that makes the tool, and the program that uses the tool are different technical objects. Learning to distinguish them prevents confusion when people say “the machine” or “the program”.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Follow one feature from request to result",
-          "body": "Begin with a feature: a hole, slot, pocket, contour or edge. Ask what function it serves and how acceptance is measured. Then connect the workpiece material, operation, cutter, holder, spindle, fixture, fluid or extraction, and inspection. A spindle is the rotating machine assembly; a fixture holds the part. A strong tool can still perform poorly if the setup lets it move. Treat these connections as a system.",
+          "heading": "Start with the result the customer wants",
+          "body": "Before choosing a tool, ask what needs to be made: perhaps a hole, a flat wall, or a pocket. Then look at the whole setup. The holder grips the tool, and a fixture holds the part. If either moves when it should not, even a well-made tool can give a poor result.",
           "bullets": [
-            "Customer input: material and condition, feature geometry, tolerances, finish, production volume and machine constraints.",
-            "Design output: tool dimensions and geometry, material grade, surface treatment, interfaces, inspection characteristics and revision.",
-            "Evidence: the actual setup, trial results, accepted parts and documented limits of use."
-          ]
+            "What material are we cutting, and what shape do we need?",
+            "How is the tool held, and how is the part held?",
+            "How will we check that the finished part is good?"
+          ],
+          "example": "A screw hole needs to fit its screw and sit in the right place. A sharp drill alone cannot guarantee both.",
+          "takeaway": "Begin with the finished part, then work backward to the tool and setup.",
+          "technical": {
+            "body": "Begin with a feature: a hole, slot, pocket, contour or edge. Ask what function it serves and how acceptance is measured. Then connect the workpiece material, operation, cutter, holder, spindle, fixture, fluid or extraction, and inspection. A spindle is the rotating machine assembly; a fixture holds the part. A strong tool can still perform poorly if the setup lets it move. Treat these connections as a system.",
+            "bullets": [
+              "Customer input: material and condition, feature geometry, tolerances, finish, production volume and machine constraints.",
+              "Design output: tool dimensions and geometry, material grade, surface treatment, interfaces, inspection characteristics and revision.",
+              "Evidence: the actual setup, trial results, accepted parts and documented limits of use."
+            ]
+          }
         },
         {
-          "heading": "Quality is several requirements",
-          "body": "Tolerance is the permitted variation around a requirement. Size, location, shape, surface texture and burr condition are different requirements. A shiny surface can have the wrong shape; a correctly sized hole can sit in the wrong place. Ra is one average roughness measure and cannot alone describe every scratch or surface defect. The inspection method belongs in the requirement, alongside its limit. Do not invent customer tolerances from a photograph."
+          "heading": "Looking good is only one part of quality",
+          "body": "A finished part has several things to get right: size, shape, position, and surface. Tolerance means the small difference allowed from a target size or position. A smooth-looking hole may still be too large or in the wrong place. The customer must say what is acceptable and how to measure it.",
+          "example": "A shelf bracket may look neat, but it will not fit if its screw holes are too far apart.",
+          "takeaway": "Ask “Does it meet the drawing?” as well as “Does it look good?”",
+          "technical": {
+            "body": "Tolerance is the permitted variation around a requirement. Size, location, shape, surface texture and burr condition are different requirements. A shiny surface can have the wrong shape; a correctly sized hole can sit in the wrong place. Ra is one average roughness measure and cannot alone describe every scratch or surface defect. The inspection method belongs in the requirement, alongside its limit. Do not invent customer tolerances from a photograph.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Use 3D to ask better questions",
-          "body": "The training models deliberately simplify flutes, edges and motion. They teach spatial relationships, not manufacturable surfaces, collision clearance or cutting performance. A real tool definition also needs manufacturing geometry, tolerances, edge preparation and measured validation. For future AI, use consistent parameter names and units; ISO 13399 is a useful reference for exchanging tool data. Your first learning deliverable is a one-page map of one existing tool and the customer feature it produces."
+          "heading": "Use the model to understand the idea",
+          "body": "An animation helps you see which part moves, which edge cuts, and where material goes. It leaves out many small details. A real tool still needs an accurate drawing, a way to make and measure it, and a cutting trial. Use the model to form better questions for the team.",
+          "example": "A map helps you understand a journey, but it does not show every pothole. A teaching model simplifies a tool in a similar way.",
+          "takeaway": "The visual explains how something works; it does not prove a tool is ready for production.",
+          "technical": {
+            "body": "The training models deliberately simplify flutes, edges and motion. They teach spatial relationships, not manufacturable surfaces, collision clearance or cutting performance. A real tool definition also needs manufacturing geometry, tolerances, edge preparation and measured validation. For future AI, use consistent parameter names and units; ISO 13399 is a useful reference for exchanging tool data. Your first learning deliverable is a one-page map of one existing tool and the customer feature it produces.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A customer asks for “a better tool for this hole.” What must you learn before proposing a design?",
-        "answer": "Identify the material and condition, hole geometry and acceptance criteria, current tool and failure, machine/holder/fixture, fluid and chip evacuation, current settings, quantity and cost objective. Separate confirmed facts from missing information; retrieve a comparable proven tool before changing geometry."
+        "prompt": "A customer says, “This hole is not good enough.” What three questions would you ask first?",
+        "answer": "Ask what material is being cut, what is wrong with the hole, and what a good hole must measure or look like. Then look at the current tool and setup with the team. Find a similar job that worked before proposing a change."
       },
       "quiz": {
-        "question": "Which description is a complete performance claim?",
+        "question": "Which statement gives you enough context to judge a tool?",
         "options": [
-          "This tool looks sharper.",
-          "This tool lasted longer.",
-          "With this identified material and setup, the tool made this number of accepted parts before the stated limit."
+          "“It looks sharper.”",
+          "“It lasted longer.”",
+          "“In this material and setup, it made this many good parts before the agreed stopping point.”"
         ],
         "correct": 2,
-        "explanation": "Performance becomes useful evidence when the operating context, accepted output and stopping criterion are recorded."
+        "explanation": "You need to know the job, the setup, what counted as a good part, and when the test ended. “Better” needs a clear meaning."
       },
       "sources": [
         {
@@ -61,50 +89,76 @@
           "title": "Harvey Performance — Tool runout and holding considerations",
           "url": "https://www.harveyperformance.com/in-the-loupe/tag/tool-runout/"
         }
-      ]
+      ],
+      "analogy": "Think of a kitchen knife and a meal: one business makes the knife; someone else uses it. CTC makes cutting tools, which customers use to shape their parts.",
+      "takeaway": "A tool is successful when it helps the customer make a good part, reliably."
     },
     {
       "id": "tool-anatomy",
-      "title": "Read the anatomy of a rotary tool",
-      "subtitle": "Connect visible shape to cutting, strength and access.",
+      "title": "Meet the parts of a cutting tool",
+      "subtitle": "See what grips, what cuts, and what gives the chips a way out.",
       "group": "Fundamentals",
       "minutes": 25,
       "objectives": [
-        "Identify the shank, flute, core, cutting edge and clearance.",
-        "Explain rake, helix and flute-count tradeoffs.",
-        "Distinguish reach from cutting length."
+        "Point to the gripping end, cutting edges, chip channels, and centre.",
+        "Explain why more cutting edges are not always better.",
+        "See why a longer reach can make a tool bend more."
       ],
       "sections": [
         {
-          "heading": "Begin at the holder and move toward the tip",
-          "body": "The shank is the part gripped by the holder. The cutting diameter is the size swept by the cutting edges. The length of cut is the length with usable cutting edges; overall length includes the rest of the tool. A reduced neck can reach past a wall without cutting it. A flute is a channel beside a cutting edge, and the core is the material left between those channels. In the 3D viewer, find each feature before changing any parameter."
+          "heading": "Find the gripping end and the cutting end",
+          "body": "The smooth gripping end is the shank. The sharp edges do the cutting. Beside them are flutes: channels that give removed material a way out. The solid centre is the core, which supports the edges. Only part of the tool may have cutting edges; its full length is not all available for cutting.",
+          "example": "Look at a drill: the machine grips the smooth end, while the spiral channels help carry material out of the hole.",
+          "takeaway": "The shank holds, the edges cut, the flutes clear chips, and the core supports.",
+          "technical": {
+            "body": "The shank is the part gripped by the holder. The cutting diameter is the size swept by the cutting edges. The length of cut is the length with usable cutting edges; overall length includes the rest of the tool. A reduced neck can reach past a wall without cutting it. A flute is a channel beside a cutting edge, and the core is the material left between those channels. In the 3D viewer, find each feature before changing any parameter.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Zoom into one cutting edge",
-          "body": "The rake face is the surface over which the chip flows. The clearance, or relief, behind the edge stops the tool body rubbing on the newly cut surface. More positive rake can lower cutting resistance but leaves a less supported wedge. Excessively little clearance can rub; too much can weaken the edge. An edge can also have a microscopic hone or chamfer. That edge preparation is separate from the much larger corner radius visible in an ordinary tool drawing."
+          "heading": "Give the sharp edge room to cut",
+          "body": "At each edge, one face guides the chip away. This is the rake face. The surface just behind the edge needs a small gap from the newly cut part; that gap is called clearance. Too little clearance causes rubbing. Too much removes support, so the edge can become easier to damage.",
+          "example": "When shaving a pencil with a blade, the edge needs to cut while the surface behind it stays out of the way. A metal-cutting edge needs the same basic separation.",
+          "takeaway": "A cutting edge needs both room to work and enough material behind it to stay strong.",
+          "technical": {
+            "body": "The rake face is the surface over which the chip flows. The clearance, or relief, behind the edge stops the tool body rubbing on the newly cut surface. More positive rake can lower cutting resistance but leaves a less supported wedge. Excessively little clearance can rub; too much can weaken the edge. An edge can also have a microscopic hone or chamfer. That edge preparation is separate from the much larger corner radius visible in an ordinary tool drawing.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Flutes are a tradeoff, not a score",
-          "body": "Helix is the spiral direction and angle of the flute; pitch is the spacing between cutting edges. Changing either changes how the edge enters the cut and how forces are distributed. Unequal pitch and variable helix can reduce regular excitation that contributes to chatter. More flutes can provide more cutting events per revolution, but geometry must still leave enough space for chips and enough core for support. No flute count is automatically best for every material, engagement or depth."
+          "heading": "More edges also means less room between them",
+          "body": "A tool with more edges can take more bites each turn. But the spaces between those edges must still hold and clear the chips. The spiral angle of a flute is called its helix angle. Changing the angle or spacing changes how the edges enter the cut and how the tool is loaded.",
+          "example": "Adding more lanes to a narrow road leaves less room for each lane. Adding cutting edges also requires a careful use of limited space.",
+          "takeaway": "Choose the number and shape of the edges for the job; do not simply choose the most.",
+          "technical": {
+            "body": "Helix is the spiral direction and angle of the flute; pitch is the spacing between cutting edges. Changing either changes how the edge enters the cut and how forces are distributed. Unequal pitch and variable helix can reduce regular excitation that contributes to chatter. More flutes can provide more cutting events per revolution, but geometry must still leave enough space for chips and enough core for support. No flute count is automatically best for every material, engagement or depth.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Reach has a mechanical cost",
-          "body": "Deflection means bending under load. Greater unsupported reach increases the tendency to bend, while a more substantial section resists it. A long fluted section and a necked tool with a short cutting section can therefore behave differently even if overall length matches. Designers must reconcile part access, holder clearance, flute volume and stiffness. In a tool review, ask which part feature requires each millimetre of reach and how the chosen geometry will be inspected. A schematic cylinder cannot predict the stiffness of a real fluted cross-section."
+          "heading": "A long reach is harder to keep steady",
+          "body": "A tool can bend slightly while cutting. This is called deflection. The farther it sticks out from its holder, the harder it is to keep steady. A tool may need extra reach to get into a deep pocket, but it does not always need cutting edges along that whole reach.",
+          "example": "Hold a ruler close to its end and push gently. Then hold it farther back and push again. The longer unsupported length bends more easily.",
+          "takeaway": "Use the reach the part needs, while keeping as much support as the job allows.",
+          "technical": {
+            "body": "Deflection means bending under load. Greater unsupported reach increases the tendency to bend, while a more substantial section resists it. A long fluted section and a necked tool with a short cutting section can therefore behave differently even if overall length matches. Designers must reconcile part access, holder clearance, flute volume and stiffness. In a tool review, ask which part feature requires each millimetre of reach and how the chosen geometry will be inspected. A schematic cylinder cannot predict the stiffness of a real fluted cross-section.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "Two tools reach the same deep pocket. One has flutes along the entire exposed length; one has a short cutting section and relieved neck. What should you compare?",
-        "answer": "Compare the length actually cutting, flute and neck sections, clearance to the walls, chip exit route, holder position and expected force. The correct choice depends on the operation: a neck may improve support in one case, while a long wall cut needs a longer cutting edge."
+        "prompt": "Ask to see one tool used for a deep pocket. Which part needs to cut, and which part only needs to reach past a wall?",
+        "answer": "Point out the cutting length, the section that only provides reach, and the place where the holder grips. Ask why each exposed length is needed and where the chips can escape. A long wall cut may need a longer cutting edge than a short cut at the bottom."
       },
       "quiz": {
-        "question": "What is the main purpose of clearance behind a cutting edge?",
+        "question": "Why is there clearance just behind a cutting edge?",
         "options": [
-          "Keep the non-cutting surface from rubbing on the new workpiece surface.",
-          "Guarantee a particular spindle speed.",
-          "Make the shank fit every holder."
+          "To stop that surface rubbing on the part that was just cut.",
+          "To make the tool rotate at a fixed speed.",
+          "To make the tool fit every holder."
         ],
         "correct": 0,
-        "explanation": "Clearance separates the trailing tool surface from the workpiece; it must also preserve sufficient edge support."
+        "explanation": "The edge cuts first. The surface behind it needs to stay clear of the new surface, while still leaving enough support for the edge."
       },
       "sources": [
         {
@@ -123,50 +177,81 @@
           "title": "Sandvik Coromant — Specific cutting force",
           "url": "https://www.sandvik.coromant.com/en-gb/knowledge/materials/specific-cutting-force"
         }
-      ]
+      ],
+      "analogy": "A tool has a gripping end and a working end, a little like a toothbrush. A cutter also needs strong support and space for the material it removes.",
+      "takeaway": "Every shape on a tool has a job: cutting, clearing chips, providing support, or reaching the part."
     },
     {
       "id": "chip-mechanics",
-      "title": "Understand chips, forces and heat",
-      "subtitle": "Learn why a cutter can rub, bend, chatter or break.",
+      "title": "What happens when a tool takes a bite?",
+      "subtitle": "Understand chips, movement, heat, and the push on the tool.",
       "group": "Fundamentals",
       "minutes": 25,
       "objectives": [
-        "Distinguish spindle speed, cutting speed and feed.",
-        "Explain chip thickness without assuming it equals feed per tooth.",
-        "Connect cutting forces, heat and the limits of simple calculations."
+        "Tell rotation speed apart from forward movement.",
+        "Explain why each cutting edge takes a changing bite.",
+        "Connect chips, heat, and bending to what you see in a cut."
       ],
       "sections": [
         {
-          "heading": "Material must leave the cutting zone",
-          "body": "In metal cutting, material is deformed and separated into chips near the edge. Energy is spent deforming material and overcoming friction. That energy appears largely as heat distributed between chip, tool and workpiece. The chip therefore carries information about the process and must escape without clogging or being cut again. Composite and PCB materials may fracture, abrade and form debris differently from a continuous metal chip. A useful first question is simply: where does the removed material go?"
+          "heading": "The removed material needs somewhere to go",
+          "body": "When an edge cuts metal, it separates small pieces called chips. Making and moving those chips creates heat. Chips must leave the cutting area rather than clog it or get cut again. Circuit boards and other mixed materials may produce fragments or dust instead of the long chips you see in some metals.",
+          "example": "Pencil shavings clog a sharpener if they have nowhere to go. A cutting tool also needs a clear exit for what it removes.",
+          "takeaway": "Watch where the removed material goes, not just where the tool goes.",
+          "technical": {
+            "body": "In metal cutting, material is deformed and separated into chips near the edge. Energy is spent deforming material and overcoming friction. That energy appears largely as heat distributed between chip, tool and workpiece. The chip therefore carries information about the process and must escape without clogging or being cut again. Composite and PCB materials may fracture, abrade and form debris differently from a continuous metal chip. A useful first question is simply: where does the removed material go?",
+            "bullets": []
+          }
         },
         {
-          "heading": "Three motions with different units",
-          "body": "Spindle speed n is revolutions per minute. Cutting speed vc is the speed of the edge relative to the workpiece. Feed vf is how quickly the tool advances. In metric milling, vc = π × D × n / 1000, with D in millimetres and vc in metres/minute. Nominal feed per tooth is fz = vf / (n × z), where z is the applicable effective tooth count. These relationships convert units and motion; they do not determine which setting is suitable."
+          "heading": "Spinning and moving forward are different",
+          "body": "Rotation speed tells you how many turns the tool makes each minute. Feed tells you how fast it moves forward. Cutting speed tells you how fast the cutting edge travels past the material. A larger tool has farther to travel around its outside each turn, so diameter matters too.",
+          "bullets": [
+            "rpm: turns per minute.",
+            "Feed: forward travel per minute.",
+            "Feed per tooth: forward travel shared between the passing cutting edges."
+          ],
+          "example": "Imagine walking while turning a hand whisk. How fast you walk and how fast the whisk turns are two separate movements.",
+          "takeaway": "Do not confuse “spin faster” with “move through the part faster.”",
+          "technical": {
+            "body": "Spindle speed n is revolutions per minute. Cutting speed vc is the speed of the edge relative to the workpiece. Feed vf is how quickly the tool advances. In metric milling, vc = π × D × n / 1000, with D in millimetres and vc in metres/minute. Nominal feed per tooth is fz = vf / (n × z), where z is the applicable effective tooth count. These relationships convert units and motion; they do not determine which setting is suitable.",
+            "bullets": []
+          }
         },
         {
-          "heading": "A tooth does not always take the same bite",
-          "body": "The actual undeformed chip thickness varies as a milling edge enters and exits the work. It depends on engagement and edge geometry as well as feed. Small radial engagement can produce chip thinning. At very small scales the finite radius of the edge and the workpiece microstructure matter; the edge may plough or rub instead of forming the intended chip. Consequently, simply reducing feed whenever a surface looks poor is not a universal remedy."
+          "heading": "Each edge takes a changing bite",
+          "body": "A milling edge moves into the material and back out again. Its bite gets thicker or thinner during that movement. The bite also changes when only a small part of the tool’s width touches the material. Making the forward movement extremely slow can sometimes make the edge rub instead of cutting a useful chip.",
+          "example": "A spoon skimming the edge of a tub takes a different scoop from one pushed through the middle. Where the cutter touches changes its bite too.",
+          "takeaway": "The size of a bite depends on the contact with the part, not only the feed number.",
+          "technical": {
+            "body": "The actual undeformed chip thickness varies as a milling edge enters and exits the work. It depends on engagement and edge geometry as well as feed. Small radial engagement can produce chip thinning. At very small scales the finite radius of the edge and the workpiece microstructure matter; the edge may plough or rub instead of forming the intended chip. Consequently, simply reducing feed whenever a surface looks poor is not a universal remedy.",
+            "bullets": []
+          }
         },
         {
-          "heading": "The load closes through the whole machine",
-          "body": "Cutting force pushes on the tool and the workpiece; both can deflect. Specific cutting force expresses resistance per chip area and depends on material, chip thickness and geometry. It helps estimate load or power, but a simple estimate is not a validated simulation of a complex tool. Chatter is a self-excited vibration of the cutting system, distinct from steady bending. For learning, predict the direction of a change first; then ask what measurement would confirm it. Keep illustrative calculator outputs separate from approved cutting data."
+          "heading": "Cutting pushes back on the whole setup",
+          "body": "The tool pushes on the part, and the part pushes back. Either can bend if it is not well supported. Sometimes the cutting action produces a repeating vibration called chatter, which can leave marks and damage the edge. A simple calculation helps explain a trend, but a real test shows how the setup behaves.",
+          "example": "A long tool cutting a thin wall can move on both sides of the contact: the tool bends and the wall flexes.",
+          "takeaway": "When a cut looks unstable, check the tool, the part, and how both are held.",
+          "technical": {
+            "body": "Cutting force pushes on the tool and the workpiece; both can deflect. Specific cutting force expresses resistance per chip area and depends on material, chip thickness and geometry. It helps estimate load or power, but a simple estimate is not a validated simulation of a complex tool. Chatter is a self-excited vibration of the cutting system, distinct from steady bending. For learning, predict the direction of a change first; then ask what measurement would confirm it. Keep illustrative calculator outputs separate from approved cutting data.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "In a purely illustrative milling calculation, a 4-tooth tool rotates at 10,000 rpm and advances at 400 mm/min. What is nominal feed per tooth?",
-        "answer": "400 / (10,000 × 4) = 0.010 mm/tooth. This is arithmetic only, not a recommended setting. Actual chip thickness and suitability require the material, tool geometry, engagement, machine and setup."
+        "prompt": "Imagine four cutting edges sharing the forward movement. If the tool makes twice as many turns each minute but moves forward at the same rate, how much forward movement does each tooth get?",
+        "answer": "Each tooth gets half as much forward movement: the same travel is shared across twice as many tooth passes. For an arithmetic example only, 400 mm/min divided by 10,000 rpm and four teeth gives 0.010 mm per tooth. These numbers are not a cutting recommendation, and the actual chip also depends on how the tool meets the part."
       },
       "quiz": {
-        "question": "If spindle speed doubles but feed per minute stays fixed, what happens to nominal feed per tooth?",
+        "question": "The tool spins twice as fast but moves forward at the same rate. What happens to the forward movement per tooth?",
         "options": [
           "It doubles.",
-          "It halves.",
-          "It stays fixed because the diameter is unchanged."
+          "It becomes half as large.",
+          "It stays the same because the diameter has not changed."
         ],
         "correct": 1,
-        "explanation": "The same advance is divided among twice as many tooth passes per minute. That alone does not establish whether the result is a good cut."
+        "explanation": "Twice as many tooth passes share the same forward movement. That halves the nominal movement per tooth; it does not tell us whether the setting is suitable."
       },
       "sources": [
         {
@@ -185,56 +270,86 @@
           "title": "Sandvik Coromant — Solid round tools training: titanium and superalloys",
           "url": "https://videos.sandvik.coromant.com/solid-round-tools-session-11"
         }
-      ]
+      ],
+      "analogy": "A pencil sharpener turns a solid pencil into a shape by removing shavings. A metal-cutting tool also removes material, although the forces and temperatures are very different.",
+      "takeaway": "Cutting is a series of bites. Each bite creates removed material, heat, and force."
     },
     {
       "id": "workpiece-materials",
-      "title": "Let the workpiece material guide the design",
-      "subtitle": "Why aluminium, steel, titanium and glass-filled boards need different decisions.",
+      "title": "Why the material changes the tool",
+      "subtitle": "Learn why a tool that works on one part may struggle on another.",
       "group": "Fundamentals",
       "minutes": 20,
       "objectives": [
-        "Ask for alloy, condition and structure instead of a material nickname.",
-        "Connect adhesion, abrasion and heat to design choices.",
-        "Keep manufacturing variability visible in the data."
+        "Ask for the exact material, not just its colour or broad name.",
+        "Recognize sticking, scratching wear, and heat as different problems.",
+        "Explain why a layered board is different from a solid block."
       ],
       "sections": [
         {
-          "heading": "“Aluminium” is not a complete input",
-          "body": "A material name is only a starting point. Alloy, heat treatment, hardness, manufacturing route and surface condition can change how it cuts. A cast alloy may contain abrasive constituents; a wrought alloy may behave differently. A useful customer record identifies the actual specification and condition, not just a broad label. For AI, preserve the original material description and its normalized interpretation so an uncertain mapping can be reviewed."
+          "heading": "“Aluminium” is only the start of the answer",
+          "body": "Two aluminium parts can behave differently when cut. They may have different ingredients, heat treatments, or ways of being made. A heat treatment changes a material’s properties by heating and cooling it. Ask for the actual material specification and condition, rather than assuming that all parts with the same broad name will cut alike.",
+          "example": "A soft aluminium piece and an aluminium casting containing hard particles may need different attention, even though both are called aluminium.",
+          "takeaway": "Ask “Which exact material, in what condition?”",
+          "technical": {
+            "body": "A material name is only a starting point. Alloy, heat treatment, hardness, manufacturing route and surface condition can change how it cuts. A cast alloy may contain abrasive constituents; a wrought alloy may behave differently. A useful customer record identifies the actual specification and condition, not just a broad label. For AI, preserve the original material description and its normalized interpretation so an uncertain mapping can be reviewed.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Recognize the major families",
-          "body": "Tool catalogues commonly organize metals into steel, stainless steel, cast iron, non-ferrous metals, heat-resistant alloys/titanium, and hardened materials. These families help navigation, but they do not replace grade-specific knowledge. Different stainless structures and different cast irons can behave differently within their family. The relevant mechanism matters more than the label.",
+          "heading": "Materials can cause different kinds of trouble",
+          "body": "Some materials stick to the cutting edge. Some contain hard particles that wear it away. Others become harder where they have been squeezed or cut, or keep more heat near the edge. Broad groups such as steel, aluminium, and stainless steel are useful starting points, but each group still contains important differences.",
           "bullets": [
-            "Adhesion: workpiece material tends to stick to the edge or rake face.",
-            "Abrasion: hard constituents wear the cutting surface.",
-            "Work hardening: deformation makes the affected material harder to cut.",
-            "Thermal behaviour: heat may remain near the edge or spread into the part and chip."
-          ]
+            "Sticking changes the edge that is doing the cutting.",
+            "Hard particles can wear the edge like an abrasive.",
+            "Heat and changing hardness can make the next bite harder."
+          ],
+          "example": "An edge covered with stuck-on material needs a different investigation from an edge that has slowly worn smooth.",
+          "takeaway": "Name the behaviour you see before deciding what to change.",
+          "technical": {
+            "body": "Tool catalogues commonly organize metals into steel, stainless steel, cast iron, non-ferrous metals, heat-resistant alloys/titanium, and hardened materials. These families help navigation, but they do not replace grade-specific knowledge. Different stainless structures and different cast irons can behave differently within their family. The relevant mechanism matters more than the label.",
+            "bullets": [
+              "Adhesion: workpiece material tends to stick to the edge or rake face.",
+              "Abrasion: hard constituents wear the cutting surface.",
+              "Work hardening: deformation makes the affected material harder to cut.",
+              "Thermal behaviour: heat may remain near the edge or spread into the part and chip."
+            ]
+          }
         },
         {
-          "heading": "Match the explanation to the material",
-          "body": "In aluminium machining, sharp geometry and chip evacuation often deserve attention; silicon content can make abrasive wear more important. Titanium and nickel alloys can create concentrated thermal and mechanical demands; low thermal conductivity and evolving chip formation help explain why settings do not transfer directly from easy-cutting materials. The appropriate design also depends on interruptions, thin walls and the condition of the stock. Think in terms of observed mechanisms and verified tool trials, not a single hardness ranking."
+          "heading": "Do not copy a successful recipe blindly",
+          "body": "A tool and setup that work well on one material may fail on another. For example, some aluminium jobs need particular attention to chips sticking or clogging, while titanium can place heavy demands on the edge and its temperature. The part’s shape also matters: a thin wall is easier to move than a solid block.",
+          "example": "Before copying a successful metal-case job, check whether the new case uses the same material and has equally well-supported walls.",
+          "takeaway": "Reuse the reasoning from a successful job, then check whether the new job really matches.",
+          "technical": {
+            "body": "In aluminium machining, sharp geometry and chip evacuation often deserve attention; silicon content can make abrasive wear more important. Titanium and nickel alloys can create concentrated thermal and mechanical demands; low thermal conductivity and evolving chip formation help explain why settings do not transfer directly from easy-cutting materials. The appropriate design also depends on interruptions, thin walls and the condition of the stock. Think in terms of observed mechanisms and verified tool trials, not a single hardness ranking.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Layered materials add interfaces",
-          "body": "A PCB laminate is a system of materials, including resin and reinforcement with conductive copper layers, rather than one uniform block. The same edge encounters materials with different responses. That is why an attractive result in one layer does not prove acceptable hole-wall quality through the stack. For your first CTC study, group tools by workpiece and operation, then choose one representative case per group. Treat these groups as a learning map; do not assume a particular portfolio contains every family discussed here."
+          "heading": "A circuit board is a stack of different materials",
+          "body": "A printed circuit board, or PCB, is not one uniform block. A common rigid board combines copper, resin, and glass reinforcement. The same cutting edge passes through these different materials. Cutting one layer cleanly does not prove that the whole hole is good; the team needs to inspect what happened through the stack.",
+          "example": "Think of cutting a layered sandwich: each layer responds differently. In a PCB, the layers are much thinner and the damage is often harder to see.",
+          "takeaway": "For layered parts, ask what is in each layer and how the layers are arranged.",
+          "technical": {
+            "body": "A PCB laminate is a system of materials, including resin and reinforcement with conductive copper layers, rather than one uniform block. The same edge encounters materials with different responses. That is why an attractive result in one layer does not prove acceptable hole-wall quality through the stack. For your first CTC study, group tools by workpiece and operation, then choose one representative case per group. Treat these groups as a learning map; do not assume a particular portfolio contains every family discussed here.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A tool works on one aluminium part but fails on another. List material information that could explain the difference.",
-        "answer": "Check exact alloy, heat treatment and hardness, casting versus wrought route, abrasive constituents, skin or coating, stock variability and interrupted features. Compare verified records before concluding that the tool design itself changed."
+        "prompt": "A tool works on one aluminium case but struggles on another. What would you compare before blaming the tool?",
+        "answer": "Compare the exact material specification, its condition, and how the part was made. Then compare the part shape, support, and current cutting setup. Keep a list of what is the same, what changed, and what is still unknown."
       },
       "quiz": {
-        "question": "Which customer input is most useful for transferring a proven tool design?",
+        "question": "Which description best helps you reuse a proven tool design?",
         "options": [
-          "The part is silver-coloured.",
-          "It is metal.",
-          "The exact material specification, condition and relevant stock or layer information."
+          "“The part is silver.”",
+          "“The part is metal.”",
+          "The exact material specification, its condition, and any important layers or surface features."
         ],
         "correct": 2,
-        "explanation": "Material identity and condition explain more than appearance or a broad family name, and make comparisons auditable."
+        "explanation": "The exact material and condition help you judge whether two jobs are comparable. Colour and broad labels leave too much unknown."
       },
       "sources": [
         {
@@ -253,50 +368,76 @@
           "title": "Isola — IS420 glass-reinforced epoxy laminate and prepreg",
           "url": "https://www.isola-group.com/pcb-laminates-prepreg/is420-high-performance-laminate-and-prepreg/"
         }
-      ]
+      ],
+      "analogy": "The same kitchen knife behaves differently in a ripe tomato, hard cheese, and a crusty loaf. Cutting tools also need to suit what they are cutting; the comparison is about behaviour, not cutting settings.",
+      "takeaway": "Know the exact material and how it behaves before reusing a tool design."
     },
     {
       "id": "tool-materials",
-      "title": "Choose carbide, coating, PCD or PCBN",
-      "subtitle": "Separate the cutting material from a coating and from a tool’s shape.",
+      "title": "What should the cutting edge be made from?",
+      "subtitle": "Separate the tool’s material, its coating, and its shape.",
       "group": "Fundamentals",
       "minutes": 25,
       "objectives": [
-        "Explain what cemented carbide and PCD are.",
-        "Distinguish PCD, diamond coating, single-crystal diamond and PCBN.",
-        "Evaluate wear resistance together with toughness and manufacturability."
+        "Explain carbide and PCD in everyday language.",
+        "Tell a diamond material apart from a coating or a tooth pattern.",
+        "Ask how a material choice affects making and repairing the tool."
       ],
       "sections": [
         {
-          "heading": "Hardness is one requirement",
-          "body": "The edge needs resistance to wear, fracture, deformation and chemical attack. Cemented carbide combines hard tungsten-carbide particles with a metallic binder; changing its microstructure changes the balance of properties. A coating adds a surface layer to a substrate. PVD and CVD describe deposition processes, not a universal performance rank. The complete grade includes the substrate and its treatment. Record exact supplier grades rather than treating all “carbide” as identical."
+          "heading": "An edge must stay sharp without breaking",
+          "body": "A cutting edge needs to resist wear, but it also needs to survive force and heat. Carbide combines hard particles with a metal that holds them together. A coating is a thin layer added to a supporting material. Different carbide grades and coatings behave differently, so “carbide” alone is not a complete specification.",
+          "example": "A very hard edge may resist wear yet chip under an impact. The team balances staying sharp with surviving the cut.",
+          "takeaway": "Ask about wear resistance and resistance to breakage, not just hardness.",
+          "technical": {
+            "body": "The edge needs resistance to wear, fracture, deformation and chemical attack. Cemented carbide combines hard tungsten-carbide particles with a metallic binder; changing its microstructure changes the balance of properties. A coating adds a surface layer to a substrate. PVD and CVD describe deposition processes, not a universal performance rank. The complete grade includes the substrate and its treatment. Record exact supplier grades rather than treating all “carbide” as identical.",
+            "bullets": []
+          }
         },
         {
-          "heading": "PCD is a cutting material",
-          "body": "Polycrystalline diamond, or PCD, consists of bonded diamond grains, commonly with a binder and carbide support. It is useful in many abrasive non-ferrous and composite applications. Diamond’s chemical interaction with iron at cutting temperatures makes PCD an unsuitable default choice for ordinary steel machining. PCBN means polycrystalline cubic boron nitride: a different superhard material, widely associated with hardened ferrous machining. A harder workpiece does not automatically imply a diamond tool."
+          "heading": "PCD is diamond-based; PCBN is different",
+          "body": "PCD means polycrystalline diamond: many diamond grains bonded together, often on a carbide support. It is useful for many abrasive materials that are not iron-based. It is not the usual starting choice for cutting steel. PCBN is a different hard cutting material, often used for hardened iron-based materials such as hardened steel.",
+          "example": "A diamond-based edge may suit an abrasive aluminium job. That does not mean it is the right next choice for a steel job.",
+          "takeaway": "Match the edge material to the part material; do not assume diamond is best for everything.",
+          "technical": {
+            "body": "Polycrystalline diamond, or PCD, consists of bonded diamond grains, commonly with a binder and carbide support. It is useful in many abrasive non-ferrous and composite applications. Diamond’s chemical interaction with iron at cutting temperatures makes PCD an unsuitable default choice for ordinary steel machining. PCBN means polycrystalline cubic boron nitride: a different superhard material, widely associated with hardened ferrous machining. A harder workpiece does not automatically imply a diamond tool.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Three meanings of “diamond”",
-          "body": "A PCD segment or layer, a deposited diamond coating on a carbide tool, and a single-crystal diamond edge are different constructions. Their edge formation, available geometry, failure modes and reconditioning routes differ. A “diamond-cut” PCB router can describe its intersecting tooth pattern; the phrase alone does not establish that the cutting material contains diamond. Inspect the material specification separately from the geometry name. This distinction is essential when cleaning historical tool descriptions for AI."
+          "heading": "“Diamond” can describe three different things",
+          "body": "A tool may have a PCD cutting piece, a diamond coating, or a single-crystal diamond edge. Those are different constructions. A “diamond-cut” PCB router may simply have a crossing tooth pattern. Its name alone does not tell you that its cutting material contains diamond. Check the material and the shape separately.",
+          "example": "If a drawing says “diamond router,” ask whether it means the tooth pattern, a coating, or the material at the cutting edge.",
+          "takeaway": "Keep material, coating, and tooth shape as three separate facts.",
+          "technical": {
+            "body": "A PCD segment or layer, a deposited diamond coating on a carbide tool, and a single-crystal diamond edge are different constructions. Their edge formation, available geometry, failure modes and reconditioning routes differ. A “diamond-cut” PCB router can describe its intersecting tooth pattern; the phrase alone does not establish that the cutting material contains diamond. Inspect the material specification separately from the geometry name. This distinction is essential when cleaning historical tool descriptions for AI.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Connect material to how the tool is made",
-          "body": "Superhard blanks and segments can be shaped through processes including grinding, electrical-discharge machining and laser machining, depending on material and equipment. A tipped tool also has an attachment and support system to consider. Do not assume that a machine capable of making a carbide end mill can make every PCD design with the same route. Compare usable edge quality, manufacturable shapes, inspection, repair and total cost per accepted part. Your first material-selection exercise should end with alternatives to test and a stated reason for rejecting incompatible candidates, not a claim that one material always wins."
+          "heading": "The material also changes how you make the tool",
+          "body": "Choosing a cutting material affects how the edge can be shaped, attached, checked, and repaired. Carbide and PCD may need different equipment or processes. A tool with a separate tip also needs a reliable joint and support beneath that tip. Compare the complete working tool, including its manufacturing route and cost per good part.",
+          "example": "A tough-to-make tip may still be worthwhile if it produces more good parts. The team needs trial evidence to make that comparison.",
+          "takeaway": "Choose a material the team can turn into a reliable, measurable tool.",
+          "technical": {
+            "body": "Superhard blanks and segments can be shaped through processes including grinding, electrical-discharge machining and laser machining, depending on material and equipment. A tipped tool also has an attachment and support system to consider. Do not assume that a machine capable of making a carbide end mill can make every PCD design with the same route. Compare usable edge quality, manufacturable shapes, inspection, repair and total cost per accepted part. Your first material-selection exercise should end with alternatives to test and a stated reason for rejecting incompatible candidates, not a claim that one material always wins.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A drawing says “diamond router.” What would you ask the design team to clarify?",
-        "answer": "Whether diamond describes tooth geometry, a deposited coating, a PCD cutting layer/segment or single-crystal material; also the exact grade, substrate or body, edge preparation, workpiece and approved manufacturing route."
+        "prompt": "A tool description says “diamond router.” What would you ask before entering it into an AI tool database?",
+        "answer": "Ask whether “diamond” describes the tooth pattern, a coating, or a diamond-based cutting piece. Then ask for the actual material grade and what the tool cuts. Store those as separate facts rather than guessing from the name."
       },
       "quiz": {
         "question": "Which statement is correct?",
         "options": [
           "PCD and a diamond coating are the same construction.",
-          "PCBN is a separate cutting material from PCD.",
-          "A diamond-cut router name proves its edge is PCD."
+          "PCBN and PCD are different cutting materials.",
+          "A “diamond-cut” router must have a PCD edge."
         ],
         "correct": 1,
-        "explanation": "PCBN is cubic boron nitride-based; PCD is diamond-based. Material, coating and tooth pattern must be stored separately."
+        "explanation": "PCD is diamond-based; PCBN is based on cubic boron nitride. A coating or tooth pattern is another separate choice."
       },
       "sources": [
         {
@@ -315,50 +456,76 @@
           "title": "Union Tool — PCB router geometry families",
           "url": "https://utj.uniontool.co.jp/en/product/drill_router/pcb_router.html"
         }
-      ]
+      ],
+      "analogy": "A plate can have a strong body and a different surface coating. A cutting tool can also combine a supporting material with a special surface or tip; the layers do different jobs.",
+      "takeaway": "A good edge must resist wear and survive the job. Hardness alone does not choose the winner."
     },
     {
       "id": "milling-operations",
-      "title": "Design for milling and the complete toolpath",
-      "subtitle": "Relate tool shape to slots, walls, pockets and sculpted surfaces.",
+      "title": "How a spinning tool makes walls and pockets",
+      "subtitle": "Watch why the tool’s route matters as much as its shape.",
       "group": "Applications",
       "minutes": 25,
       "objectives": [
-        "Identify axial and radial engagement.",
-        "Explain climb and conventional milling.",
-        "See why a good straight cut can fail in a corner."
+        "See the difference between cutting with the side and the end.",
+        "Explain why a corner can be harder to cut than a straight wall.",
+        "Connect the finished surface to where the tool touches it."
       ],
       "sections": [
         {
-          "heading": "Name the surface being produced",
-          "body": "Milling uses a rotating tool to remove material while tool and part move relative to each other. Peripheral edges can form a wall; end edges can form a floor; a ball or rounded profile can follow a sculpted surface. A slot engages the cutter differently from a light pass along an open wall. Roughing removes stock while preserving a path to the final geometry; finishing produces the required surface and dimensions. A cutter’s end shape must match the feature and access."
+          "heading": "The side makes a wall; the end can make a floor",
+          "body": "Milling uses a spinning tool that moves relative to the part. Edges on the side can cut a wall, while edges at the end can cut a floor. A rounded end can follow a curved surface. The first passes may remove most of the unwanted material; later passes bring the shape and surface to the required result.",
+          "example": "To make a pocket in a metal case, the tool must create both a floor and surrounding walls, while leaving room to enter and move.",
+          "takeaway": "Choose the cutting shape for the surface you need to make.",
+          "technical": {
+            "body": "Milling uses a rotating tool to remove material while tool and part move relative to each other. Peripheral edges can form a wall; end edges can form a floor; a ball or rounded profile can follow a sculpted surface. A slot engages the cutter differently from a light pass along an open wall. Roughing removes stock while preserving a path to the final geometry; finishing produces the required surface and dimensions. A cutter’s end shape must match the feature and access.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Engagement controls the load",
-          "body": "Axial engagement is the depth along the tool’s axis; radial engagement is the width of material intercepted across its diameter. They jointly influence the amount and location of edge contact. As a tool enters an internal corner, engagement can increase even when programmed feed is unchanged. A design review should therefore include the complete toolpath: entry, straight sections, corners, depth changes and exit. Ask which segment sets the worst load, chip-space or clearance requirement."
+          "heading": "A corner can suddenly put more of the tool to work",
+          "body": "How much of the edge touches the part matters. Cutting deeper uses more edge length; cutting wider brings more of the tool’s width into the material. In an inside corner, contact can increase even if the forward movement stays the same. That can raise the load and leave less room for chips.",
+          "example": "A tool may cut a straight pocket wall smoothly, then start vibrating as it reaches the corner.",
+          "takeaway": "Look at the hardest part of the route, not only the easy straight section.",
+          "technical": {
+            "body": "Axial engagement is the depth along the tool’s axis; radial engagement is the width of material intercepted across its diameter. They jointly influence the amount and location of edge contact. As a tool enters an internal corner, engagement can increase even when programmed feed is unchanged. A design review should therefore include the complete toolpath: entry, straight sections, corners, depth changes and exit. Ask which segment sets the worst load, chip-space or clearance requirement.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Direction changes how a chip develops",
-          "body": "In the simple peripheral-milling picture, climb milling begins with a thicker chip that becomes thinner; conventional milling begins near zero thickness and builds. Direction affects rubbing, edge loading, chip placement and forces. Machine backlash, workholding and surface condition can change which approach is appropriate. A familiar general preference is not permission to apply one direction everywhere. Observe the direction of force relative to a thin wall or poorly supported edge."
+          "heading": "The cutting direction changes the bite",
+          "body": "In a simple side cut, climb milling starts each bite thicker and ends thinner. Conventional milling starts with a very thin bite and builds it up. These directions change rubbing and how the tool pushes on the part. The machine, the way the part is held, and the surface being cut all affect the choice.",
+          "example": "When cutting beside a thin wall, ask which direction pushes the wall and whether it has enough support.",
+          "takeaway": "Cutting direction changes the forces; the team must choose it for the actual setup.",
+          "technical": {
+            "body": "In the simple peripheral-milling picture, climb milling begins with a thicker chip that becomes thinner; conventional milling begins near zero thickness and builds. Direction affects rubbing, edge loading, chip placement and forces. Machine backlash, workholding and surface condition can change which approach is appropriate. A familiar general preference is not permission to apply one direction everywhere. Observe the direction of force relative to a thin wall or poorly supported edge.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Surface generation is geometric and physical",
-          "body": "A rounded tool leaves small ridges, or scallops, between adjacent passes. Their size depends on local geometry and spacing, while actual finish also reflects vibration, runout and wear. On a ball end mill, contact near the rotational centre has low local cutting speed. Tool orientation and contact location therefore matter in sculpted work. A special form tool can combine features in one pass, but each added edge brings cutting and inspection constraints. Capture the surface requirement, path and tool orientation together when comparing trials."
+          "heading": "A curved tool does not touch everywhere the same way",
+          "body": "A ball-shaped tool touches a curved part at different places as it moves. Near the centre of the ball, the surface of the tool moves slowly because it is close to the rotation axis. Spacing between passes also leaves small ridges. Vibration, wear, and how steadily the tool rotates can affect the final surface too.",
+          "example": "Imagine mowing a curved lawn in overlapping strips: spacing changes what is left between the strips. A rounded cutter leaves much smaller ridges between passes.",
+          "takeaway": "Check the contact point and the spacing between passes when judging a finished surface.",
+          "technical": {
+            "body": "A rounded tool leaves small ridges, or scallops, between adjacent passes. Their size depends on local geometry and spacing, while actual finish also reflects vibration, runout and wear. On a ball end mill, contact near the rotational centre has low local cutting speed. Tool orientation and contact location therefore matter in sculpted work. A special form tool can combine features in one pass, but each added edge brings cutting and inspection constraints. Capture the surface requirement, path and tool orientation together when comparing trials.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A tool cuts an open wall well but chatters in a pocket corner. What could change even though speed and programmed feed remain the same?",
-        "answer": "Radial engagement, number and length of edges in contact, chip escape space and force direction can change. Inspect the path and setup before choosing between a path modification, reduced engagement, stronger support or a geometry revision."
+        "prompt": "A tool is quiet on a straight wall but vibrates in a pocket corner. What would you ask to see?",
+        "answer": "Ask to see the tool’s full route and how much material it meets in the corner. Compare chip space, tool reach, and support of the part. The problem may involve the route or setup as well as the tool shape."
       },
       "quiz": {
-        "question": "Why is nominal tool diameter alone insufficient for a ball-end finishing calculation?",
+        "question": "Why is the stated diameter of a ball-shaped tool not enough to understand the cut?",
         "options": [
-          "The active contact diameter depends on where the ball touches the part.",
-          "Ball tools have no cutting speed.",
-          "A ball end mill always cuts only with its shank."
+          "The speed at the contact changes depending on where the ball touches the part.",
+          "A ball-shaped tool has no cutting speed.",
+          "A ball-shaped tool cuts only with its gripping end."
         ],
         "correct": 0,
-        "explanation": "Contact location determines local effective diameter and therefore local cutting speed; the rotational centre is a special low-speed region."
+        "explanation": "The contact point matters. A point close to the rotation axis travels more slowly than one farther out on the ball."
       },
       "sources": [
         {
@@ -373,50 +540,76 @@
           "title": "Sandvik Coromant — Milling different materials",
           "url": "https://www.sandvik.coromant.com/en-gb/knowledge/milling/milling-different-materials"
         }
-      ]
+      ],
+      "analogy": "Milling is like removing material from a block to reveal a shape. The tool does this with many small bites along a planned route, rather than removing the whole shape at once.",
+      "takeaway": "Judge a milling tool together with the route it follows through the part."
     },
     {
       "id": "holemaking",
-      "title": "Understand drilling, reaming and precision holes",
-      "subtitle": "Connect point geometry and chip escape to hole quality.",
+      "title": "Making a hole—and making it accurate",
+      "subtitle": "See how drilling starts a hole and finishing operations refine it.",
       "group": "Applications",
       "minutes": 25,
       "objectives": [
-        "Identify a drill’s point, chisel edge, web, margin and flute.",
-        "Separate drilling, reaming and fine boring.",
-        "Inspect a hole as more than one diameter."
+        "Find the cutting point and the chip channels on a drill.",
+        "Explain the difference between drilling and reaming.",
+        "Check more than the width of a hole at its entrance."
       ],
       "sections": [
         {
-          "heading": "Read a drill from the point backward",
-          "body": "The cutting lips meet the workpiece at the drill point. The web is the central section separating the flutes; its end contributes to the chisel edge. Margins are narrow outer guiding regions. Flutes provide channels for removed material. Point shape, thinning at the web, flute space and margin geometry work together. Near the centre, rotational surface speed approaches zero, so cutting behaviour differs from the outer corner. A drill is not simply an end mill with a pointed end."
+          "heading": "The drill’s point cuts; the channels clear the way",
+          "body": "The sharp lips at the drill point cut the material. Spiral channels, called flutes, give the removed material an exit. The solid centre between the flutes is the web. Narrow outer strips help guide the drill. Near its centre, the surface moves more slowly than it does near the outside, so the point needs careful design.",
+          "example": "Look at the drill from its tip, then along its side. Trace where the cutting lips meet the part and where the chips must travel out.",
+          "takeaway": "A drill’s point, support, and chip channels must work together.",
+          "technical": {
+            "body": "The cutting lips meet the workpiece at the drill point. The web is the central section separating the flutes; its end contributes to the chisel edge. Margins are narrow outer guiding regions. Flutes provide channels for removed material. Point shape, thinning at the web, flute space and margin geometry work together. Near the centre, rotational surface speed approaches zero, so cutting behaviour differs from the outer corner. A drill is not simply an end mill with a pointed end.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Thrust, torque and a confined exit route",
-          "body": "Thrust pushes the drill along its axis; torque turns it. Chips must travel out of an increasingly confined hole. Web thinning can alter the centre region and reduce thrust, while the remaining web still needs mechanical support. Hole depth relative to diameter, tool reach, coolant delivery where applicable, material and chip form are linked decisions. Entry onto an angled surface and breaking through an exit can impose different loading from the middle of a straight hole. Do not copy a metal-drilling cycle into PCB drilling without checking the process."
+          "heading": "The deeper the hole, the harder the exit can be",
+          "body": "The machine both pushes the drill forward and turns it. The forward push is thrust; the turning effort is torque. As the hole gets deeper, removed material has a longer path back out. Support, chip space, and any cutting fluid must suit that job. Entering or breaking through a surface can bring different loads.",
+          "example": "A chip that escapes easily near the entrance may have much farther to travel when the drill is deep inside the part.",
+          "takeaway": "Ask how the chips will leave at the deepest point of the hole.",
+          "technical": {
+            "body": "Thrust pushes the drill along its axis; torque turns it. Chips must travel out of an increasingly confined hole. Web thinning can alter the centre region and reduce thrust, while the remaining web still needs mechanical support. Hole depth relative to diameter, tool reach, coolant delivery where applicable, material and chip form are linked decisions. Entry onto an angled surface and breaking through an exit can impose different loading from the middle of a straight hole. Do not copy a metal-drilling cycle into PCB drilling without checking the process.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Creating a hole and finishing one differ",
-          "body": "Drilling creates the hole. Reaming removes controlled remaining stock to improve specified size and finish; fine boring is another precision enlargement and finishing method. The pre-existing hole, its alignment, remaining stock and the finishing tool form one process. Reaming is not a blanket cure for a badly located hole. Guided, solid and replaceable-head tools offer different architectures. For a combination drill/reamer or step tool, document which edge creates each surface and how every diameter will be checked."
+          "heading": "Drilling creates the hole; reaming refines it",
+          "body": "A drill starts a hole in solid material. A reamer finishes an existing hole by removing a small, planned amount. This can improve the required size and surface. Boring is another way to enlarge and finish a hole. The starting hole still matters: a reamer is not a general fix for a hole in the wrong place.",
+          "example": "If a hole needs a precise fit for a pin, the process may drill it first and then finish it with a reamer.",
+          "takeaway": "Judge the finishing tool together with the hole it receives.",
+          "technical": {
+            "body": "Drilling creates the hole. Reaming removes controlled remaining stock to improve specified size and finish; fine boring is another precision enlargement and finishing method. The pre-existing hole, its alignment, remaining stock and the finishing tool form one process. Reaming is not a blanket cure for a badly located hole. Guided, solid and replaceable-head tools offer different architectures. For a combination drill/reamer or step tool, document which edge creates each surface and how every diameter will be checked.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Inspect the complete hole",
-          "body": "Diameter is only one attribute. Also consider position, straightness, roundness, taper, surface texture, entry and exit condition, and the applicable internal features. A through-hole reaches the other side; a blind hole ends inside the part and has a bottom geometry requirement. A measured diameter at the mouth does not prove the entire hole is acceptable. For training, draw a section of one customer hole, label its acceptance requirements, then place the cutting edges and chip escape route onto that drawing."
+          "heading": "Check the whole hole, not just the opening",
+          "body": "A hole can be the right width at the entrance and still be wrong farther down. It may taper, wander, or have a rough wall. Its position and the condition at the entry and exit matter too. A through-hole goes out the other side; a blind hole stops inside the part and also needs the right bottom shape.",
+          "example": "A pin may enter a hole easily but jam partway in. Checking only the entrance would miss the problem.",
+          "takeaway": "Ask where the hole was measured and whether its full depth meets the requirement.",
+          "technical": {
+            "body": "Diameter is only one attribute. Also consider position, straightness, roundness, taper, surface texture, entry and exit condition, and the applicable internal features. A through-hole reaches the other side; a blind hole ends inside the part and has a bottom geometry requirement. A measured diameter at the mouth does not prove the entire hole is acceptable. For training, draw a section of one customer hole, label its acceptance requirements, then place the cutting edges and chip escape route onto that drawing.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A reamed hole meets diameter at the entrance but fails inspection deeper down. What information do you collect?",
-        "answer": "The measurement method and locations, full hole geometry, stock before reaming, alignment/runout, tool condition, actual depth and exit type, chip evacuation and thermal/setup history. A single diameter value cannot identify the cause."
+        "prompt": "A pin enters a finished hole but gets stuck halfway down. What would you ask the inspection team to check?",
+        "answer": "Ask for measurements at more than one depth, plus the hole’s shape, straightness, and surface. Then compare the starting hole, the finishing tool, and the setup. One measurement at the entrance cannot tell the whole story."
       },
       "quiz": {
-        "question": "Which statement best describes reaming?",
+        "question": "What does a reamer normally do?",
         "options": [
-          "Making any hole from solid stock.",
-          "Finishing an existing hole with a suitable controlled allowance.",
-          "Correcting every possible hole-location error."
+          "Start any hole directly from solid material.",
+          "Finish an existing hole by removing a small, planned amount.",
+          "Fix every hole that is in the wrong position."
         ],
         "correct": 1,
-        "explanation": "Reaming is a finishing operation whose result depends on the pre-hole and setup as well as the reamer."
+        "explanation": "Reaming is a finishing step. It depends on a suitable starting hole and a suitable setup."
       },
       "sources": [
         {
@@ -435,50 +628,76 @@
           "title": "MAPAL — Reaming and fine boring",
           "url": "https://mapal.com/en/products-and-solutions/reaming-fineboring"
         }
-      ]
+      ],
+      "analogy": "Starting a rough opening and making it fit accurately are often separate jobs. Drilling makes the hole; a finishing step may then remove a small amount to improve the required size and surface.",
+      "takeaway": "A good hole needs the right size, position, shape, and surface through its full depth."
     },
     {
       "id": "pcb-tools",
-      "title": "Explore PCB drilling and routing",
-      "subtitle": "Understand a small tool cutting a layered electrical material.",
+      "title": "Cutting tiny holes and shapes in circuit boards",
+      "subtitle": "Follow a drill through the layers and a router around the edge.",
       "group": "Applications",
       "minutes": 30,
       "objectives": [
-        "Describe copper, glass reinforcement and resin as different cutting challenges.",
-        "Explain the role of entry and backing materials and machine condition.",
-        "Recognize hole-wall and routed-edge quality metrics."
+        "Explain why a board’s layers create different cutting challenges.",
+        "See how the sheets above and below a board help the drilling process.",
+        "Look for damage inside a hole as well as around its opening."
       ],
       "sections": [
         {
-          "heading": "One hole crosses many interfaces",
-          "body": "PCB means printed circuit board. A common rigid laminate family uses glass fabric in an epoxy resin system with copper conductors, though PCB materials vary widely. The drill repeatedly crosses copper, resin, glass and their interfaces. The laminate identity and actual stack construction are therefore design inputs. Do not transfer a condition from a generic FR-4 example to every board. Flexible boards, filled high-performance laminates and metal-backed constructions can need different tools and evaluation."
+          "heading": "One drill passes through several materials",
+          "body": "PCB means printed circuit board. A common rigid board contains copper layers and glass reinforcement held in resin. A drill passes through these different materials and the places where they meet. Boards are not all built the same way, so the actual layer arrangement and materials must be known before choosing or comparing tools.",
+          "example": "A clean cut through the copper at the top does not tell you how the glass and resin below it were affected.",
+          "takeaway": "Ask for the real board construction, not simply the label “PCB.”",
+          "technical": {
+            "body": "PCB means printed circuit board. A common rigid laminate family uses glass fabric in an epoxy resin system with copper conductors, though PCB materials vary widely. The drill repeatedly crosses copper, resin, glass and their interfaces. The laminate identity and actual stack construction are therefore design inputs. Do not transfer a condition from a generic FR-4 example to every board. Flexible boards, filled high-performance laminates and metal-backed constructions can need different tools and evaluation.",
+            "bullets": []
+          }
         },
         {
-          "heading": "The tool operates inside a stack system",
-          "body": "Entry material sits above the board stack; backing material supports the exit below it. Their material and thickness affect drilling conditions. Stack height, flute length, pressure-foot support, vacuum extraction, spindle condition and the actual tool together influence the result. Runout means the rotating edge deviates from its intended concentric path; for a very small drill, that deviation can be significant relative to the intended cut. Evaluate breakage and positional error as system problems before assigning them to tool geometry alone."
+          "heading": "The sheets around the board are part of the job",
+          "body": "An entry sheet sits above the boards, and a backing sheet supports the exit below them. The height of the board stack changes how far the drill and removed material must travel. The drill also needs to rotate steadily. Wobble, called runout, can matter a great deal when the drill itself is very small.",
+          "example": "If more boards are stacked together, the tool faces a different job even when the board material and drill stay the same.",
+          "takeaway": "Check the whole board stack and machine setup before blaming the drill shape.",
+          "technical": {
+            "body": "Entry material sits above the board stack; backing material supports the exit below it. Their material and thickness affect drilling conditions. Stack height, flute length, pressure-foot support, vacuum extraction, spindle condition and the actual tool together influence the result. Runout means the rotating edge deviates from its intended concentric path; for a very small drill, that deviation can be significant relative to the intended cut. Evaluate breakage and positional error as system problems before assigning them to tool geometry alone.",
+            "bullets": []
+          }
         },
         {
-          "heading": "A hole can look open and still be defective",
-          "body": "Evaluation can include registration, wall roughness, copper deformation, resin smear, burrs, glass-related damage and tool wear. Resin smear is resin left across surfaces exposed by drilling; its presence and removal relate to later interconnection quality. Entry, middle layers and exit may show different defects. The appropriate acceptance method and limits come from the customer’s board requirements. A training model of coloured flat layers makes interfaces visible but does not reproduce woven glass, local copper patterns, thermal behaviour or validated damage prediction."
+          "heading": "An open hole is not always a good hole",
+          "body": "A hole can look open from above but have damage along its wall. Copper can deform, glass can be damaged, and resin can be left across exposed surfaces; that resin is called smear. The entry, middle, and exit may each look different. The inspection must match what the customer needs for the later circuit-making steps.",
+          "example": "Looking down a straw tells you that it is open, but not whether its inside wall is clean and smooth. A PCB hole also needs internal checks.",
+          "takeaway": "Inspect the wall through the stack, not just the visible opening.",
+          "technical": {
+            "body": "Evaluation can include registration, wall roughness, copper deformation, resin smear, burrs, glass-related damage and tool wear. Resin smear is resin left across surfaces exposed by drilling; its presence and removal relate to later interconnection quality. Entry, middle layers and exit may show different defects. The appropriate acceptance method and limits come from the customer’s board requirements. A training model of coloured flat layers makes interfaces visible but does not reproduce woven glass, local copper patterns, thermal behaviour or validated damage prediction.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Routing introduces side-cutting choices",
-          "body": "Routing cuts the board outline, slots or other profiles. Up-cut and down-cut designs influence debris movement and surface-edge behaviour. Intersecting-tooth, chip-breaker, single-flute and coated geometries serve different material and finish needs. The phrase “diamond-cut” may name a tooth pattern, while “diamond-coated” specifies a material layer. Compare edge burrs, dimensional accuracy, debris removal, wear and support of the board. Your first PCB study should trace one returned drill or router to its specific laminate, stack, machine state and measured defect."
+          "heading": "A router cuts the board’s outline and slots",
+          "body": "A PCB router cuts sideways to make outlines, slots, or other shapes. Its teeth influence where debris moves and how clean the edges become. Different boards can need different tooth shapes or coatings. Remember that “diamond-cut” may name a crossing tooth pattern; “diamond-coated” describes a layer of material added to the tool.",
+          "example": "A board can have the correct outer shape but still have rough or damaged edges. The team must check both the size and the edge quality.",
+          "takeaway": "For routing, compare edge quality, debris removal, tool wear, and support of the board.",
+          "technical": {
+            "body": "Routing cuts the board outline, slots or other profiles. Up-cut and down-cut designs influence debris movement and surface-edge behaviour. Intersecting-tooth, chip-breaker, single-flute and coated geometries serve different material and finish needs. The phrase “diamond-cut” may name a tooth pattern, while “diamond-coated” specifies a material layer. Compare edge burrs, dimensional accuracy, debris removal, wear and support of the board. Your first PCB study should trace one returned drill or router to its specific laminate, stack, machine state and measured defect.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "A customer reports PCB drill breakage and exit burrs after increasing stack height. What is a useful investigation plan?",
-        "answer": "Confirm exactly what changed; compare board and entry/backing materials, stack support, flute length and chip space, extraction, runout, tool wear and measured defects through the stack. Review controlled trial evidence with the process owner; do not prescribe new settings from the training model."
+        "prompt": "More boards are added to a drilling stack. Drills now break and the bottom edges are rough. What changed that you would investigate first?",
+        "answer": "Start with the increased stack height. Ask whether the drill still has enough cutting length and chip space, whether the exit is properly supported, and whether debris is being removed. Compare the machine condition and tool wear with the earlier setup before choosing a change."
       },
       "quiz": {
-        "question": "What does “diamond-cut PCB router” establish by itself?",
+        "question": "What does the name “diamond-cut PCB router” tell you on its own?",
         "options": [
-          "That the cutting edge is definitely PCD.",
-          "That the tool has a deposited diamond coating.",
-          "A geometry description; cutting material and coating still need confirmation."
+          "The cutting edge is definitely PCD.",
+          "The tool definitely has a diamond coating.",
+          "It describes a tooth pattern; the material and coating still need checking."
         ],
         "correct": 2,
-        "explanation": "The tooth pattern, substrate and coating are separate attributes and should remain separate in a tool database."
+        "explanation": "The name can describe the pattern of the teeth. Check the actual material and any coating as separate facts."
       },
       "sources": [
         {
@@ -497,50 +716,76 @@
           "title": "Union Tool — PCB router geometry families",
           "url": "https://utj.uniontool.co.jp/en/product/drill_router/pcb_router.html"
         }
-      ]
+      ],
+      "analogy": "A PCB is more like a layered sandwich than a solid metal block. The layers are extremely thin and their quality affects the finished circuit, so the tool must work through the whole stack.",
+      "takeaway": "PCB tools must suit the board layers, the stack setup, and the quality needed inside the cut."
     },
     {
       "id": "failure-diagnosis",
-      "title": "Diagnose wear, defects and failed trials",
-      "subtitle": "Turn a tool failure into evidence that improves the next design.",
+      "title": "Find out why a tool or part went wrong",
+      "subtitle": "Turn “it failed” into a clear observation and a useful next test.",
       "group": "Applications",
       "minutes": 25,
       "objectives": [
-        "Distinguish observed damage from a hypothesis about its cause.",
-        "Recognize common wear and mechanical problems.",
-        "Record trials in a form that supports engineering and future AI."
+        "Describe what you can see before guessing the cause.",
+        "Tell gradual wear apart from sudden damage or movement.",
+        "Record a comparison that helps the team learn."
       ],
       "sections": [
         {
-          "heading": "Name the observation before naming the cause",
-          "body": "“The tool failed” is too broad. Did the edge wear gradually, chip locally, fracture, lose coating, accumulate material or lose an attached tip? Did the part fail dimension, finish, burr or location? Record a clear photograph with scale and orientation, the cutting time or accepted-part count, and the stopping reason. A badly worn end-of-life photograph may hide the sequence that caused the damage. Earlier observations are often more informative."
+          "heading": "Say exactly what went wrong",
+          "body": "“The tool failed” could mean several things. An edge may have worn slowly, chipped, broken, or collected stuck-on material. Or the tool may look fine while the part has the wrong size or surface. Record the visible problem, when it appeared, and why the run stopped before deciding what caused it.",
+          "example": "“One edge chipped after this many parts” gives the team more to investigate than “bad tool.” A photo with a size reference helps too.",
+          "takeaway": "An observation is what you saw. A cause is an explanation that still needs checking.",
+          "technical": {
+            "body": "“The tool failed” is too broad. Did the edge wear gradually, chip locally, fracture, lose coating, accumulate material or lose an attached tip? Did the part fail dimension, finish, burr or location? Record a clear photograph with scale and orientation, the cutting time or accepted-part count, and the stopping reason. A badly worn end-of-life photograph may hide the sequence that caused the damage. Earlier observations are often more informative.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Recognize the main patterns",
-          "body": "Flank wear develops on the clearance side; crater wear occurs on the rake face. Built-up edge is attached workpiece material that changes the working edge. Notch wear concentrates near a depth-of-cut boundary. Plastic deformation changes the edge shape under heat and load; thermal cracks can develop from repeated temperature changes. Chipping and fracture involve mechanical damage. These labels organize evidence, but similar-looking damage can have multiple causes and several mechanisms can coexist."
+          "heading": "Learn a few different damage patterns",
+          "body": "Wear means the edge gradually loses material. Chipping means pieces break away. Stuck-on workpiece material can change the shape of the working edge. Heat and force can also distort or crack it. These patterns help you ask better questions, but a single photograph does not always reveal which event happened first.",
+          "example": "A worn shoe sole and a torn shoe are different problems. A smoothly worn cutting edge and a broken corner also point to different questions.",
+          "takeaway": "Use damage patterns to guide the investigation, not to declare the cause immediately.",
+          "technical": {
+            "body": "Flank wear develops on the clearance side; crater wear occurs on the rake face. Built-up edge is attached workpiece material that changes the working edge. Notch wear concentrates near a depth-of-cut boundary. Plastic deformation changes the edge shape under heat and load; thermal cracks can develop from repeated temperature changes. Chipping and fracture involve mechanical damage. These labels organize evidence, but similar-looking damage can have multiple causes and several mechanisms can coexist.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Check the system before redesigning the edge",
-          "body": "Runout can make one cutting edge carry more load than another. Deflection can change dimensions without visible edge failure. Chatter can leave surface marks and accelerate damage. Chip packing, recutting, unstable support and material variation may mimic a geometry problem. Compare a suspect tool against the approved drawing and measured geometry, then compare the actual customer setup against the successful reference. Keep the evidence for manufacture, application and measurement separate enough to test each explanation."
+          "heading": "Check what holds and moves the tool",
+          "body": "A tool that wobbles may make one edge do more work than the others. A long tool may bend, and a poorly supported part may move. Chips can also become trapped and get cut again. Compare both the measured tool and the actual setup with a job that worked before deciding that the design needs to change.",
+          "example": "If just one flute is badly damaged, check whether the tool is running true before making every edge stronger.",
+          "takeaway": "A cutting problem can come from the setup even when the damage appears on the tool.",
+          "technical": {
+            "body": "Runout can make one cutting edge carry more load than another. Deflection can change dimensions without visible edge failure. Chatter can leave surface marks and accelerate damage. Chip packing, recutting, unstable support and material variation may mimic a geometry problem. Compare a suspect tool against the approved drawing and measured geometry, then compare the actual customer setup against the successful reference. Keep the evidence for manufacture, application and measurement separate enough to test each explanation.",
+            "bullets": []
+          }
         },
         {
-          "heading": "Create a useful learning loop",
-          "body": "Use a written hypothesis: “We think this mechanism causes this defect under these conditions.” Select a controlled comparison, define the acceptance measures beforehand and record all material changes. Capture successful and unsuccessful runs, including trials stopped early and why. For AI, the strongest example links customer requirements, tool revision, measured tool, setup, operating context and resulting quality. A suggestion that looks plausible is a candidate for review, not proof of improvement. Reward the team for documenting exceptions and rejected designs; those boundaries are valuable engineering knowledge."
+          "heading": "Make the next trial answer one clear question",
+          "body": "Write down what you think happened and what evidence would test that idea. Agree what a good result will look like before the next trial. Keep the important conditions comparable, record any changes, and save both good and bad results. This gives the team—and later an AI system—something reliable to learn from.",
+          "example": "If you suspect poor support caused vibration, compare the result with improved support while keeping the other important conditions as similar as possible.",
+          "takeaway": "A useful test explains why a result changed, rather than only showing that it changed.",
+          "technical": {
+            "body": "Use a written hypothesis: “We think this mechanism causes this defect under these conditions.” Select a controlled comparison, define the acceptance measures beforehand and record all material changes. Capture successful and unsuccessful runs, including trials stopped early and why. For AI, the strongest example links customer requirements, tool revision, measured tool, setup, operating context and resulting quality. A suggestion that looks plausible is a candidate for review, not proof of improvement. Reward the team for documenting exceptions and rejected designs; those boundaries are valuable engineering knowledge.",
+            "bullets": []
+          }
         }
       ],
       "exercise": {
-        "prompt": "Only one flute is heavily damaged while the others appear less worn. What hypothesis should you test before making every flute stronger?",
-        "answer": "Check measured runout and edge-height variation, holder/spindle condition, tool seating and actual manufactured geometry. Unequal load is a plausible cause; inspect chips, engagement and damage sequence before accepting it as the cause."
+        "prompt": "Only one cutting edge is badly damaged. What would you check before asking for a stronger tool?",
+        "answer": "Ask whether the tool rotates steadily, whether it is seated correctly in its holder, and whether its cutting edges match the intended geometry. Unequal loading is a possible explanation, not yet a proven cause. Also look at the chips and how the damage developed."
       },
       "quiz": {
-        "question": "Which record is most useful for learning from a failed trial?",
+        "question": "Which record will help the team learn most from a failed trial?",
         "options": [
-          "“Bad tool” in a spreadsheet cell.",
-          "A photograph without scale or context.",
-          "A linked tool revision, setup, material, time sequence, measured defect and explicit hypothesis."
+          "A note saying “bad tool.”",
+          "A photo with no size reference or job information.",
+          "The exact tool version, material, setup, measured problem, sequence of events, and explanation to test."
         ],
         "correct": 2,
-        "explanation": "A contextual record supports comparison and tests explanations. A failure label alone can teach an AI the wrong relationship."
+        "explanation": "A useful record connects the result to the job and the changes that may have caused it. A failure label alone leaves too much missing."
       },
       "sources": [
         {
@@ -559,7 +804,9 @@
           "title": "Union Tool — Standard PCB tool evaluation",
           "url": "https://utj.uniontool.co.jp/en/product/drill_router/technical_info/evaluation/"
         }
-      ]
+      ],
+      "analogy": "A car that will not start needs a diagnosis, not an immediate new engine. A bad cutting result also needs checks of the tool and its surroundings before redesigning the edge.",
+      "takeaway": "Start with the evidence, test one explanation, and record what actually happened."
     }
   ],
   "glossary": [

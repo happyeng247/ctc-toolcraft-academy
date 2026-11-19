@@ -150,7 +150,7 @@ function deferred() {
 }
 async function flush() { for (let i = 0; i < 24; i++) await Promise.resolve(); }
 
-function fixture({ lessonText = 'Understand the cutting edge.', realContent = false, delaySessionStart = false } = {}) {
+function fixture({ lessonText = 'Understand the cutting edge.', realContent = false, delaySessionStart = false, initialPreferences } = {}) {
   const document = new Document(), window = new Events();
   const main = document.createElement('main'); main.id = 'main'; document.body.appendChild(main);
   const lesson = {
@@ -159,7 +159,7 @@ function fixture({ lessonText = 'Understand the cutting edge.', realContent = fa
     exercise: { prompt: 'Observe one edge.', answer: 'HIDDEN_EXERCISE_ANSWER' },
     quiz: { question: 'Which part cuts?', options: ['The edge', 'The label'], correct: 0, explanation: 'HIDDEN_QUIZ_EXPLANATION' }, sources: [],
   };
-  main.innerHTML = '<div class="page-heading"><h1>First lesson</h1></div><article class="lesson-body"><div class="learning-objectives">Objectives</div><section><h3>Dimensions</h3></section><section><details><summary>Reveal</summary></details></section><section><div class="quiz-options"><button data-answer="0">The edge</button><button data-answer="1">The label</button></div><div id="quiz-feedback"></div></section></article><textarea id="lesson-notes"></textarea>';
+  main.innerHTML = '<div class="page-heading"><h1>First lesson</h1></div><article class="lesson-body"><div class="learning-objectives">Objectives</div><section class="lesson-section"><h3>Dimensions</h3></section><section class="lesson-section"><details><summary>Reveal</summary></details></section><section class="lesson-section"><div class="quiz-options"><button data-answer="0">The edge</button><button data-answer="1">The label</button></div><div id="quiz-feedback"></div></section></article><textarea id="lesson-notes"></textarea>';
   const records = { spoken: [], cancellations: 0, fetches: [], sessions: [], recognizers: [], scribes: [], saves: 0 };
   const sessionStartGate = delaySessionStart ? deferred() : null;
   const timers = new Map(); let timerId = 0;
@@ -198,13 +198,14 @@ function fixture({ lessonText = 'Understand the cutting edge.', realContent = fa
   const state = { completed: [], passed: [], notes: {}, brief: {} };
   const DATA = { modules: [lesson], briefFields: [{ name: 'Material', why: 'Identify material', example: 'Example material' }], sources: [], glossary: [], processSteps: [], diagnostics: [], roadmap: [], fieldwork: [] };
   const location = { hash: '#lesson/first', href: 'https://academy.example/#lesson/first', hostname: 'academy.example', origin: 'https://academy.example' };
-  const sectionElement = main.querySelector('.lesson-body > section');
+  const sectionElement = main.querySelector('.lesson-body section.lesson-section');
   const content = {
     getSections: () => [{ id: 'first:section:0', title: 'Dimensions', text: lessonText, element: sectionElement }],
     getContext: () => ({ route: location.hash.slice(1), currentSections: [{ title: 'Dimensions', text: lessonText }] }),
     performAction: () => ({ ok: true, message: 'Action recorded' }),
   };
   const store = new Map();
+  if (initialPreferences) store.set('ctc-voice-preferences-v1', JSON.stringify(initialPreferences));
   class LocalURL extends URL {}
   LocalURL.createObjectURL = () => 'blob:offline-fixture'; LocalURL.revokeObjectURL = () => {};
   const context = {
@@ -525,4 +526,280 @@ test('unknown gateway errors and raw provider messages are never rendered or mis
   assert.equal(h.voice.getStatus().playing, false);
   assert.ok(!h.document.body.textContent.includes('SECRET_PROVIDER_BODY'));
   assert.match(h.get('voice-error').textContent, /voice service could not complete/);
+});
+
+function visualLessonFixture(options = {}) {
+  const h = fixture({ ...options, realContent: true });
+  const lesson = h.DATA.modules[0];
+  lesson.analogy = 'PLAIN_ANALOGY about removing pencil shavings.';
+  lesson.takeaway = 'LESSON_TAKEAWAY: material needs a way out.';
+  lesson.sections = [
+    { heading: 'The cutting edge', body: 'PLAIN_FIRST_SECTION describes the cutting edge.', example: 'PLAIN_EXAMPLE uses a pencil sharpener.', takeaway: 'SECTION_TAKEAWAY says the edge removes material.', technical: { body: 'OPTIONAL_TECHNICAL_BODY', bullets: ['OPTIONAL_TECHNICAL_BULLET'] } },
+    { heading: 'The chip exit', body: 'PLAIN_SECOND_SECTION describes a clear exit for chips.', example: 'SECOND_EXAMPLE compares a clear channel.', takeaway: 'SECOND_TAKEAWAY keeps the exit open.' },
+  ];
+  h.document.querySelector('.lesson-body').innerHTML = '<div class="learning-objectives">Objectives</div><section class="lesson-section"><h3>The cutting edge</h3><details class="lesson-technical" data-technical-index="0"><summary>Engineering detail</summary><p>OPTIONAL_TECHNICAL_BODY</p></details></section><section class="lesson-section"><h3>The chip exit</h3></section><section class="lesson-section"><details><summary>Reveal</summary></details></section><section class="lesson-section"><div class="quiz-options"><button data-answer="0">The edge</button><button data-answer="1">The label</button></div><div id="quiz-feedback"></div></section>';
+  const selectedSteps = [];
+  const visualState = { lessonId: 'first', sectionIndex: 0, sectionTitle: 'A schematic cutting tool', sceneDescription: 'The edge removes material and chips leave through a channel.', motionPlaying: false, scope: 'Teaching model', privateImplementationData: 'PRIVATE_VISUAL_INTERNAL' };
+  h.window.AcademyLessonVisuals = {
+    selectStep(index) { selectedSteps.push(index); visualState.sectionIndex = index; },
+    getState: () => ({ ...visualState }),
+  };
+  return { ...h, lesson, selectedSteps, visualState };
+}
+
+test('nested lesson transcripts keep section, optional detail, exercise and quiz targets aligned', async () => {
+  const h = visualLessonFixture();
+  const body = h.document.querySelector('.lesson-body');
+  const nodes = body.querySelectorAll('section.lesson-section');
+  const transcript = h.document.createElement('details');
+  transcript.className = 'lesson-transcript';
+  transcript.append(...nodes.slice(0, 2));
+  body.replaceChildren(body.querySelector('.learning-objectives'), transcript, ...nodes.slice(2));
+  let sections = h.window.AcademyVoiceContent.getSections();
+  assert.equal(sections.find(part => part.id === 'first:section:0').element, nodes[0]);
+  assert.equal(sections.find(part => part.id === 'first:section:1').element, nodes[1]);
+  assert.equal(sections.find(part => part.id === 'first:exercise').element, nodes[2]);
+  assert.equal(sections.find(part => part.id === 'first:quiz').element, nodes[3]);
+  assert.doesNotMatch(JSON.stringify(h.window.AcademyVoiceContent.getContext()), /OPTIONAL_TECHNICAL_BODY|HIDDEN_EXERCISE_ANSWER|HIDDEN_QUIZ_EXPLANATION/);
+  transcript.open = true;
+  assert.ok(!h.window.AcademyVoiceContent.getSections().some(part => part.id === 'first:technical:0'), 'Opening the transcript alone does not opt into technical narration');
+  const technical = nodes[0].querySelector('.lesson-technical');
+  technical.open = true;
+  h.window.dispatchEvent(new MockEvent('academy:lesson-detail'));
+  sections = h.window.AcademyVoiceContent.getSections();
+  assert.equal(sections.filter(part => part.id === 'first:technical:0').length, 1, 'Opening the transcript detail adds one optional passage');
+  assert.equal(sections.find(part => part.id === 'first:technical:0').element, technical);
+  assert.equal(sections.find(part => part.id === 'first:exercise').element, nodes[2]);
+  assert.equal(sections.find(part => part.id === 'first:quiz').element, nodes[3]);
+  await h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  assert.equal(h.selectedSteps.at(-1), 1);
+  assert.equal(h.records.fetches.length, 0);
+});
+
+test('simple examples are narrated while optional engineering detail stays out until the learner opens it', () => {
+  const h = visualLessonFixture();
+  h.state.notes.first = 'PRIVATE_VISUAL_LESSON_NOTE';
+  let sections = h.window.AcademyVoiceContent.getSections();
+  let context = JSON.stringify(h.window.AcademyVoiceContent.getContext());
+  assert.match(sections[0].text, /PLAIN_ANALOGY/);
+  assert.match(sections[0].text, /LESSON_TAKEAWAY/);
+  const plain = sections.find(section => section.id === 'first:section:0');
+  assert.match(plain.text, /PLAIN_FIRST_SECTION/);
+  assert.match(plain.text, /PLAIN_EXAMPLE/);
+  assert.match(plain.text, /SECTION_TAKEAWAY/);
+  assert.doesNotMatch(context, /OPTIONAL_TECHNICAL_BODY|OPTIONAL_TECHNICAL_BULLET|PRIVATE_VISUAL_LESSON_NOTE|HIDDEN_EXERCISE_ANSWER|HIDDEN_QUIZ_EXPLANATION/);
+  h.document.querySelector('.lesson-technical').open = true;
+  sections = h.window.AcademyVoiceContent.getSections();
+  const technical = sections.find(section => section.id === 'first:technical:0');
+  assert.ok(technical, 'Open engineering detail becomes its own optional narration section');
+  assert.match(technical.text, /OPTIONAL_TECHNICAL_BODY/);
+  assert.match(technical.text, /OPTIONAL_TECHNICAL_BULLET/);
+  context = JSON.stringify(h.window.AcademyVoiceContent.getContext());
+  assert.match(context, /OPTIONAL_TECHNICAL_BODY/);
+  assert.doesNotMatch(context, /PRIVATE_VISUAL_LESSON_NOTE|HIDDEN_EXERCISE_ANSWER|HIDDEN_QUIZ_EXPLANATION/);
+  h.document.querySelector('.lesson-technical').open = false;
+  assert.doesNotMatch(JSON.stringify(h.window.AcademyVoiceContent.getContext()), /OPTIONAL_TECHNICAL_BODY/);
+});
+
+test('narration follows a stable lesson section ID and selects its matching visual step', async () => {
+  const h = visualLessonFixture();
+  h.document.querySelector('.lesson-technical').open = true;
+  await h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.equal(h.selectedSteps.at(-1), 1);
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  assert.doesNotMatch(h.records.spoken.at(-1).text, /OPTIONAL_TECHNICAL_BODY/);
+  await h.voice.stop();
+  await h.voice.start('listen', { sectionId: 'first:technical:0' }); await flush();
+  assert.equal(h.selectedSteps.at(-1), 0, 'Optional detail stays with the visual it explains');
+  assert.match(h.records.spoken.at(-1).text, /OPTIONAL_TECHNICAL_BODY/);
+  assert.equal(h.records.sessions.length + h.records.recognizers.length + h.records.scribes.length, 0, 'Listening does not open a microphone');
+});
+
+test('closing the narrated engineering detail stops it and returns to its main section without skipping ahead', async () => {
+  const h = visualLessonFixture();
+  const detail = h.document.querySelector('.lesson-technical');
+  detail.open = true;
+  await h.voice.start('listen', { sectionId: 'first:technical:0' }); await flush();
+  const oldCompletion = h.records.spoken.at(-1).onend;
+  const spokenBeforeClose = h.records.spoken.length;
+  detail.open = false;
+  h.window.dispatchEvent(new MockEvent('academy:lesson-detail'));
+  assert.equal(h.voice.getStatus().playing, false, 'Hiding the detail cancels its narration');
+  assert.equal(h.voice.getStatus().sectionTitle, 'The cutting edge');
+  assert.equal(h.selectedSteps.at(-1), 0);
+  oldCompletion(); await flush();
+  assert.equal(h.records.spoken.length, spokenBeforeClose, 'An already queued audio completion cannot continue the closed detail');
+  h.click('voice-read'); await flush();
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_FIRST_SECTION/);
+  for (let i = 0; i < 10 && h.voice.getStatus().sectionTitle === 'The cutting edge'; i++) {
+    h.records.spoken.at(-1).onend?.(); await flush();
+  }
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit', 'Playback advances to the next main section after an explicit restart');
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  assert.equal(h.records.fetches.length, 0);
+});
+
+test('closing unrelated engineering detail preserves the selected narration and its audio', async () => {
+  const h = visualLessonFixture();
+  const detail = h.document.querySelector('.lesson-technical');
+  detail.open = true;
+  await h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  const audio = h.records.spoken.at(-1);
+  const completion = audio.onend;
+  const cancellations = h.records.cancellations;
+  detail.open = false;
+  h.window.dispatchEvent(new MockEvent('academy:lesson-detail'));
+  assert.equal(h.voice.getStatus().playing, true);
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.equal(h.get('voice-section-select').value, '2', 'The dropdown moves with the stable selected section');
+  assert.equal(h.records.cancellations, cancellations);
+  assert.equal(audio.onend, completion, 'The existing narration continues without being replaced');
+  assert.equal(h.selectedSteps.at(-1), 1);
+});
+
+test('listening bookmarks survive a return to the lesson with engineering detail collapsed', async () => {
+  const h = visualLessonFixture();
+  const detail = h.document.querySelector('.lesson-technical');
+  detail.open = true;
+  await h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  h.route('learn');
+  detail.open = false;
+  h.route('lesson/first');
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit', 'The same main explanation is restored even though its list index changed');
+  assert.equal(h.voice.getStatus().playing, false, 'Returning to a bookmark does not start audio');
+  h.click('voice-read'); await flush();
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+});
+
+test('a collapsed engineering-detail bookmark restores its main explanation', async () => {
+  const h = visualLessonFixture();
+  const detail = h.document.querySelector('.lesson-technical');
+  detail.open = true;
+  await h.voice.start('listen', { sectionId: 'first:technical:0' }); await flush();
+  h.route('learn');
+  detail.open = false;
+  h.route('lesson/first');
+  assert.equal(h.voice.getStatus().sectionTitle, 'The cutting edge');
+  assert.equal(detail.open, false, 'Restoring a place does not reopen optional material');
+  h.click('voice-read'); await flush();
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_FIRST_SECTION/);
+});
+
+test('saved numeric bookmarks from older versions still restore within the available section list', () => {
+  for (const [saved, expectedId] of [[2, 'first:section:1'], [999, 'first:quiz']]) {
+    const h = visualLessonFixture({ initialPreferences: { bookmarks: { 'lesson/first': saved } } });
+    h.route('learn'); h.route('lesson/first');
+    assert.equal(h.window.AcademyVoiceContent.getSections()[h.voice.getStatus().sectionIndex].id, expectedId);
+  }
+});
+
+test('a requested narration section stays stable if earlier detail opens while a tutor is ending', async () => {
+  const h = visualLessonFixture();
+  await h.unlock(); await h.click('voice-start-tutor');
+  const previous = h.records.sessions[0]; previous.endGate = deferred();
+  const pending = h.voice.start('listen', { sectionId: 'first:section:1' }); await flush();
+  h.document.querySelector('.lesson-technical').open = true;
+  h.window.dispatchEvent(new MockEvent('academy:lesson-detail'));
+  previous.endGate.resolve(); await pending; await flush();
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  assert.doesNotMatch(h.records.spoken.at(-1).text, /OPTIONAL_TECHNICAL_BODY/);
+});
+
+for (const mode of ['listen', 'tutor']) {
+  test(`delegated ${mode} controls prefer a stable section ID over an obsolete numeric index`, async () => {
+    const h = visualLessonFixture();
+    if (mode === 'tutor') await h.unlock();
+    h.document.querySelector('.lesson-technical').open = true;
+    const button = h.document.createElement('button');
+    button.setAttribute('data-voice-action', mode);
+    button.setAttribute('data-voice-section', '2');
+    button.setAttribute('data-voice-section-id', 'first:section:1');
+    h.get('main').appendChild(button);
+    h.document.dispatchEvent(new MockEvent('click', { target: button })); await flush();
+    assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+    assert.equal(h.selectedSteps.at(-1), 1);
+    if (mode === 'listen') {
+      assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+      assert.equal(h.records.fetches.length, 0);
+    } else {
+      const context = JSON.parse(h.records.sessions[0].options.dynamicVariables.current_context);
+      assert.equal(context.narration.sectionId, 'first:section:1');
+      assert.equal(h.records.spoken.length, 0);
+    }
+  });
+}
+
+test('legacy delegated controls still accept a numeric narration section', async () => {
+  const h = visualLessonFixture();
+  h.window.dispatchEvent(new MockEvent('academy:lesson-detail'));
+  const button = h.document.querySelectorAll('.voice-section-trigger').find(item => item.dataset.voiceAction === 'listen' && item.dataset.voiceSection === '2');
+  assert.ok(button);
+  h.document.dispatchEvent(new MockEvent('click', { target: button })); await flush();
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+});
+
+test('a visual Listen event resolves the matching main section even when optional detail shifts the list', async () => {
+  const h = visualLessonFixture();
+  h.document.querySelector('.lesson-technical').open = true;
+  h.window.dispatchEvent(new MockEvent('academy:visual-listen', { detail: { lessonId: 'first', sectionIndex: 1 } }));
+  await flush();
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  assert.equal(h.selectedSteps.at(-1), 1);
+  assert.equal(h.records.fetches.length, 0, 'Device narration does not consume a provider request');
+});
+
+test('visual step changes remain silent while idle or paused, and active narration follows the chosen step', async () => {
+  const h = visualLessonFixture();
+  const step = index => h.window.dispatchEvent(new MockEvent('academy:visual-step', { detail: { lessonId: 'first', sectionIndex: index } }));
+  step(1); await flush();
+  assert.equal(h.voice.getStatus().sectionTitle, 'The chip exit');
+  assert.equal(h.records.spoken.length, 0, 'Selecting a visual alone does not start narration');
+  await h.voice.start('listen', { sectionId: 'first:section:0' }); await flush();
+  const beforeActiveChange = h.records.spoken.length;
+  step(1); await flush();
+  assert.equal(h.records.spoken.length, beforeActiveChange + 1);
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_SECOND_SECTION/);
+  h.click('voice-read'); await flush();
+  const beforePausedChange = h.records.spoken.length;
+  step(0); await flush();
+  assert.equal(h.records.spoken.length, beforePausedChange, 'Changing the visual must not unpause speech');
+  assert.equal(h.voice.getStatus().sectionTitle, 'The cutting edge');
+  h.click('voice-read'); await flush();
+  assert.match(h.records.spoken.at(-1).text, /PLAIN_FIRST_SECTION/, 'The next explicit play starts the newly selected section');
+  assert.equal(h.records.sessions.length + h.records.recognizers.length + h.records.scribes.length, 0);
+});
+
+test('visual events from another lesson are ignored and Stop cancels narration waiting for a tutor to end', async () => {
+  const h = visualLessonFixture();
+  h.window.dispatchEvent(new MockEvent('academy:visual-listen', { detail: { lessonId: 'different-lesson', sectionIndex: 1 } }));
+  await flush(); assert.equal(h.records.spoken.length, 0);
+  await h.unlock(); await h.click('voice-start-tutor');
+  const previous = h.records.sessions[0]; previous.endGate = deferred();
+  h.window.dispatchEvent(new MockEvent('academy:visual-listen', { detail: { lessonId: 'first', sectionIndex: 1 } }));
+  await flush(); assert.equal(previous.ends, 1);
+  await h.voice.stop(); previous.endGate.resolve(); await flush();
+  assert.equal(h.records.spoken.length, 0, 'Stop wins over a pending visual Listen request');
+  assert.equal(h.records.sessions.length, 1);
+  assert.equal(h.records.recognizers.length + h.records.scribes.length, 0);
+  assert.equal(h.voice.getStatus().playing || h.voice.getStatus().connected, false);
+});
+
+test('tutor context includes only the visual that belongs to the current lesson', () => {
+  const h = visualLessonFixture();
+  let context = h.window.AcademyVoiceContent.getContext();
+  assert.equal(context.lessonVisual.lessonId, 'first');
+  assert.equal(context.lessonVisual.sectionIndex, 0);
+  assert.match(context.lessonVisual.sceneDescription, /chips leave/);
+  assert.doesNotMatch(JSON.stringify(context), /PRIVATE_VISUAL_INTERNAL/, 'Only public teaching state belongs in the tutor context');
+  h.visualState.lessonId = 'stale-lesson';
+  context = h.window.AcademyVoiceContent.getContext();
+  assert.ok(!context.lessonVisual, 'A visual left over from another page must not become tutor context');
+  h.visualState.lessonId = 'first'; h.route('learn');
+  context = h.window.AcademyVoiceContent.getContext();
+  assert.ok(!context.lessonVisual, 'The course overview must not inherit a lesson visual');
 });

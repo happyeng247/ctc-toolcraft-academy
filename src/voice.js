@@ -8,7 +8,7 @@
   let preferences = {};
   try { preferences = JSON.parse(localStorage.getItem('ctc-voice-preferences-v1') || '{}'); } catch (_) {}
   const prefs = {
-    rate: 1, engine: 'device', continueLesson: false, bookmarks: {},
+    rate: 1, engine: 'device', continueLesson: false, bookmarks: {}, bookmarkIds: {},
     ...preferences,
   };
   if (![0.75, 1, 1.25, 1.5].includes(Number(prefs.rate))) prefs.rate = 1;
@@ -119,6 +119,12 @@
   }
   async function startMode(mode, options = {}) {
     if (!['listen', 'tutor', 'dictate'].includes(mode)) return;
+    if (typeof options.sectionId === 'string') {
+      refreshSections();
+      const selected = sections.findIndex(part => part.id === options.sectionId);
+      if (selected < 0) return;
+      options = { ...options, sectionIndex: selected };
+    }
     if (Number.isInteger(options.sectionIndex)) {
       sectionIndex = Math.max(0, Math.min(sections.length - 1, options.sectionIndex));
       highlight(); sendContext();
@@ -381,8 +387,13 @@
     document.querySelectorAll('.voice-reading').forEach(el => el.classList.remove('voice-reading'));
     sections[sectionIndex]?.element?.classList.add('voice-reading');
     prefs.bookmarks[currentRoute] = sectionIndex;
+    prefs.bookmarkIds[currentRoute] = sections[sectionIndex]?.id;
     storePreferences();
     find('voice-section-select').value = String(sectionIndex);
+    const selected = sections[sectionIndex]?.id;
+    const step = selected?.match(/:(?:section|technical):(\d+)$/);
+    if (currentRoute.startsWith('lesson/') && step) window.AcademyLessonVisuals?.selectStep(Number(step[1]));
+    else if (currentRoute.startsWith('lesson/') && selected?.endsWith(':objectives')) window.AcademyLessonVisuals?.selectStep(0);
     updateSurface();
   }
   function speakable(value) {
@@ -455,15 +466,17 @@
       }
     }
   }
-  async function startReading(index = sectionIndex) {
+  async function startReading(index = sectionIndex, requestedId = sections[index]?.id) {
     if (!sections.length) return;
-    if (prefs.engine === 'elevenlabs' && !requireSession(() => startReading(index))) return;
+    if (prefs.engine === 'elevenlabs' && !requireSession(() => startReading(index, requestedId))) return;
     const intent = ++operation;
     stopDictation(); stopNarration(); discardAudio(); error();
     const run = generation;
     await endTutor();
     if (intent !== operation || run !== generation) return;
-    sectionIndex = Math.min(sections.length - 1, Math.max(0, index));
+    const requestedIndex = sections.findIndex(part => part.id === requestedId);
+    if (requestedIndex < 0) return;
+    sectionIndex = requestedIndex;
     const part = sections[sectionIndex];
     narrationKind = 'section'; playing = true; highlight(); keepAwake(true);
     status(`Reading · ${part.title}`, true); find('voice-read').textContent = 'Pause';
@@ -824,12 +837,26 @@
   function refreshSections(routeChanged = false) {
     if (!content) return;
     const oldId = sections[sectionIndex]?.id;
+    let closedSelectedDetail = false;
     sections = content.getSections();
     const heading = document.querySelector('#main h1');
     const title = (heading?.innerText || heading?.textContent || nav.find(n => n[0] === currentRoute)?.[1] || 'Academy').replace(/\s+/g, ' ').trim();
     find('voice-place').textContent = title;
-    if (routeChanged) sectionIndex = Number(prefs.bookmarks[currentRoute] || 0);
-    else { const i = sections.findIndex(part => part.id === oldId); if (i >= 0) sectionIndex = i; }
+    if (routeChanged) {
+      const savedId = prefs.bookmarkIds[currentRoute];
+      let savedIndex = sections.findIndex(part => part.id === savedId);
+      if (savedIndex < 0 && typeof savedId === 'string') savedIndex = sections.findIndex(part => part.id === savedId.replace(/:technical:(\d+)$/, ':section:$1'));
+      sectionIndex = savedIndex >= 0 ? savedIndex : Number(prefs.bookmarks[currentRoute] || 0);
+    } else {
+      const i = sections.findIndex(part => part.id === oldId);
+      if (i >= 0) sectionIndex = i;
+      else if (oldId?.match(/:technical:\d+$/)) {
+        // Closing an optional passage cancels its audio before the list changes place.
+        stopNarration(); discardAudio();
+        sectionIndex = sections.findIndex(part => part.id === oldId.replace(/:technical:(\d+)$/, ':section:$1'));
+        closedSelectedDetail = true;
+      }
+    }
     sectionIndex = Math.max(0, Math.min(sectionIndex, sections.length - 1));
     const select = find('voice-section-select');
     select.replaceChildren(...sections.map((part, i) => { const option = document.createElement('option'); option.value = String(i); option.textContent = `${i + 1}. ${part.title}`; return option; }));
@@ -850,6 +877,10 @@
     });
     mountInline(); updateSurface();
     refreshDictationTargets();
+    if (closedSelectedDetail) {
+      highlight();
+      if (!conversation && !dictating) status('Extra detail closed · main lesson selected');
+    }
   }
   function sendContext() {
     if (!conversation) return;
@@ -878,6 +909,29 @@
     }
   }
   window.addEventListener('academy:route', onRoute);
+  window.addEventListener('academy:lesson-detail', () => { refreshSections(); sendContext(); });
+  function visualSectionId(detail) {
+    if (!detail || currentRoute !== `lesson/${detail.lessonId}` || !Number.isInteger(detail.sectionIndex)) return null;
+    const lesson = DATA.modules.find(item => item.id === detail.lessonId);
+    if (!lesson || detail.sectionIndex < 0 || detail.sectionIndex >= lesson.sections.length) return null;
+    return `${detail.lessonId}:section:${detail.sectionIndex}`;
+  }
+  window.addEventListener('academy:visual-listen', event => {
+    const sectionId = visualSectionId(event.detail);
+    if (sectionId) startMode('listen', { sectionId });
+  });
+  window.addEventListener('academy:visual-step', event => {
+    const sectionId = visualSectionId(event.detail);
+    if (!sectionId) return;
+    refreshSections();
+    const index = sections.findIndex(part => part.id === sectionId);
+    if (index < 0) return;
+    const continueReading = playing && !paused;
+    if (playing) stopNarration();
+    sectionIndex = index; highlight(); sendContext();
+    if (continueReading) startReading(index);
+    else if (!conversation && !dictating) status('3D step selected · choose Listen & watch to hear it');
+  });
   window.addEventListener('academy:voice-command', event => {
     const { action, target, sectionId } = event.detail || {};
     if (action === 'repeat') {
@@ -899,7 +953,7 @@
     if (event.target.matches('#lesson-notes, [data-brief], #voice-question')) previousFocusedField = event.target;
   });
   for (const name of ['click', 'input', 'change']) document.getElementById('main').addEventListener(name, event => {
-    if (event.target.closest('[data-voice-action], [data-voice-panel], [data-voice-next], .voice-section-trigger') || event.target.matches('textarea')) return;
+    if (event.target.closest('#lesson-visual, [data-voice-action], [data-voice-panel], [data-voice-next], .voice-section-trigger') || event.target.matches('textarea')) return;
     clearTimeout(contextTimer); contextTimer = setTimeout(() => { refreshSections(); sendContext(); }, 200);
   });
   document.addEventListener('visibilitychange', () => {
@@ -917,8 +971,9 @@
     const panel = event.target.closest?.('[data-voice-panel]');
     if (action) {
       launchElement = action;
+      const sectionId = action.getAttribute('data-voice-section-id');
       const value = action.getAttribute('data-voice-section');
-      const options = value === null ? {} : { sectionIndex: Number(value) };
+      const options = sectionId !== null ? { sectionId } : value === null ? {} : { sectionIndex: Number(value) };
       if (action.dataset.voiceTarget) options.target = action.dataset.voiceTarget;
       startMode(action.dataset.voiceAction, options);
     } else if (panel) {

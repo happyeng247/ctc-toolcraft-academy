@@ -1,0 +1,22 @@
+/* Begin with the idea; let the learner choose when to go deeper. */
+.lesson-transcript { margin:26px 0; border:1px solid #e3e8ee; border-radius:12px; padding:0 20px; }
+.lesson-transcript>summary { min-height:52px; padding:16px 0; cursor:pointer; color:#533afd; font-size:14px; }
+.lesson-transcript[open]>summary { border-bottom:1px solid #e3e8ee; }
+.lesson-big-idea{display:flex;align-items:baseline;gap:20px;margin:-8px 0 24px;padding:18px 24px;border-left:3px solid #533afd;background:#eeecff;border-radius:0 12px 12px 0}
+.lesson-big-idea .eyebrow{white-space:nowrap;font-size:10px;color:#4434d4}
+.lesson-big-idea p{margin:0;color:#0d253d;font-size:16px;line-height:1.6}
+#lesson-visual{scroll-margin-top:0;margin-bottom:24px}
+.lesson-analogy{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid #dedcf4}
+.lesson-analogy p{font-size:16px;line-height:1.75;margin:10px 0 0;color:#273951}
+.lesson-body .lesson-example{padding:20px 24px;margin:24px 0 18px;border-radius:12px;background:#f6f9fc;border:1px solid #e3e8ee}
+.lesson-body .lesson-example .eyebrow{color:#61718a;font-size:10px}
+.lesson-body .lesson-example p{margin:8px 0 0;font-size:15px;line-height:1.75}
+.lesson-body .lesson-takeaway{padding:0 0 0 14px;border-left:2px solid #665efd;font-size:15px;color:#273951}
+.lesson-takeaway strong{font-weight:600}
+.lesson-show-visual{margin:8px 0 18px;font-size:13px;min-height:44px}
+.lesson-body .lesson-technical{border:1px solid #e3e8ee;border-radius:12px;padding:0 18px;background:#fff;margin:10px 0 0}
+.lesson-body .lesson-technical summary{min-height:48px;padding:14px 0;color:#61718a;font-size:13px;cursor:pointer}
+.lesson-body .lesson-technical[open] summary{border-bottom:1px solid #e3e8ee;color:#0d253d}
+.lesson-body .lesson-technical p,.lesson-body .lesson-technical ul{font-size:14px;line-height:1.75}
+.lesson-body .lesson-technical p{margin:18px 0}
+@media(max-width:767px){.lesson-big-idea{display:block;padding:16px 18px;margin:0 0 20px}.lesson-big-idea p{font-size:15px;margin-top:8px}.lesson-analogy p{font-size:15px}.lesson-body .lesson-example{padding:16px 18px}.lesson-body .lesson-technical{padding:0 14px}#lesson-visual{scroll-margin-top:0}}
